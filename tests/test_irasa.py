@@ -1,7 +1,7 @@
 #%%
 import sys
 from neurodsp.sim import sim_combined
-from neurodsp.sim import sim_knee, sim_powerlaw, sim_oscillation
+from neurodsp.sim import sim_knee, sim_powerlaw, sim_oscillation, sim_variable_oscillation, sim_damped_oscillation
 from neurodsp.utils import create_times
 import numpy as np
 import scipy.signal as dsp
@@ -12,7 +12,7 @@ sns.set_style('ticks')
 sns.set_context('poster')
 sys.path.append('../')
 
-from irasa import irasa
+from irasa import irasa, irasa_epochs
 
 
 #%%
@@ -29,6 +29,7 @@ times = create_times(n_seconds, fs)
 #%%
 exponents = [1, 2, 3]
 knee_freq = 15
+
 #%
 knee_ap = []
 knee_osc = []
@@ -49,7 +50,7 @@ for exponent in exponents:
     
 # %% plot timeseries
 
-tmax = times < 1
+tmax = times < 60
 fig, ax = plt.subplots(figsize=(6,3))
 
 ax.plot(times[tmax], knee_ap[0][tmax], label=f'slope = -{exponents[0]}')
@@ -67,7 +68,7 @@ kwargs_psd = {'window': 'hann',
 # Calculate original spectrum
 freq, psds = dsp.welch(knee_ap, fs=fs, **kwargs_psd)
 
-psd_aperiodics, psd_periodics, freq_rasa = irasa(np.array(knee_ap), band=(0.1, 100), duration=duration, fs=fs)
+psd_aperiodics, psd_periodics, freq_rasa = irasa(np.array(knee_ap), band=(1, 100), duration=duration, fs=fs)
 
 
 freq_mask = freq < 100
@@ -82,7 +83,10 @@ for ix, ax in enumerate(axes):
 from peak_utils import get_peak_params
 
 freq, psds = dsp.welch(knee_osc, fs=fs, **kwargs_psd)
-psd_aperiodics, psd_periodics, freq_rasa = irasa(np.array(knee_osc), band=(0.1, 100), duration=duration, fs=fs)
+psd_aperiodics, psd_periodics, freq_rasa = irasa(np.array(knee_osc), 
+                                                 band=(1, 100),
+                                                 #hplp=(0,100),
+                                                 duration=duration, fs=fs)
 
 freq_mask = freq < 100
 
@@ -95,72 +99,123 @@ for ix, ax in enumerate(axes):
 get_peak_params(psd_periodics, 
                 freq_rasa,
                 min_peak_height=0.01,
-                peak_width_limits=(0.5, 8),
+                peak_width_limits=(0.25, 8),
                 peak_threshold=1)
 
 # %%
 plt.plot(psd_periodics[0,:])
 plt.plot(psd_periodics[1,:])
 plt.plot(psd_periodics[2,:])
+
+
+#%% now lets check the mne python implementation
+import mne
+from mne.datasets import sample
+
+data_path = sample.data_path()
+meg_path = data_path / "MEG" / "sample"
+raw_fname = meg_path / "sample_audvis_raw.fif"
+fwd_fname = meg_path / "sample_audvis-meg-eeg-oct-6-fwd.fif"
+event_fname = meg_path / "sample_audvis_filt-0-40_raw-eve.fif"
+event_id = {
+    "Auditory/Left": 1,
+    "Auditory/Right": 2,
+    "Visual/Left": 3,
+    "Visual/Right": 4,
+}
+tmin = -0.2
+tmax = 0.5
+
+# Load real data as the template
+raw = mne.io.read_raw_fif(raw_fname)
+events = mne.read_events(event_fname)
+picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude="bads")
+raw.pick(picks)
+#%%
+aperiodic, periodic = irasa(raw, band=(1, 50), duration=2, return_type=)
+
+#%%
+aperiodic.plot();
+
+#%%
+aperiodic.plot_topomap();
+
+#%%
+aperiodic.plot_topo();
+
+#%% note for periodic data the normal plotting function fails
+#%%
+periodic.plot(dB=False);
+
+#%%
+periodic.plot_topomap(dB=False);
+
+#%% now lets check-out the events
+epochs = mne.Epochs(
+    raw,
+    events,
+    event_id,
+    tmin,
+    tmax,
+    #picks=picks,
+    baseline=None,
+    preload=True,
+    verbose=False,
+)
+
+#%%
+
+aperiodic, periodic = irasa_epochs(epochs, band=(1, 50), return_type=mne.time_frequency.EpochsSpectrum)
+
+#%%
+plt.plot(periodic["Visual/Right"].freqs, periodic["Visual/Left"].get_data().mean(axis=0).T)#.mean(axis=0))
+#plt.plot(periodic["Visual/Right"].freqs, periodic["Visual/Right"].get_data().mean(axis=0).mean(axis=0))
+#plt.plot(periodic["Visual/Right"].freqs, periodic["Auditory/Left"].get_data().mean(axis=0).mean(axis=0))
+#plt.plot(periodic["Visual/Right"].freqs, periodic["Auditory/Right"].get_data().mean(axis=0).mean(axis=0))
+
+
+plt.show()
+#%%
+periodic["Visual/Right"].average().plot_topomap();
+
+#%%
+epochs.get_data().shape
+
+#%%
+cur_trl = epochs.get_data()[0]
+
+#%%
+fs = epochs.info['sfreq']
+psd = np.fft.fft(cur_trl) * np.conj(np.fft.fft(cur_trl))
+freq_axis = np.fft.fftfreq(len(psd), 1/fs)
+
+#%%
+
+#%%
+fft_settings = {'fs': fs,
+                'nperseg': cur_trl.shape[1],
+                'noverlap': 0,}
+
+f, p_csd2 = dsp.welch(cur_trl, **fft_settings)
+
+#%%
+plt.loglog(f, p_w.T)
+
+#%%
+
+
+#%%
+freq_idcs = freq_axis > 0
+plt.loglog(freq_axis[freq_idcs], psd[freq_idcs])
+
 # %% now lets parametrize the fractal part
-
-from patsy import dmatrix
+from aperiodic_utils import compute_slope
 
 #%%
 
-#1. Transform data to log log
-#2. Specify expected maximum number of knees
-#3. loop over sensible cut point specifications based on quantiles of the data -> compute mse in each go
-#4. compare mse using bic along with the fitted knees
-
-x = freq_rasa
-y = psd_aperiodics[2]
-n_knees = 1
-
-x_log,  y_log = np.log10(x), np.log10(y)
-
-knots = tuple(np.round(np.quantile(x_log, np.linspace(0, 1, n_knees)), 4))
-
-spline_matrix = dmatrix(f"bs(aperiodic, knots={knots}, degree=2, include_intercept=True)",
-                        {"aperiodic": x_log},return_type='matrix') # matrix or dataframe
+aps, gof = compute_slope(freq_rasa,  psd_aperiodics[2], fit_func='knee')
 
 
 #%%
-import statsmodels.api as sm
-
-#%%
-#from sklearn.linear_model import LinearRegression
-from scipy.stats import linregress
-from scipy.optimize import curve_fit
-
-def fit(x, a0, a1):
-    res = a0*x + a1*x
-    return [res]
-
-
-#curve_fit(fit, spline_matrix, y_log)
-#linregress(x=spline_matrix.to_numpy(), y=y_log)
-
-
-#%%
-spline_matrix
-cs = sm.GLM(y_log, np.asarray(spline_matrix)).fit()
-#array([0.15418033, 0.6909883, 0.15418033])
-
-#%%
-plt.plot(x_log, cs.predict())
-plt.plot(x_log, y_log)
-
-
-# %%
-cs.summary()
-
-
-#%%
-xp = np.linspace(x_log.min(),x_log.max(), 100)
-pred = cs.predict(dmatrix(f"bs(xp, knots={knots}, include_intercept=True)", 
-                          {"xp": xp}, 
-                          return_type='dataframe'))
-
-
+aps
 # %%
