@@ -12,7 +12,7 @@ sns.set_style('ticks')
 sns.set_context('poster')
 sys.path.append('../')
 
-from irasa import irasa, irasa_epochs
+from irasa import irasa, irasa_epochs, irasa_raw
 
 
 #%%
@@ -68,7 +68,7 @@ kwargs_psd = {'window': 'hann',
 # Calculate original spectrum
 freq, psds = dsp.welch(knee_ap, fs=fs, **kwargs_psd)
 
-psd_aperiodics, psd_periodics, freq_rasa = irasa(np.array(knee_ap), band=(1, 100), duration=duration, fs=fs)
+psd_aperiodics, psd_periodics, freq_rasa = irasa(np.array(knee_ap), band=(1, 100), fs=fs, kwargs_psd=kwargs_psd)
 
 
 freq_mask = freq < 100

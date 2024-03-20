@@ -6,11 +6,11 @@ import mne
 
 
 from irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
-                          _check_input_data, _check_input_data_epochs)
+                          _check_input_data, _check_psd_settings)
 #TODO: Port to Cython
 
 #%% irasa
-def irasa(data, fs, band, hset, kwargs_psd):
+def irasa(data, fs, band, kwargs_psd, hset_info=(1.1, 1.95, 0.05)):
 
     '''
     This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016).
@@ -57,6 +57,14 @@ def irasa(data, fs, band, hset, kwargs_psd):
 
     '''
 
+    #Minimal safety checks
+    assert isinstance(data, np.ndarray), 'Data should either be a numpy array or an mne python Raw object.'
+    if data.ndim == 1:
+        data = data[np.newaxis, :]
+    assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'
+    assert isinstance(hset_info, tuple), 'hset should be a tuple of (min, max, step)'
+
+    hset = np.round(np.arange(*hset_info), 4)
     # Calculate original spectrum
     freq, psd = dsp.welch(data, fs=fs, **kwargs_psd)
 
@@ -89,11 +97,10 @@ def irasa(data, fs, band, hset, kwargs_psd):
 def irasa_raw(data,                  
                 fs=None,
                 band=(1,100),
-                filter_settings=(0, np.inf),
                 duration=None, 
                 overlap=50, 
                 hset_info=(1.1, 1.95, 0.05),
-                return_type='numpy'):
+                return_type=np.array):
 
     '''
     This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016).
@@ -116,7 +123,7 @@ def irasa_raw(data,
         The time window of each segment in seconds used to calculate the psd.
     overlap : float
         The overlap between segments in percent
-    return_type : string
+    return_type : 
         The returned datatype, when using :py:class:˚mne.io.BaseRaw˚ can be either
         ˚mne.time_frequency.SpectrumArray˚ or :py:class:`numpy.ndarray`. When the input data is of type
         :py:class:`numpy.ndarray` the returned data type is always :py:class:`numpy.ndarray`.
@@ -152,65 +159,32 @@ def irasa_raw(data,
 
     #set parameters & safety checks
     #ensure that input data is in the right format
-    info = None
-    if isinstance(data, mne.io.BaseRaw):
-        assert data.info['bads'] == [], 'Data should not contain bad channels as this might mess up the creation of the returned data structure'
-        info = data.info.copy()
-        fs = data.info["sfreq"] 
-        filter_settings = (data.info["highpass"], data.info["lowpass"])
-        data = data.get_data() 
-    else:
-        assert isinstance(data, np.ndarray), 'Data should either be a numpy array or an mne python Raw object.'
-        if data.ndim == 1:
-            data = data[np.newaxis, :]
-        assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (, Samples).'
+    assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.BaseEpochs'
+    assert data.info['bads'] == [], 'Data should not contain bad channels as this might mess up the creation of the returned data structure'
+    _check_input_data(data, hset_info, band)
 
-    #check if hset is specified correctly
-    assert isinstance(hset_info, tuple), 'hset should be a tuple of (min, max, step)'
-    hset = np.round(np.arange(*hset_info), 4)
-    data, overlap, hset = _check_input_data(data, hset, fs, band, filter_settings, duration, overlap)
+    
+    info = data.info.copy()
+    fs = data.info["sfreq"] 
+    data_array = data.get_data() 
 
+    _check_psd_settings(data_array, fs, duration, overlap)
 
-    nfft = 2**(np.ceil(np.log2(int(fs*duration)*hset.max())))
+    nfft = 2**(np.ceil(np.log2(int(fs*duration*np.max(hset_info)))))
     kwargs_psd = {'window': 'hann',
                   'average': 'median',
                   'nfft': nfft,
                   'nperseg': int(fs*duration), 
                   'noverlap': int(fs*duration*overlap)}
     
-    freq, psd_aperiodic, psd_periodic = irasa()
-
-    # Do the actual IRASA stuff..
-    # Calculate original spectrum
-    freq, psd = dsp.welch(data, fs=fs, **kwargs_psd)
-
-    psds = np.zeros((len(hset), *psd.shape))
-    for i, h in enumerate(hset):
-
-        rat = fractions.Fraction(str(h))
-        up, down = rat.numerator, rat.denominator
-
-        # Much faster than FFT-based resampling
-        data_up = dsp.resample_poly(data, up, down, axis=-1)
-        data_down = dsp.resample_poly(data, down, up, axis=-1)
-
-        # Calculate an up/downsampled version of the PSD using same params as original
-        _, psd_up = dsp.welch(data_up, fs * h,  **kwargs_psd)
-        _, psd_dw = dsp.welch(data_down, fs / h, **kwargs_psd)
-
-        # geometric mean between up and downsampled
-        psds[i, :] = np.sqrt(psd_up * psd_dw)
-
-    psd_aperiodic = np.median(psds, axis=0)
-    psd_periodic = psd - psd_aperiodic
-
-     = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
+    freq, psd_aperiodic, psd_periodic = irasa(data_array, fs=fs, band=band, hset=hset_info, kwargs_psd=kwargs_psd)
     
-    if np.logical_or(info == None, return_type == 'numpy'):
+    if return_type == isinstance(np.array):
         return psd_aperiodic, psd_periodic, freq
-    else:
+    
+    elif return_type == isinstance(mne.time_frequency.SpectrumArray):
         aperiodic = mne.time_frequency.SpectrumArray(psd_aperiodic, info, freqs=freq)
-        periodic = mne.time_frequency.SpectrumArray(psd_periodic, info, freqs=freq) #TODO: inherit from spectrumarray and turn to periodicspectrumarray
+        periodic = mne.time_frequency.SpectrumArray(psd_periodic, info, freqs=freq)
 
         return aperiodic, periodic
 
@@ -260,8 +234,8 @@ def irasa_epochs(data,
     assert isinstance(data, mne.BaseEpochs),  'Data should be of type mne.BaseEpochs'
     assert data.info['bads'] == [], 'Data should not contain bad channels as this might mess up the creation of the returned data structure'
     assert isinstance(hset_info, tuple), 'hset should be a tuple of (min, max, step)'
-    hset = np.round(np.arange(*hset_info), 4)
-    _check_input_data_epochs(data, hset, band)
+
+    _check_input_data(data, hset_info, band)
 
     info = data.info.copy()
     fs = data.info["sfreq"]
@@ -271,53 +245,28 @@ def irasa_epochs(data,
     data_array = data.get_data()
     
     #TODO: check if hset.max() is really max
-    nfft = 2**(np.ceil(np.log2(data_array.shape[2]*hset.max())))
+    nfft = 2**(np.ceil(np.log2(int(data_array.shape[2]*np.max(hset_info)))))
 
     #TODO: does zero padding make sense?
-    fft_settings = {'window': 'hann',
-                    #'nperseg': data.shape[2],
+    kwargs_psd = {'window': 'hann',
+                    'nperseg': data.shape[2],
                     'nfft': nfft,
                     'noverlap': 0,}
 
     # Do the actual IRASA stuff..
-    # Calculate original spectrum
     psd_list_aperiodic, psd_list_periodic = [], []
     for epoch in data_array:
     
-        freq, psd = dsp.welch(epoch, fs=fs, **fft_settings)
-
-        psds = np.zeros((len(hset), *psd.shape))
-        for i, h in enumerate(hset):
-
-            rat = fractions.Fraction(str(h))
-            up, down = rat.numerator, rat.denominator
-
-            # Much faster than FFT-based resampling
-            data_up = dsp.resample_poly(epoch, up, down, axis=-1)
-            data_down = dsp.resample_poly(epoch, down, up, axis=-1)
-
-            # Calculate an up/downsampled version of the PSD using same params as original
-            _, psd_up = dsp.welch(data_up, fs=fs * h,  **fft_settings)
-            _, psd_dw = dsp.welch(data_down, fs=fs / h, **fft_settings)
-
-            # geometric mean between up and downsampled
-            psds[i, :] = np.sqrt(psd_up * psd_dw)
-
-        psd_aperiodic = np.median(psds, axis=0)
-        psd_periodic = psd - psd_aperiodic
-
-        freq, psd_aperiodic, psd_periodic = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
+        freq, psd_aperiodic, psd_periodic = irasa(epoch, fs=fs, band=band, hset=hset_info,, kwargs_psd=kwargs_psd)
         psd_list_aperiodic.append(psd_aperiodic)
         psd_list_periodic.append(psd_periodic)
     
     psd_aperiodic = np.array(psd_list_aperiodic)
     psd_periodic = np.array(psd_list_periodic)
 
-
-    
-    if np.logical_or(info == None, return_type == 'numpy'):
+    if return_type == isinstance(np.array):
         return psd_aperiodic, psd_periodic, freq
-    else:
+    elif return_type == isinstance(mne.time_frequency.EpochsSpectrumArray):
         aperiodic = mne.time_frequency.EpochsSpectrumArray(psd_aperiodic, info, freqs=freq, events=events, event_id=event_ids)
         periodic = mne.time_frequency.EpochsSpectrumArray(psd_periodic, info, freqs=freq, events=events, event_id=event_ids)
 
