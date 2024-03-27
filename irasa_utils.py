@@ -37,9 +37,6 @@ def _find_nearest(sgramm_ud, time_array, time_value):
     return sgramm_sel
 
 
-
-
-
 def _check_input_data(data, hset, band):
 
     '''Check if the input parameters for irasa are specified correctly'''

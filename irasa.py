@@ -58,7 +58,7 @@ def irasa(data, fs, band, kwargs_psd, hset_info=(1.1, 1.95, 0.05)):
     '''
 
     #Minimal safety checks
-    assert isinstance(data, np.ndarray), 'Data should either be a numpy array or an mne python Raw object.'
+    assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
     if data.ndim == 1:
         data = data[np.newaxis, :]
     assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'
@@ -100,25 +100,28 @@ def irasa_raw(data,
                 duration=None, 
                 overlap=50, 
                 hset_info=(1.1, 1.95, 0.05),
-                return_type=np.array):
+                as_array=False):
 
     '''
-    This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016).
-    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
+    This function can be used to seperate aperiodic from periodic power spectra using 
+    the IRASA algorithm (Wen & Liu, 2016). This implementation of the IRASA algorithm 
+    is based on the yasa.irasa function in (Vallat & Walker, 2021).
 
     Parameters
     ----------
     data : :py:class:˚numpy.ndarray˚ or :py:class:˚mne.io.BaseRaw˚ 
         The timeseries data used to extract aperiodic and periodic power spectra. 
-        Can also be :py:class:˚mne.io.BaseRaw˚ in which case 'fs' and 'filter_settings' will be automatically extracted.
+        Can also be :py:class:˚mne.io.BaseRaw˚ in which case 'fs' and 'filter_settings' 
+        will be automatically extracted.
     fs : int
         The sampling frequency of the data. Can be omitted if data is :py:class:˚mne.io.BaseRaw˚.
     band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
+        A tuple containing the lower and upper band of the frequency range used to extract 
+        (a-)periodic spectra.
     filter_settings : tuple
         A tuple containing the cut-off of the High- and Lowpass filter. 
-        It is highly advisable to set this correctly in order to avoid filter artifacts in your evaluated frequency range.
-        Can be omitted if data is :py:class:˚mne.io.BaseRaw˚.
+        It is highly advisable to set this correctly in order to avoid filter artifacts 
+        in your evaluated frequency range. Can be omitted if data is :py:class:˚mne.io.BaseRaw˚.
     duration : float
         The time window of each segment in seconds used to calculate the psd.
     overlap : float
@@ -160,16 +163,18 @@ def irasa_raw(data,
     #set parameters & safety checks
     #ensure that input data is in the right format
     assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.BaseEpochs'
-    assert data.info['bads'] == [], 'Data should not contain bad channels as this might mess up the creation of the returned data structure'
+    assert data.info['bads'] == [], ('Data should not contain bad channels '
+                                     'as this might mess up the creation of the returned data structure')
     _check_input_data(data, hset_info, band)
 
-    
+    #extract relevant info from mne object
     info = data.info.copy()
     fs = data.info["sfreq"] 
     data_array = data.get_data() 
 
     _check_psd_settings(data_array, fs, duration, overlap)
 
+    overlap /= 100
     nfft = 2**(np.ceil(np.log2(int(fs*duration*np.max(hset_info)))))
     kwargs_psd = {'window': 'hann',
                   'average': 'median',
@@ -177,12 +182,13 @@ def irasa_raw(data,
                   'nperseg': int(fs*duration), 
                   'noverlap': int(fs*duration*overlap)}
     
-    freq, psd_aperiodic, psd_periodic = irasa(data_array, fs=fs, band=band, hset=hset_info, kwargs_psd=kwargs_psd)
+    freq, psd_aperiodic, psd_periodic = irasa(data_array, fs=fs, band=band, 
+                                              hset_info=hset_info, kwargs_psd=kwargs_psd)
     
-    if return_type == isinstance(np.array):
+    if as_array==True:
         return psd_aperiodic, psd_periodic, freq
     
-    elif return_type == isinstance(mne.time_frequency.SpectrumArray):
+    else:
         aperiodic = mne.time_frequency.SpectrumArray(psd_aperiodic, info, freqs=freq)
         periodic = mne.time_frequency.SpectrumArray(psd_periodic, info, freqs=freq)
 
@@ -192,22 +198,26 @@ def irasa_raw(data,
 def irasa_epochs(data,                  
           band=(1,100),
           hset_info=(1.1, 1.95, 0.05),
-          return_type=np.array):
+          as_array=False):
 
     '''
-    This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016).
-    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
+    This function can be used to seperate aperiodic from periodic power spectra 
+    using the IRASA algorithm (Wen & Liu, 2016). This implementation of the IRASA algorithm
+    is based on the yasa.irasa function in (Vallat & Walker, 2021).
 
     Parameters
     ----------
     data : :py:class:˚mne.io.BaseEpochs˚
         The timeseries data used to extract aperiodic and periodic power spectra. 
-        Should be :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings', 'duration' and 'overlap' will be automatically extracted.
+        Should be :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings', 
+        'duration' and 'overlap' will be automatically extracted.
     band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
+        A tuple containing the lower and upper band of the frequency range used to extract 
+        (a-)periodic spectra.
     return_type : :py:class: ˚numpy.ndarray˚ or :py:class:˚mne.io.BaseEpochs˚
         The returned datatype, when using :py:class:˚mne.io.BaseEpochs˚ can be either
-        ˚mne.time_frequency.EpochsSpectrumArray˚ or :py:class:`numpy.ndarray`. When the input data is of type.
+        ˚mne.time_frequency.EpochsSpectrumArray˚ or :py:class:`numpy.ndarray`.
+        When the input data is of type.
 
     Returns
     -------
@@ -242,52 +252,50 @@ def irasa_epochs(data,
     events = data.events
     event_ids = data.event_id
 
-    data_array = data.get_data()
+    data_array = data.get_data(copy=True)
     
     #TODO: check if hset.max() is really max
     nfft = 2**(np.ceil(np.log2(int(data_array.shape[2]*np.max(hset_info)))))
 
     #TODO: does zero padding make sense?
     kwargs_psd = {'window': 'hann',
-                    'nperseg': data.shape[2],
-                    'nfft': nfft,
-                    'noverlap': 0,}
+                #'nperseg': data_array.shape[2],
+                'nfft': nfft,
+                'noverlap': 0,}
 
     # Do the actual IRASA stuff..
     psd_list_aperiodic, psd_list_periodic = [], []
     for epoch in data_array:
     
-        freq, psd_aperiodic, psd_periodic = irasa(epoch, fs=fs, band=band, hset=hset_info,, kwargs_psd=kwargs_psd)
+        freq, psd_aperiodic, psd_periodic = irasa(epoch, fs=fs, band=band, 
+                                                  hset_info=hset_info, kwargs_psd=kwargs_psd)
         psd_list_aperiodic.append(psd_aperiodic)
         psd_list_periodic.append(psd_periodic)
     
     psd_aperiodic = np.array(psd_list_aperiodic)
     psd_periodic = np.array(psd_list_periodic)
 
-    if return_type == isinstance(np.array):
+    if as_array==True:
         return psd_aperiodic, psd_periodic, freq
-    elif return_type == isinstance(mne.time_frequency.EpochsSpectrumArray):
+    else:
         aperiodic = mne.time_frequency.EpochsSpectrumArray(psd_aperiodic, info, freqs=freq, events=events, event_id=event_ids)
         periodic = mne.time_frequency.EpochsSpectrumArray(psd_periodic, info, freqs=freq, events=events, event_id=event_ids)
 
         return aperiodic, periodic
 
 
-
-
 #%% irasa sprint
 
 def irasa_sprint(x,
                  fs,
-                 filter_settings,
                  band=(1,100),
                  duration=4,
                  hset=(1.1, 1.95, 0.05)):
 
     '''
 
-    This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016)
-    in a time resolved manner.
+    This function can be used to seperate aperiodic from periodic power spectra 
+    using the IRASA algorithm (Wen & Liu, 2016) in a time resolved manner.
     
     Parameters
     ----------
