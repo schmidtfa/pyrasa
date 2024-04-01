@@ -1,0 +1,2 @@
+Executing Job 16818 on node06.scc-pilot.plus.ac.at
+slurmstepd-node06.scc-pilot.plus.ac.at: error: *** JOB 16818 ON node06.scc-pilot.plus.ac.at CANCELLED AT 2024-03-30T11:04:20 ***

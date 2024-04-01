@@ -1,0 +1,22 @@
+Executing Job 17452 on node03.scc-pilot.plus.ac.at
+Running on: node03.scc-pilot.plus.ac.at
+Running on CPUs: [58, 59]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'piecewise_linear_loglog', 'n_seconds': 60, 'knee_freq': 16}
+Job ID: 17349, Task ID: 103
+Starting Job at 2024-03-31 11:10:34.658936
+##########
+Traceback (most recent call last):
+  File "/home/schmidtfa/git/pyrasa/paper/jobs/004/slurm/runner.py", line 70, in <module>
+    job_object.run_private()
+  File "/home/schmidtfa/git/pyrasa/paper/jobs/004/slurm/plus_slurm/job.py", line 52, in run_private
+    return self.run(*self.args, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schmidtfa/git/pyrasa/paper/cluster_jobs/knee_simulations.py", line 77, in run
+    ap_rasa, gof_rasa = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[0,:], fit_func=fit_func)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py", line 216, in compute_slope
+    gof = _get_gof(psd, np.log10(freq), psd_pred)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: _get_gof() takes 2 positional arguments but 3 were given

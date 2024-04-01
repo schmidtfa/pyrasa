@@ -1,0 +1,30 @@
+Executing Job 17273 on node09.scc-pilot.plus.ac.at
+Running on: node09.scc-pilot.plus.ac.at
+Running on CPUs: [8, 9]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'double_exponential', 'n_seconds': 60, 'knee_freq': 12}
+Job ID: 17000, Task ID: 273
+Starting Job at 2024-03-30 22:55:04.627304
+##########
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:57: RuntimeWarning: invalid value encountered in log10
+  y_hat = y_hat + a - np.log10((x**b1) * (k + x**b2))
+##########
+Job stopped at 2024-03-30 22:59:07.784899
+Execution took 0:04:03.157595
+Your job used an average of 1.01 CPUs
+Your job asked for 1.86GB of RAM
+Your job used a maximum of 0.23GB of RAM
+You overestimated you memory usage by 699.27%.

@@ -1,0 +1,16 @@
+Executing Job 17861 on node07.scc-pilot.plus.ac.at
+Running on: node07.scc-pilot.plus.ac.at
+Running on CPUs: [26, 27]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'piecewise_linear_loglog', 'n_seconds': 300, 'knee_freq': 19}
+Job ID: 17697, Task ID: 164
+Starting Job at 2024-03-31 15:09:14.429758
+##########
+##########
+Job stopped at 2024-03-31 17:18:47.114250
+Execution took 2:09:32.684492
+Your job used an average of 1.00 CPUs
+Your job asked for 1.86GB of RAM
+Your job used a maximum of 0.30GB of RAM
+You overestimated you memory usage by 513.30%.

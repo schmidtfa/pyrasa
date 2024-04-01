@@ -1,0 +1,2 @@
+Executing Job 16691 on node01.scc-pilot.plus.ac.at
+slurmstepd-node01.scc-pilot.plus.ac.at: error: *** JOB 16691 ON node01.scc-pilot.plus.ac.at CANCELLED AT 2024-03-30T11:04:20 ***

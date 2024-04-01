@@ -1,0 +1,18 @@
+Executing Job 17817 on node03.scc-pilot.plus.ac.at
+Running on: node03.scc-pilot.plus.ac.at
+Running on CPUs: [28, 29]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'piecewise_linear_loglog', 'n_seconds': 180, 'knee_freq': 4}
+Job ID: 17697, Task ID: 120
+Starting Job at 2024-03-31 15:09:12.036803
+##########
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:204: OptimizeWarning: Covariance of the parameters could not be estimated
+  p, _ = curve_fit(fit_f, freq_log, psd_log)
+##########
+Job stopped at 2024-03-31 15:51:13.050820
+Execution took 0:42:01.014017
+Your job used an average of 1.00 CPUs
+Your job asked for 1.86GB of RAM
+Your job used a maximum of 0.31GB of RAM
+You overestimated you memory usage by 502.47%.

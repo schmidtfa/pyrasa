@@ -1,0 +1,24 @@
+Executing Job 17728 on node06.scc-pilot.plus.ac.at
+Running on: node06.scc-pilot.plus.ac.at
+Running on CPUs: [56, 57]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'piecewise_linear_loglog', 'n_seconds': 8, 'knee_freq': 2}
+Job ID: 17697, Task ID: 31
+Starting Job at 2024-03-31 15:09:07.869324
+##########
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:204: OptimizeWarning: Covariance of the parameters could not be estimated
+  p, _ = curve_fit(fit_f, freq_log, psd_log)
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:204: OptimizeWarning: Covariance of the parameters could not be estimated
+  p, _ = curve_fit(fit_f, freq_log, psd_log)
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:204: OptimizeWarning: Covariance of the parameters could not be estimated
+  p, _ = curve_fit(fit_f, freq_log, psd_log)
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:204: OptimizeWarning: Covariance of the parameters could not be estimated
+  p, _ = curve_fit(fit_f, freq_log, psd_log)
+##########
+Job stopped at 2024-03-31 15:09:17.631044
+Execution took 0:00:09.761720
+Your job used an average of 1.43 CPUs
+Your job asked for 1.86GB of RAM
+Your job used a maximum of 0.30GB of RAM
+You overestimated you memory usage by 515.06%.

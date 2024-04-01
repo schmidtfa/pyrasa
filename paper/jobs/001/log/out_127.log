@@ -1,0 +1,2 @@
+Executing Job 16778 on node04.scc-pilot.plus.ac.at
+slurmstepd-node04.scc-pilot.plus.ac.at: error: *** JOB 16778 ON node04.scc-pilot.plus.ac.at CANCELLED AT 2024-03-30T11:04:20 ***
