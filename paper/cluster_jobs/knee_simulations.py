@@ -66,7 +66,7 @@ class knee_simulations(Job):
 
             freq_mask = np.logical_and(freq_ap < fmax_plot,  freq_ap > 0)
 
-            def _add_info(df, param_type, knee_freq, exponent):
+            def _add_info(df, param_type, knee_freq, exponent, exponent_1):
 
                 df['param_type'] = param_type
                 df['GT_Exponent'] = exponent
@@ -77,12 +77,12 @@ class knee_simulations(Job):
 
             # now lets parametrize the fractal part (and compare to ground truth)
             ap_rasa, gof_rasa = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[0,:], fit_func=fit_func)
-            ap_rasa = _add_info(ap_rasa, 'irasa', knee_freq, exponent)
-            gof_rasa = _add_info(gof_rasa, 'irasa', knee_freq, exponent)
+            ap_rasa = _add_info(ap_rasa, 'irasa', knee_freq, exponent, exponent_1)
+            gof_rasa = _add_info(gof_rasa, 'irasa', knee_freq, exponent, exponent_1)
             # also evaluate slope fit on aperiodic spectra without IRASA
             ap_norasa, gof_norasa = compute_slope(freq_ap[freq_mask],  psds_ap[freq_mask], fit_func=fit_func)
-            ap_norasa = _add_info(ap_norasa, 'norasa', knee_freq, exponent)
-            gof_norasa = _add_info(gof_norasa, 'norasa', knee_freq, exponent)
+            ap_norasa = _add_info(ap_norasa, 'norasa', knee_freq, exponent, exponent_1)
+            gof_norasa = _add_info(gof_norasa, 'norasa', knee_freq, exponent, exponent_1)
 
             df_cmb = pd.concat([ap_rasa, ap_norasa])
             aperiodic_fits.append(df_cmb)

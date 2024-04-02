@@ -1,0 +1,24 @@
+Executing Job 18187 on node06.scc-pilot.plus.ac.at
+Running on: node06.scc-pilot.plus.ac.at
+Running on CPUs: [56, 57]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'knee', 'exponent_1': 0.5, 'n_seconds': 180, 'knee_freq': 24}
+Job ID: 17873, Task ID: 314
+Starting Job at 2024-04-01 09:50:18.235617
+##########
+Traceback (most recent call last):
+  File "/home/schmidtfa/git/pyrasa/paper/jobs/007/slurm/runner.py", line 70, in <module>
+    job_object.run_private()
+  File "/home/schmidtfa/git/pyrasa/paper/jobs/007/slurm/plus_slurm/job.py", line 52, in run_private
+    return self.run(*self.args, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schmidtfa/git/pyrasa/paper/cluster_jobs/knee_simulations.py", line 79, in run
+    ap_rasa, gof_rasa = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[0,:], fit_func=fit_func)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py", line 83, in compute_slope
+    p, _ = curve_fit(fit_f, freq, np.log10(psd)) 
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schmidtfa/miniconda3/envs/pyrasa/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py", line 982, in curve_fit
+    raise RuntimeError("Optimal parameters not found: " + errmsg)
+RuntimeError: Optimal parameters not found: Number of calls to function has reached maxfev = 1000.

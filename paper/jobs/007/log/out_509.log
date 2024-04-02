@@ -1,0 +1,22 @@
+Executing Job 18382 on node02.scc-pilot.plus.ac.at
+Running on: node02.scc-pilot.plus.ac.at
+Running on CPUs: [4, 5]
+Now running cluster_jobs.knee_simulations.knee_simulations
+Parameters: []
+Keyword Parameters: {'fit_func': 'knee', 'exponent_1': 1, 'n_seconds': 300, 'knee_freq': 16}
+Job ID: 17873, Task ID: 509
+Starting Job at 2024-04-01 09:51:45.829384
+##########
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:26: RuntimeWarning: invalid value encountered in log10
+  y_hat = a - np.log10(x**b1 * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:26: RuntimeWarning: invalid value encountered in log10
+  y_hat = a - np.log10(x**b1 * (k + x**b2))
+/home/schmidtfa/git/pyrasa/paper/../../pyrasa/aperiodic_utils.py:26: RuntimeWarning: invalid value encountered in log10
+  y_hat = a - np.log10(x**b1 * (k + x**b2))
+##########
+Job stopped at 2024-04-01 11:45:53.839531
+Execution took 1:54:08.010147
+Your job used an average of 1.00 CPUs
+Your job asked for 1.86GB of RAM
+Your job used a maximum of 0.29GB of RAM
+You overestimated you memory usage by 541.81%.

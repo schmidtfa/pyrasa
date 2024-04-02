@@ -63,6 +63,13 @@ def compute_slope(freq, psd, fit_func):
     and you get 2 pandas dataframes in return that contain the model parameters alongside the goodness of fit of the model.
         
     '''
+    curv_kwargs = {'maxfev': 5000,
+                   'ftol': 1e-5, 
+                   'xtol': 1e-5, 
+                   'gtol': 1e-5,} #adjusted based on specparam
+    
+    off_guess = [psd[0]]
+    exp_guess = [np.abs(psd[-1] - psd[0]) / (np.log10(freq[-1] / freq[0]))]
     
     valid_slope_functions = ['fixed', 'knee'] # 'mixed'
     
@@ -70,7 +77,10 @@ def compute_slope(freq, psd, fit_func):
 
     if fit_func == 'fixed':
         fit_f = fixed_model
+        curv_kwargs['p0'] = np.array(off_guess + exp_guess)
+        curv_kwargs['bounds'] = np.array([(0, 0,), (np.inf, np.inf)])
         p, _ = curve_fit(fit_f, freq, np.log10(psd)) 
+
         
         params = pd.DataFrame({'Offset': p[0],
                                'Exponent': p[1],
@@ -80,7 +90,10 @@ def compute_slope(freq, psd, fit_func):
 
     elif fit_func == 'knee':
         fit_f = knee_model
-        p, _ = curve_fit(fit_f, freq, np.log10(psd)) 
+        #curve_fit_specs
+        curv_kwargs['p0'] = np.array(off_guess + [] + [] + exp_guess)
+        curv_kwargs['bounds'] = np.array([(0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf)])
+        p, _ = curve_fit(fit_f, freq, np.log10(psd), **curv_kwargs) 
         
         params = pd.DataFrame({'Offset': p[0],
                                'Knee': p[1],

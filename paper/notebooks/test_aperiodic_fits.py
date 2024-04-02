@@ -102,6 +102,14 @@ gof_cmb = pd.concat([gof1, gof2, gof3])
 aps_cmb
 
 #%%
+plt.loglog(freq_ap, psds_ap[0], 'ko')
+plt.loglog(freq_ap, psds_ap[1], 'ko')
+plt.loglog(freq_ap, psds_ap[2], 'ko')
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps1_rasa.to_numpy()[0][:-1]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps2_rasa.to_numpy()[0][:-1]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps3_rasa.to_numpy()[0][:-1]))
+plt.axvline(knee_freq)
+#%%
 
 aps1, gof1 = compute_slope(freq_ap[1:],  psds_ap[0][1:], fit_func='knee')
 aps2, gof2 = compute_slope(freq_ap[1:],  psds_ap[1][1:], fit_func='knee')
@@ -110,15 +118,16 @@ aps3, gof3 = compute_slope(freq_ap[1:],  psds_ap[2][1:], fit_func='knee')
 aps_cmb = pd.concat([aps1, aps2, aps3])
 
 aps_cmb
-
+#%%
 #%%
 plt.loglog(freq_ap, psds_ap[0], 'ko')
 plt.loglog(freq_ap, psds_ap[1], 'ko')
 plt.loglog(freq_ap, psds_ap[2], 'ko')
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps1_rasa.to_numpy()[0][:-1]))
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps2_rasa.to_numpy()[0][:-1]))
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps3_rasa.to_numpy()[0][:-1]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps1.to_numpy()[0][:-1]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps2.to_numpy()[0][:-1]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps3.to_numpy()[0][:-1]))
 plt.axvline(knee_freq)
+
 #%%
 from scipy.optimize import curve_fit
 
@@ -147,7 +156,7 @@ def knee_model(x, a, k, b1, b2):
     return y_hat
 
 
-def mixed_model(x, x1, a, b1, k, b2, b3):
+def mixed_model(x, x1, a1, b1, k, a2, b2, b3):
 
     '''
     Fit the data using a piecewise function. 
@@ -157,8 +166,8 @@ def mixed_model(x, x1, a, b1, k, b2, b3):
     '''
 
     condlist = [x < x1,  x > x1]
-    funclist = [lambda x: a - np.log10(x**b1), 
-                lambda x: a - np.log10(x**b2 * (k + (x-x1)**b3))]
+    funclist = [lambda x: a1 - np.log10(x**b1), 
+                lambda x: a2 - np.log10(x**b2 * (k + (x-x1)**b3))]
     return np.piecewise(x, condlist, funclist)
 
 

@@ -21,19 +21,22 @@ all_dfs = []
 for f in path_list:
     f_info = str(f).split('/')[-1].split('_')
     cur_data = pd.concat(joblib.load(f)['ap_fits'])
+    cur_data['pre_knee_exp'] = float(f_info[8])
     cur_data['n_seconds'] = int(f_info[-5])
     cur_data['fit_func'] = f_info[4]
     all_dfs.append(cur_data)
 
 # %%
-cur_fit_func = "double"
-df_cmb = pd.concat(all_dfs).query(f'fit_func == "{cur_fit_func}"')
+cur_pre = 0.
+
+df_cmb = pd.concat(all_dfs).query(f'pre_knee_exp == {cur_pre}')
 exponent = 'Exponent_2' #or Exponent_2
 # %%
-if cur_fit_func == 'double':
-    df_cmb['Knee Frequency (Hz)'] = df_cmb['Knee'] ** (1. / df_cmb[exponent])
+
+df_cmb['Knee Frequency (Hz)'] = df_cmb['Knee'] ** (1. / (df_cmb[exponent] + cur_pre))
 df_cmb['delta_knee'] = np.abs(df_cmb['GT_Knee_Freq'] - df_cmb['Knee Frequency (Hz)'])
 df_cmb['delta_exponent'] = np.abs(df_cmb['GT_Exponent'] - df_cmb[exponent]) #if piecewise
+df_cmb = df_cmb[df_cmb['Knee Frequency (Hz)'] < 100]
 # %%
 sns.catplot(df_cmb, x='n_seconds', y='delta_knee', 
             hue='param_type', kind='point') 
