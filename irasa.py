@@ -5,7 +5,7 @@ import numpy as np
 import mne
 
 
-from irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
+from pyrasa.irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
                           _check_input_data, _check_psd_settings)
 #TODO: Port to Cython
 

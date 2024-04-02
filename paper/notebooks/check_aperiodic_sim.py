@@ -27,7 +27,7 @@ for f in path_list:
     all_dfs.append(cur_data)
 
 # %%
-cur_pre = 0.
+cur_pre = 0.5
 
 df_cmb = pd.concat(all_dfs).query(f'pre_knee_exp == {cur_pre}')
 exponent = 'Exponent_2' #or Exponent_2

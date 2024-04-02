@@ -95,7 +95,6 @@ aps2_rasa, gof2 = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[1], fit_func='k
 aps3_rasa, gof3 = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[2], fit_func='knee')
 
 aps_cmb = pd.concat([aps1_rasa, aps2_rasa, aps3_rasa])
-
 gof_cmb = pd.concat([gof1, gof2, gof3])
 
 #%%
@@ -127,6 +126,20 @@ plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps1.to_numpy()[0][:-1]))
 plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps2.to_numpy()[0][:-1]))
 plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps3.to_numpy()[0][:-1]))
 plt.axvline(knee_freq)
+
+ 
+#%%
+cur_id = 2
+cumsum_psd = np.cumsum(psds_ap[cur_id][1:])
+half_pw_freq = freq_ap[1:][np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
+#exp_guess = np.abs(psds_ap[cur_id][1] / psds_ap[cur_id][-1]) / (np.log10(freq_ap[-1] / freq_ap[1]))
+exp_guess = np.log10(psds_ap[cur_id][1] / psds_ap[cur_id][-1]) - (np.log10(freq_ap[-1] / freq_ap[1]))
+exp_guess
+
+#%%
+plt.plot(np.log10(freq_ap[1:]), np.log10(psds_ap[cur_id][1:].min()) * -1 + np.log10(psds_ap[cur_id][1:]))
+plt.axvline(np.log10(half_pw_freq))
+knee_freq ** (exp_guess)
 
 #%%
 from scipy.optimize import curve_fit
@@ -167,14 +180,31 @@ def mixed_model(x, x1, a1, b1, k, a2, b2, b3):
 
     condlist = [x < x1,  x > x1]
     funclist = [lambda x: a1 - np.log10(x**b1), 
-                lambda x: a2 - np.log10(x**b2 * (k + (x-x1)**b3))]
+                lambda x: a1 - np.log10((x-x1)**b2 * (k + (x-x1)**b3))]
     return np.piecewise(x, condlist, funclist)
 
 
 #%%
-cur_id = 2
+cur_id = 1
+
+curv_fit_kwargs = {'maxfev': 5000,
+                   'ftol': 1e-5, 
+                   'xtol': 1e-5, 
+                   'gtol': 1e-5,}
+off_guess = [psds_ap[cur_id][1]]
+exp_guess = [np.log10(psds_ap[cur_id][1] / psds_ap[cur_id][-1]) - np.log10(freq_ap[-1] / freq_ap[1])]
+cumsum_psd = np.cumsum(psds_ap[cur_id][1:])
+half_pw_ix = np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()
+half_pw_freq = freq_ap[half_pw_ix] 
+half_pw_off = [psds_ap[cur_id][half_pw_ix]]
+#make the knee guess the point where we have half the power in the spectrum seems plausible to me
+knee_guess = [half_pw_freq ** exp_guess[0]] #convert knee freq to knee val
+curv_fit_kwargs['p0'] = np.array(knee_guess + off_guess + exp_guess + half_pw_off + knee_guess + exp_guess + exp_guess) #TODO: Really pay attention here
+curv_fit_kwargs['bounds'] = ((0, 0, 0, 0, 0, 0, 0), 
+                             (np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf)) 
+
 p, _ = curve_fit(knee_model, freq_ap[1:], np.log10(psds_ap[cur_id][1:]))
-p2, _ = curve_fit(mixed_model, freq_ap[1:], np.log10(psds_ap[cur_id][1:]))
+p2, _ = curve_fit(mixed_model, freq_ap[1:], np.log10(psds_ap[cur_id][1:]), **curv_fit_kwargs)
 
 plt.loglog(freq_ap[1:], psds_ap[cur_id][1:], 'ko')
 plt.loglog(freq_ap[1:], 10**knee_model(freq_ap[1:], *p))
