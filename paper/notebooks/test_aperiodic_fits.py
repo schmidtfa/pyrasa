@@ -28,9 +28,9 @@ overlap=0.5
 times = create_times(n_seconds, fs)
 
 #%%
-exponent_1 = 0.5
-exponents = [1, 2, 3]
-knee_freq = 10
+exponent_1 = 0.
+exponents = [0.5, 1, 2, 3]
+knee_freq = 15
 
 
 knee_ap = []
@@ -40,7 +40,7 @@ for exponent_2 in exponents:
     knee_ap.append(sim_knee(n_seconds, fs, 
                         exponent1=-1*exponent_1, 
                         exponent2=-1*exponent_2, 
-                        knee=(knee_freq ** (exponent_1 + exponent_2)))) #currently the actual exponent2 is exp1 + exp2
+                        knee=(knee_freq ** (2*exponent_1 + exponent_2))))
     
     # knee_osc.append(sim_combined(n_seconds, 
     #                             fs, 
@@ -104,9 +104,9 @@ aps_cmb
 plt.loglog(freq_ap, psds_ap[0], 'ko')
 plt.loglog(freq_ap, psds_ap[1], 'ko')
 plt.loglog(freq_ap, psds_ap[2], 'ko')
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps1_rasa.to_numpy()[0][:-1]))
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps2_rasa.to_numpy()[0][:-1]))
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps3_rasa.to_numpy()[0][:-1]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps1_rasa.to_numpy()[0][:-2]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps2_rasa.to_numpy()[0][:-2]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps3_rasa.to_numpy()[0][:-2]))
 plt.axvline(knee_freq)
 #%%
 
@@ -122,18 +122,18 @@ aps_cmb
 plt.loglog(freq_ap, psds_ap[0], 'ko')
 plt.loglog(freq_ap, psds_ap[1], 'ko')
 plt.loglog(freq_ap, psds_ap[2], 'ko')
-plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps1.to_numpy()[0][:-1]))
-plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps2.to_numpy()[0][:-1]))
-plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps3.to_numpy()[0][:-1]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps1.to_numpy()[0][:-2]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps2.to_numpy()[0][:-2]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps3.to_numpy()[0][:-2]))
 plt.axvline(knee_freq)
 
  
 #%%
-cur_id = 2
+cur_id = 0
 cumsum_psd = np.cumsum(psds_ap[cur_id][1:])
 half_pw_freq = freq_ap[1:][np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
 #exp_guess = np.abs(psds_ap[cur_id][1] / psds_ap[cur_id][-1]) / (np.log10(freq_ap[-1] / freq_ap[1]))
-exp_guess = np.log10(psds_ap[cur_id][1] / psds_ap[cur_id][-1]) - (np.log10(freq_ap[-1] / freq_ap[1]))
+exp_guess = np.log10(psds_ap[cur_id][1] / psds_ap[cur_id][-1])# / 2 #/ np.log10(freq_ap[-1] - freq_ap[1]))
 exp_guess
 
 #%%
@@ -185,7 +185,7 @@ def mixed_model(x, x1, a1, b1, k, a2, b2, b3):
 
 
 #%%
-cur_id = 1
+cur_id = 2
 
 curv_fit_kwargs = {'maxfev': 5000,
                    'ftol': 1e-5, 
@@ -200,7 +200,7 @@ half_pw_off = [psds_ap[cur_id][half_pw_ix]]
 #make the knee guess the point where we have half the power in the spectrum seems plausible to me
 knee_guess = [half_pw_freq ** exp_guess[0]] #convert knee freq to knee val
 curv_fit_kwargs['p0'] = np.array(knee_guess + off_guess + exp_guess + half_pw_off + knee_guess + exp_guess + exp_guess) #TODO: Really pay attention here
-curv_fit_kwargs['bounds'] = ((0, 0, 0, 0, 0, 0, 0), 
+curv_fit_kwargs['bounds'] = ((-np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf), 
                              (np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf)) 
 
 p, _ = curve_fit(knee_model, freq_ap[1:], np.log10(psds_ap[cur_id][1:]))

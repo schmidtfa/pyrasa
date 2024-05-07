@@ -5,12 +5,12 @@ import numpy as np
 import mne
 
 
-from pyrasa.irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
+from irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
                           _check_input_data, _check_psd_settings)
 #TODO: Port to Cython
 
 #%% irasa
-def irasa(data, fs, band, kwargs_psd, hset_info=(1.1, 1.95, 0.05)):
+def irasa(data, fs, band, kwargs_psd, hset_info=(1., 2., 0.05)):
 
     '''
     This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016).
@@ -99,7 +99,7 @@ def irasa_raw(data,
                 band=(1,100),
                 duration=None, 
                 overlap=50, 
-                hset_info=(1.1, 1.95, 0.05),
+                hset_info=(1., 2., 0.05),
                 as_array=False):
 
     '''
@@ -162,7 +162,7 @@ def irasa_raw(data,
 
     #set parameters & safety checks
     #ensure that input data is in the right format
-    assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.BaseEpochs'
+    assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.BaseRaw'
     assert data.info['bads'] == [], ('Data should not contain bad channels '
                                      'as this might mess up the creation of the returned data structure')
     _check_input_data(data, hset_info, band)
@@ -197,7 +197,7 @@ def irasa_raw(data,
 
 def irasa_epochs(data,                  
           band=(1,100),
-          hset_info=(1.1, 1.95, 0.05),
+          hset_info=(1., 2., 0.05),
           as_array=False):
 
     '''
@@ -290,7 +290,7 @@ def irasa_sprint(x,
                  fs,
                  band=(1,100),
                  duration=4,
-                 hset=(1.1, 1.95, 0.05)):
+                 hset=(1., 2., 0.05)):
 
     '''
 
@@ -316,19 +316,14 @@ def irasa_sprint(x,
 
     Returns
     -------
-    if data : :py:class:`numpy.ndarray`
-        freqs : :py:class:`numpy.ndarray`
-            The Frequencys associated with the (a-)periodic spectra.
-        aperiodic : :py:class:`numpy.ndarray`
-            The aperiodic component of the data.
-        periodic : :py:class:`numpy.ndarray`
-            The periodic component of the data.
-
-    elif data : :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚
-        aperiodic : :py:class:˚mne.time_frequency.SpectrumArray˚
-            The aperiodic component of the data as an mne.time_frequency.SpectrumArray object.
-        periodic : :py:class:˚mne.time_frequency.SpectrumArray˚
-            The periodic component of the data as anmne.time_frequency.SpectrumArray object.
+    aperiodic : :py:class:`numpy.ndarray`
+        The aperiodic component of the data.
+    periodic : :py:class:`numpy.ndarray`
+        The periodic component of the data.
+    freqs : :py:class:`numpy.ndarray`
+        The Frequencys associated with the (a-)periodic spectra.
+    time : :py:class:`numpy.ndarray`
+        The time bins in seconds associated with the (a-)periodic spectra.
 
 
     References

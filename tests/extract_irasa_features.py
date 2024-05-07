@@ -11,7 +11,6 @@ import scipy.signal as dsp
 import numpy as np
 
 
-
 sns.set_style('ticks')
 sns.set_context('poster')
 

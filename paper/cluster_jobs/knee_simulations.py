@@ -46,14 +46,14 @@ class knee_simulations(Job):
 
 
         aperiodic_fits, gofs = [], []
-        exponents = np.arange(0.5, 6, step=0.5)
+        exponents = np.arange(0.5, 4, step=0.5)
 
         for exponent in exponents:
             cur_signal = sim_knee(n_seconds, 
                                     fs, 
                                     exponent1=-1*exponent_1, 
                                     exponent2=-1*exponent, 
-                                    knee=knee_freq ** (exponent_1 + exponent))
+                                    knee=knee_freq ** (2*exponent_1 + exponent))
                 
 
             # Calculate original spectrum
@@ -71,7 +71,7 @@ class knee_simulations(Job):
                 df['param_type'] = param_type
                 df['GT_Exponent'] = exponent
                 df['GT_Knee_Freq'] = knee_freq
-                df['GT_Knee'] = knee_freq ** (exponent_1 + exponent)
+                df['GT_Knee'] = knee_freq ** (2*exponent_1 + exponent)
 
                 return df
 

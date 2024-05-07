@@ -57,7 +57,7 @@ def _get_gof(psd, psd_pred):
     return gof
 
 
-def compute_slope(freq, psd, fit_func):
+def compute_slope(freq, psd, fit_func, fit_bounds=None):
 
     '''
     Compute the slope of the aperiodic spectrum. Enter a slope fitting function 
@@ -71,13 +71,13 @@ def compute_slope(freq, psd, fit_func):
         freq = freq[1:]
         psd = psd[1:]
 
-    curv_kwargs = {'maxfev': 5000,
+    curv_kwargs = {'maxfev': 10_000,
                    'ftol': 1e-5, 
                    'xtol': 1e-5, 
-                   'gtol': 1e-5,} #adjusted based on specparam
+                   'gtol': 1e-5,}
     
-    off_guess = [psd[0]]
-    exp_guess = [np.log10(psd[0] / psd[-1]) - np.log10(freq[-1] / freq[0])] #TODO: Check this with thomas
+    off_guess = [psd[0]] if fit_bounds == None else fit_bounds[0]
+    exp_guess = [np.abs(np.log10(psd[0] / psd[-1]) / np.log10(freq[-1] / freq[0]))] if fit_bounds == None else fit_bounds[1]
     
     valid_slope_functions = ['fixed', 'knee', 'mixed']
     
@@ -86,8 +86,8 @@ def compute_slope(freq, psd, fit_func):
     if fit_func == 'fixed':
         fit_f = fixed_model
         curv_kwargs['p0'] = np.array(off_guess + exp_guess)
-        curv_kwargs['bounds'] = np.array([(0, 0,), (np.inf, np.inf)]) 
-        #offset should always be positive TODO: Think about whether that also holds for the exponent
+        curv_kwargs['bounds'] = np.array([(0, 0), (np.inf, np.inf)]) 
+
         p, _ = curve_fit(fit_f, freq, np.log10(psd)) 
 
         
@@ -103,19 +103,19 @@ def compute_slope(freq, psd, fit_func):
         cumsum_psd = np.cumsum(psd)
         half_pw_freq = freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()] 
         #make the knee guess the point where we have half the power in the spectrum seems plausible to me
-        knee_guess = [half_pw_freq ** exp_guess[0]] #convert knee freq to knee val
+        knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])] 
+        #convert knee freq to knee val which should be 2*exp_1 but this seems good enough
         curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)
-        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf)) 
-        #knee value should also always be positive at least intuitively
+        print(curv_kwargs['p0'])
+        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf)) #make this optional
+        #knee value should always be positive at least intuitively
         p, _ = curve_fit(fit_f, freq, np.log10(psd), **curv_kwargs)
         
         params = pd.DataFrame({'Offset': p[0],
                                'Knee': p[1],
                                'Exponent_1': p[2],
                                'Exponent_2': p[3],
-                               #'Knee Frequency (Hz)': p[2] ** (1. / p[4]), 
-                               #Think about whether its ok to compute the knee freq like this.
-                               #In absence of pre-knee slope it makes sense, but is it still sensible with a pre-knee slope? 
+                               'Knee Frequency (Hz)': p[1] ** (1. / (2*p[2] + p[3])),
                                'fit_type': 'knee',
                                 }, index=[0])
         psd_pred = fit_f(freq, *p)
@@ -141,9 +141,10 @@ def compute_slope(freq, psd, fit_func):
                                'Exponent_1': p[2],
                                'Offset_2': p[3],
                                'Knee': p[4],
+                               'Knee Frequency (Hz)': p[4] ** (1. / (2*p[5] + p[6])),
                                'Exponent_3': p[5],
                                'Exponent_4': p[6],
-                               'fit_type': 'knee',
+                               'fit_type': 'expo + knee',
                                 }, index=[0])
         psd_pred = fit_f(freq, *p)
     

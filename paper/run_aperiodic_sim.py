@@ -6,9 +6,9 @@ import os
 
 
 #% get jobcluster
-job_cluster = JobCluster(required_ram='2G',
+job_cluster = JobCluster(required_ram='1G',
                          request_cpus=2,
-                         request_time=60*5,
+                         request_time=60*3,
                          python_bin='/home/schmidtfa/miniconda3/envs/pyrasa/bin/python')
 
 #% put in jobs...

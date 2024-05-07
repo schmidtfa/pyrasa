@@ -28,7 +28,7 @@ sim_components = {'sim_powerlaw': {'exponent' : -1},
                   'sim_oscillation': {'freq' : 10}}
 
 #x1 = sim_combined(n_seconds=10, fs=fs, components=sim_components)
-x1 = sim_oscillation(n_seconds=10, fs=fs, freq=10) #* .5
+x1 = sim_oscillation(n_seconds=10, fs=fs, freq=10) * 1.
 x2 = sim_powerlaw(n_seconds=10, fs=fs, exponent=-1)
 x3 = sim_oscillation(n_seconds=10, fs=fs, freq=20)
 x4 = sim_oscillation(n_seconds=20, fs=fs, freq=30)
@@ -41,11 +41,6 @@ x = np.tile(x, 10)
 x_2 = np.tile(x_2, 10)
 
 x_l = np.concatenate([x[np.newaxis, :], x_2[np.newaxis, :]], axis=0)
-
-#%%
-plt.plot(x[:10000])
-
-
 
 #%%
 
@@ -115,9 +110,10 @@ import pandas as pd
 
 df_peaks = get_peak_params_sprint(sgramm_periodic, freqs=freqs_ap, times=time_ap, min_peak_height=0.2)
 df_alpha_peaks = get_band_info(df_peaks, freq_range=(8, 12), ch_names=[0,1]).query('ch_name == 0')
-df_alpha_peaks.head(10)
+df_alpha_peaks['time'] = df_alpha_peaks['time'] / 2
+df_alpha_peaks#.head(10)
 # %% lets compare this to fooof
-sys.path.append('/mnt/obob/staff/fschmidt/git/SPRiNT')
+sys.path.append('/home/schmidtfa/git/SPRiNT')
 # %%
 from SPRiNT_py import SPRiNT_stft_py, SPRiNT_remove_outliers
 # %%
@@ -157,13 +153,15 @@ for ch in [0, 1]:
             origin='lower',
             aspect='auto')
 
+    plt.tight_layout()
+
+
 #%%
 from fooof import FOOOFGroup, fit_fooof_3d
 from fooof.objs.utils import combine_fooofs
 
 start = time.time()
 fg = FOOOFGroup(peak_width_limits=[1, 8],
-                
     min_peak_height=0.2, 
     max_n_peaks = 3)
 fgs = fit_fooof_3d(fg, output['freqs'], output['TF'])
@@ -175,6 +173,27 @@ print(stop - start)
 
 df_fooof = pd.DataFrame(fgs[0].get_params('gaussian_params'), columns=('CF', 'PW', 'BW', 'Time'))
 df_alpha_fooof = df_fooof.query('CF < 12').query('CF > 8')
+
+df_alpha_fooof
+
+#%% compare fooof vs. irasa peak detection
+np.std(df_alpha_peaks['bw'])
+
+#%%
+np.std(df_alpha_fooof['BW'])
+
+#%% compare fooof vs. irasa peak detection
+np.std(df_alpha_peaks['pw'])
+
+#%%
+np.std(df_alpha_fooof['PW'])
+
+#%% compare fooof vs. irasa peak detection
+np.std(df_alpha_peaks['cf'])
+
+#%%
+np.std(df_alpha_fooof['CF'])
+
 
 #%%
 plt.plot(df_alpha_peaks['time'], df_alpha_peaks['pw'])

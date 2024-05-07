@@ -11,6 +11,13 @@ sns.set_style('ticks')
 sns.set_context('paper')
 sys.path.append('../')
 
+
+import matplotlib as mpl
+new_rc_params = {'text.usetex': False,
+                 "svg.fonttype": 'none'
+}
+mpl.rcParams.update(new_rc_params)
+
 import mne
 from mne.datasets import sample
 
@@ -112,10 +119,20 @@ plt.show()
 
 
 #%% note for periodic data the normal plotting function fails
+sns.set_style('ticks')
+sns.set_context('poster')
 
-plt.plot(periodic.freqs, periodic.get_data().T)
+f, ax = plt.subplots(figsize=(4,4))
+ax.plot(periodic.freqs, periodic.get_data().T);
+ax.set_xlabel('Frequency (Hz)')
+ax.set_ylabel('Power')
 
-periodic.plot_topomap(dB=False, vlim=(0, 250));
+#%%
+#fig, ax = plt.subplots(ncols=5, figsize=(10, 4))
+periodic.plot_topomap(dB=False, 
+                      vlim=(0, 250),
+                      #axes=ax
+                      );
 
 
 #%% 
