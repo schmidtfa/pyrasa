@@ -1,12 +1,13 @@
 import scipy.signal as dsp
-from scipy.signal import ShortTimeFFT
 import fractions
 import numpy as np
 import mne
+from copy import copy
 
 
 from irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
-                          _check_input_data, _check_psd_settings)
+                          _check_input_data, _check_psd_settings, _get_windows,
+                          _do_sgramm)
 #TODO: Port to Cython
 
 #%% irasa
@@ -289,7 +290,14 @@ def irasa_epochs(data,
 def irasa_sprint(x,
                  fs,
                  band=(1,100),
-                 duration=4,
+                 freq_res=.5,
+                 win_duration=.4,
+                 win_func=dsp.windows.hann,
+                 win_func_kwargs = None,
+                 dpss_settings_time_bandwidth = 2,
+                 dpss_settings_low_bias = True,
+                 dpss_eigenvalue_weighting = True,
+                 hop=10,
                  hset=(1., 2., 0.05)):
 
     '''
@@ -311,8 +319,14 @@ def irasa_sprint(x,
         A tuple containing the cut-off of the High- and Lowpass filter. 
         It is highly advisable to set this correctly in order to avoid filter artifacts in your evaluated frequency range.
         Can be omitted if data is :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚.
-    duration : float
-        The time window of each segment in seconds used to calculate the psd.
+    win_duration : float
+        The time width of window in seconds used to calculate the stffts.
+    win_func : :py:class:`scipy.signal.windows`
+        The desired window function. Can be any window specified in :py:class:`scipy.signal.windows`. 
+        The default is multitapering via dpss with sensible preconfigurations. 
+        To change the settings adjust the parameter `win_func_kwargs`.
+    win_func_kwargs: dict
+        A dictionary containing keyword arguments passed to win_func. 
 
     Returns
     -------
@@ -341,6 +355,8 @@ def irasa_sprint(x,
     nyquist = fs / 2
     hmax = np.max(hset)
     band_evaluated = (band[0] / hmax, band[1] * hmax)
+    if win_func_kwargs is None:
+        win_func_kwargs = {}
 
     #TODO: Add safety checks
     assert isinstance(x, np.ndarray), 'Data should be a numpy array.'
@@ -349,28 +365,21 @@ def irasa_sprint(x,
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
     assert band_evaluated[1] < nyquist, 'The evaluated frequency range is higher than Nyquist (fs / 2)'
 
+    nperseg = int(np.floor(fs*win_duration))
+    mfft = int(fs / freq_res)
+    win_kwargs = {'win_func': win_func, 
+                  'win_func_kwargs': win_func_kwargs}
+    dpss_settings = {'time_bandwidth': dpss_settings_time_bandwidth,
+                     'low_bias' : dpss_settings_low_bias,
+                     'eigenvalue_weighting': dpss_eigenvalue_weighting,
+                     }
 
-    #TODO: think about whether we need smoothing or not
-    # def _moving_average(x, w):
-    #     return np.convolve(x, np.ones(w), 'valid') / w
-    # n_avgs=3
-    # sgramm_smoother = lambda sgramm, n_avgs : np.array([_moving_average(sgramm[freq,:], w=n_avgs) for freq in range(sgramm.shape[0])])
-
-    #TODO: Allow window definition
-    win = dsp.windows.tukey(int(np.floor(fs*duration)), 0.25)
-    hop = int(win.shape[0])
-    mfft = int(2**np.ceil(np.log2(hmax*hop)))
-
-
-    SFT = ShortTimeFFT(win, hop=hop, mfft=mfft,
-                    fs=fs, scale_to='psd')
-
+    #get windows
+    wins, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
     #get time and frequency info
-    time = _gen_time_from_sft(SFT, x)
-    freq = SFT.f
-
-    sgramm = SFT.spectrogram(x, detr='constant')
-    #sgramm_smooth = sgramm_smoother(sgramm, n_avgs)
+    freq, time, sgramm = _do_sgramm(x, fs, mfft, hop, win=wins, ratios=ratios)
+    max_t = sgramm.shape[2]
+    time = time[:max_t]
 
     sgramms = np.zeros((len(hset), *sgramm.shape))
     #TODO: Only up/ downsampling of specific window
@@ -383,31 +392,32 @@ def irasa_sprint(x,
         data_up = dsp.resample_poly(x, up, down, axis=-1)
         data_down = dsp.resample_poly(x, down, up, axis=-1)
 
-        # Calculate an up/downsampled version of the PSD using same params as original
-        win_up = dsp.windows.tukey(int(fs*duration*h), 0.25)
-        hop_up = int(win_up.shape[0])
-        SFT_up = ShortTimeFFT(win_up, hop=hop_up, mfft=mfft,
-                    fs=int(fs * h), scale_to='psd')
-        sgramm_up = SFT_up.spectrogram(data_up, detr='constant')
-        #smooth_up = sgramm_smoother(sgramm_up, n_avgs)
+        # Calculate an up/downsampled version of the PSD using same params as original    
+        wins, ratios = _get_windows(int(np.floor(fs*win_duration*h)), dpss_settings, **win_kwargs)    
+        _, time_up, sgramm_up = _do_sgramm(data_up, 
+                                           fs=int(fs * h),
+                                           mfft=mfft,
+                                           hop=int(hop * h),
+                                           win=wins,
+                                           ratios=ratios,)
+        #print(sgramm_up.shape)
 
-        win_dw = dsp.windows.tukey(int(fs*duration/h), 0.25)
-        hop_dw = int(win_dw.shape[0])
-        SFT_dw = ShortTimeFFT(win_dw, hop=hop_dw, mfft=mfft,
-                    fs=int(fs / h), scale_to='psd')
-        sgramm_dw = SFT_dw.spectrogram(data_down, detr='constant')
-        #smooth_dw = sgramm_smoother(sgramm_dw, n_avgs)
-
+        wins, ratios = _get_windows(int(np.floor(fs*win_duration/h)), dpss_settings, **win_kwargs)
+        _, time_dw, sgramm_dw = _do_sgramm(data_down, 
+                                           fs=int(fs / h),
+                                           mfft=mfft,
+                                           hop=int(hop / h),
+                                           win=wins,
+                                           ratios=ratios,)
+        #print(sgramm_dw.shape)
         #subsample the upsampled data in the time domain to allow averaging
         #This is necessary as division by h can cause slight rounding differences that
         #result in actual unintended temporal differences in up/dw for very long segments.
-        time_dw = _gen_time_from_sft(SFT_dw, data_down)
-        time_up = _gen_time_from_sft(SFT_up, data_up)
         sgramm_ss_up = np.array([_find_nearest(sgramm_up, time_up, t) for t in time])
         sgramm_ss_dw = np.array([_find_nearest(sgramm_dw, time_dw, t) for t in time])
 
         # geometric mean between up and downsampled
-        sgramms[i, :, :] = np.swapaxes(np.swapaxes(np.sqrt(sgramm_ss_up * sgramm_ss_dw), 1, 2), 0, 2)
+        sgramms[i, :, :] = np.swapaxes(np.swapaxes(np.sqrt(sgramm_ss_up[:max_t,:,:] * sgramm_ss_dw[:max_t,:,:]), 1, 2), 0, 2)
 
     sgramm_aperiodic = np.median(sgramms, axis=0)
     sgramm_periodic = sgramm - sgramm_aperiodic
@@ -415,7 +425,12 @@ def irasa_sprint(x,
     #NOTE: we need to transpose the data as crop_data extracts stuff from the last axis
     freq, sgramm_aperiodic, sgramm_periodic = _crop_data(band, freq, sgramm_aperiodic, sgramm_periodic, axis=1)
 
-    return sgramm_aperiodic, sgramm_periodic, freq, time
+    #adjust time info (i.e. cut the padded stuff)
+    tmax = x.shape[1] / fs 
+    t_mask = np.logical_and(time >= 0, time < tmax)[:max_t]
+
+
+    return sgramm_aperiodic[:, :,t_mask], sgramm_periodic[:, :,t_mask], freq, time[t_mask]
 
 
 #%%cohrasa

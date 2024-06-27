@@ -1,6 +1,8 @@
 #%% Utility functions for the IRASA procedures 
 import numpy as np    
-
+from copy import copy
+import scipy.signal as dsp
+from scipy.signal import ShortTimeFFT
 
 
 def _crop_data(band, freqs, psd_aperiodic, psd_periodic, axis):
@@ -15,11 +17,11 @@ def _crop_data(band, freqs, psd_aperiodic, psd_periodic, axis):
     return freqs, psd_aperiodic, psd_periodic
 
 
-def _gen_time_from_sft(SFT, x):
+def _gen_time_from_sft(SFT, sgramm):
 
     '''Generates time from SFT object'''
 
-    tmin, tmax= SFT.extent(x.shape[-1])[:2]
+    tmin, tmax= SFT.extent(sgramm.shape[-1])[:2]
     delta_t = SFT.delta_t
 
     time = np.arange(tmin, tmax, delta_t)
@@ -32,9 +34,65 @@ def _find_nearest(sgramm_ud, time_array, time_value):
 
     idx = (np.abs(time_array - time_value)).argmin()
 
+    if sgramm_ud.shape[2] >= idx:
+        idx = idx - 1 
+
     sgramm_sel = sgramm_ud[:, :, idx]
 
     return sgramm_sel
+
+
+def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
+        
+        '''Generate a window function used for tapering'''
+
+        win_func_kwargs = copy(win_func_kwargs)
+       
+        #special settings in case multitapering is required 
+        if win_func == dsp.windows.dpss:
+            
+            time_bandwidth = dpss_settings['time_bandwidth']
+            if time_bandwidth < 2.0:
+                raise ValueError("time_bandwidth should be >= 2.0 for good tapers")
+            
+            n_taps = int(np.floor(time_bandwidth - 1))
+            win_func_kwargs.update({'NW': time_bandwidth / 2, #half width
+                                    'Kmax': n_taps,
+                                    'sym': False,
+                                    'return_ratios': True})
+            win, ratios = win_func(nperseg, **win_func_kwargs)
+            if dpss_settings['low_bias']:
+                win = win[ratios > 0.9]
+                ratios = ratios[ratios > 0.9]
+        else:
+             win = [win_func(nperseg, **win_func_kwargs)]
+             ratios = None
+
+        
+        return win, ratios
+
+
+def _do_sgramm(x, fs, mfft, hop, win, ratios=None):
+            
+            '''Function to compute spectrograms'''
+
+            sgramms = []
+            for cur_win in win:
+                SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft,
+                                fs=fs, scale_to='psd')
+                cur_sgramm = SFT.spectrogram(x, detr='constant')
+                sgramms.append(cur_sgramm)
+
+            if ratios is None:
+                sgramm = np.mean(sgramms, axis=0)
+            else:
+                weighted_sgramms = [ratios[ix] * cur_sgramm for ix, cur_sgramm in enumerate(sgramms)]
+                sgramm = np.sum(weighted_sgramms, axis=0) / np.sum(ratios)
+
+            time = _gen_time_from_sft(SFT, x)
+            freq = SFT.f[SFT.f > 0]
+
+            return freq, time, sgramm
 
 
 def _check_input_data(data, hset, band):
