@@ -90,15 +90,13 @@ from aperiodic_utils import compute_slope, knee_model
 #%%
 cols = ['Knee', 'Offset', 'Exponent_1', 'Exponent_2']
 
-aps1_rasa, gof1 = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[0], fit_func='knee')
-aps2_rasa, gof2 = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[1], fit_func='knee')
-aps3_rasa, gof3 = compute_slope(freq_rasa_ap,  psd_aperiodics_ap[2], fit_func='knee')
-
-aps_cmb = pd.concat([aps1_rasa, aps2_rasa, aps3_rasa])
-gof_cmb = pd.concat([gof1, gof2, gof3])
+aps_cmb, gof_cmb = compute_slope(psd_aperiodics_ap, freq_rasa_ap, fit_func='knee')
 
 #%%
 aps_cmb
+
+#%%
+gof_cmb
 
 #%%
 plt.loglog(freq_ap, psds_ap[0], 'ko')

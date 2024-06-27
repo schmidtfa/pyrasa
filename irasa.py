@@ -287,7 +287,7 @@ def irasa_epochs(data,
 
 #%% irasa sprint
 
-def irasa_sprint(x,
+def irasa_sprint(data,
                  fs,
                  band=(1,100),
                  freq_res=.5,
@@ -344,8 +344,7 @@ def irasa_sprint(x,
     ----------
         [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
         Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.
-        https://doi.org/10.1007/s10548-015-0448-0
+        Brain Topography, 29(1), 13–26.https://doi.org/10.1007/s10548-015-0448-0
 
     '''
 
@@ -359,8 +358,8 @@ def irasa_sprint(x,
         win_func_kwargs = {}
 
     #TODO: Add safety checks
-    assert isinstance(x, np.ndarray), 'Data should be a numpy array.'
-    assert x.ndim == 2, 'Data shape needs to be of shape (Channels, Samples).'
+    assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
+    assert data.ndim == 2, 'Data shape needs to be of shape (Channels, Samples).'
     assert band[1] < nyquist, 'Upper band limit must be <  Nyquist (fs / 2).'
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
     assert band_evaluated[1] < nyquist, 'The evaluated frequency range is higher than Nyquist (fs / 2)'
@@ -377,7 +376,7 @@ def irasa_sprint(x,
     #get windows
     wins, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
     #get time and frequency info
-    freq, time, sgramm = _do_sgramm(x, fs, mfft, hop, win=wins, ratios=ratios)
+    freq, time, sgramm = _do_sgramm(data, fs, mfft, hop, win=wins, ratios=ratios)
     max_t = sgramm.shape[2]
     time = time[:max_t]
 
@@ -389,8 +388,8 @@ def irasa_sprint(x,
         up, down = rat.numerator, rat.denominator
 
         # Much faster than FFT-based resampling
-        data_up = dsp.resample_poly(x, up, down, axis=-1)
-        data_down = dsp.resample_poly(x, down, up, axis=-1)
+        data_up = dsp.resample_poly(data, up, down, axis=-1)
+        data_down = dsp.resample_poly(data, down, up, axis=-1)
 
         # Calculate an up/downsampled version of the PSD using same params as original    
         wins, ratios = _get_windows(int(np.floor(fs*win_duration*h)), dpss_settings, **win_kwargs)    
@@ -426,7 +425,7 @@ def irasa_sprint(x,
     freq, sgramm_aperiodic, sgramm_periodic = _crop_data(band, freq, sgramm_aperiodic, sgramm_periodic, axis=1)
 
     #adjust time info (i.e. cut the padded stuff)
-    tmax = x.shape[1] / fs 
+    tmax = data.shape[1] / fs 
     t_mask = np.logical_and(time >= 0, time < tmax)[:max_t]
 
 
