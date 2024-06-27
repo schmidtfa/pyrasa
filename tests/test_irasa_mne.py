@@ -127,6 +127,29 @@ class PeriodicSpectrumArray(SpectrumArray):
 
     ''' Childclass of SpectrumArray '''
 
+    def __init__(
+        self,
+        data,
+        info,
+        freqs,
+        *,
+        verbose=None,
+    ):
+        #_check_data_shape(data, freqs, info, ndim=2)
+
+        self.__setstate__(
+            dict(
+                method="unknown",
+                data=data,
+                sfreq=info["sfreq"],
+                dims=("channel", "freq"),
+                freqs=freqs,
+                inst_type_str="Raw",
+                data_type="Periodic Power Spectrum",
+                info=info,
+            )
+        )
+
     def plot(self, *, picks=None, average=False, dB=False,
         amplitude=False, xscale="linear", ci="sd",
         ci_alpha=0.3, color="black", alpha=None,
@@ -194,6 +217,9 @@ class PeriodicSpectrumArray(SpectrumArray):
 psd_array = PeriodicSpectrumArray(periodic, info, freqs=freq)
 peak_df = psd_array.get_peaks()
 peak_df
+
+#%%
+psd_array
 
 #%%
 psd_array.plot()
