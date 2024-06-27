@@ -3,7 +3,7 @@ import fractions
 import numpy as np
 import mne
 from copy import copy
-
+from mne_objs import PeriodicSpectrumArray, AperiodicSpectrumArray
 
 from irasa_utils import (_crop_data, _gen_time_from_sft, _find_nearest,
                           _check_input_data, _check_psd_settings, _get_windows,
@@ -190,8 +190,8 @@ def irasa_raw(data,
         return psd_aperiodic, psd_periodic, freq
     
     else:
-        aperiodic = mne.time_frequency.SpectrumArray(psd_aperiodic, info, freqs=freq)
-        periodic = mne.time_frequency.SpectrumArray(psd_periodic, info, freqs=freq)
+        aperiodic = AperiodicSpectrumArray(psd_aperiodic, info, freqs=freq)
+        periodic = PeriodicSpectrumArray(psd_periodic, info, freqs=freq)
 
         return aperiodic, periodic
 

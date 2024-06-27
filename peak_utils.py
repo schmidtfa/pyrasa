@@ -11,7 +11,7 @@ def get_peak_params(periodic_spectrum,
                     smoothing_window=1,
                     cut_spectrum=(1, 40),
                     peak_threshold=1,
-                    min_peak_height=0.01,
+                    min_peak_height=0.,
                     peak_width_limits=(.5, 12)):
 
     '''

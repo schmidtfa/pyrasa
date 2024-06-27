@@ -102,15 +102,15 @@ gof_cmb
 plt.loglog(freq_ap, psds_ap[0], 'ko')
 plt.loglog(freq_ap, psds_ap[1], 'ko')
 plt.loglog(freq_ap, psds_ap[2], 'ko')
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps1_rasa.to_numpy()[0][:-2]))
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps2_rasa.to_numpy()[0][:-2]))
-plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps3_rasa.to_numpy()[0][:-2]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps_cmb.iloc[0].to_numpy()[:-3]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps_cmb.iloc[1].to_numpy()[:-3]))
+plt.loglog(freq_rasa_ap, 10**knee_model(freq_rasa_ap, *aps_cmb.iloc[2].to_numpy()[:-3]))
 plt.axvline(knee_freq)
 #%%
 
-aps1, gof1 = compute_slope(freq_ap[1:],  psds_ap[0][1:], fit_func='knee')
-aps2, gof2 = compute_slope(freq_ap[1:],  psds_ap[1][1:], fit_func='knee')
-aps3, gof3 = compute_slope(freq_ap[1:],  psds_ap[2][1:], fit_func='knee')
+aps1, gof1 = compute_slope(psds_ap[0][np.newaxis, 1:], freq_ap[1:], fit_func='knee')
+aps2, gof2 = compute_slope(psds_ap[1][np.newaxis, 1:], freq_ap[1:], fit_func='knee')
+aps3, gof3 = compute_slope(psds_ap[2][np.newaxis, 1:], freq_ap[1:], fit_func='knee')
 
 aps_cmb = pd.concat([aps1, aps2, aps3])
 
@@ -120,9 +120,9 @@ aps_cmb
 plt.loglog(freq_ap, psds_ap[0], 'ko')
 plt.loglog(freq_ap, psds_ap[1], 'ko')
 plt.loglog(freq_ap, psds_ap[2], 'ko')
-plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps1.to_numpy()[0][:-2]))
-plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps2.to_numpy()[0][:-2]))
-plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps3.to_numpy()[0][:-2]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps1.to_numpy()[0][:-3]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps2.to_numpy()[0][:-3]))
+plt.loglog(freq_ap, 10**knee_model(freq_ap, *aps3.to_numpy()[0][:-3]))
 plt.axvline(knee_freq)
 
  
