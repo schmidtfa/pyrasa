@@ -12,6 +12,7 @@ def get_peak_params(periodic_spectrum,
                     cut_spectrum=(1, 40),
                     peak_threshold=1,
                     min_peak_height=0.,
+                    polyorder=1,
                     peak_width_limits=(.5, 12)):
 
     '''
@@ -45,13 +46,18 @@ def get_peak_params(periodic_spectrum,
 
     '''
 
-    polyorder = 1 # polyorder for smoothing
+    
 
     if np.isnan(periodic_spectrum).sum() > 0:
         raise ValueError("peak width detection does not work properly with nans")
 
     freq_step = freqs[1] - freqs[0]
     window_length = int(smoothing_window // freq_step)
+    #polyorder = 1 # polyorder for smoothing
+
+
+    assert window_length > polyorder, ('The smoothing window is too small you either need to increase \n'
+                                      '`smoothing_window` or decrease the `polyorder`.')
 
     # generate channel names if not given
     if len(ch_names) == 0:
@@ -104,6 +110,7 @@ def get_peak_params_sprint(periodic_spectrum,
                            cut_spectrum=(1, 40),
                            peak_threshold=1,
                            min_peak_height=0.01,
+                           polyorder=1,
                            peak_width_limits=(.5, 12)):
 
         

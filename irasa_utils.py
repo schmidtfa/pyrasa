@@ -95,7 +95,7 @@ def _do_sgramm(x, fs, mfft, hop, win, ratios=None):
             return freq, time, sgramm
 
 
-def _check_input_data(data, hset, band):
+def _check_input_data_mne(data, hset, band):
 
     '''Check if the input parameters for irasa are specified correctly'''
 
@@ -118,9 +118,9 @@ def _check_input_data(data, hset, band):
                                                                                      f'You want to make sure that band[0]/hset.max() > {np.round(filter_settings[0], 2)} and that band[1] * hset.max() < {np.round(filter_settings[1], 2)}')
 
 
-def _check_psd_settings(data_array, fs, duration, overlap):
+def _check_psd_settings_raw(data_array, fs, duration, overlap):
 
-    '''Check if the kwargs for welch are specified correctly'''
+    '''LEGACY:  Check if the kwargs for welch are specified correctly'''
 
     # check parameters for welch
     overlap /= 100
