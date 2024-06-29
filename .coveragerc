@@ -1,0 +1,5 @@
+[run]
+source = pyrasa
+omit =
+    *__init__*
+    pyrasa/tests/*
