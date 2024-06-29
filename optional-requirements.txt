@@ -1,0 +1,4 @@
+mne
+matplotlib
+seaborn
+neurodsp

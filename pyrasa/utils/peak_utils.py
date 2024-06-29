@@ -1,0 +1,199 @@
+"""Utilities for extracting peak parameters."""
+import pandas as pd
+import scipy.signal as dsp
+import numpy as np
+
+
+# %% find peaks irasa style
+def get_peak_params(periodic_spectrum,
+                    freqs,
+                    ch_names=[],
+                    smoothing_window=1,
+                    cut_spectrum=(1, 40),
+                    peak_threshold=1,
+                    min_peak_height=0.,
+                    polyorder=1,
+                    peak_width_limits=(.5, 12)):
+
+    '''
+    This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
+    The algorithm works by smoothing the spectrum, zeroing out negative values and 
+    extracting peaks based on user specified parameters.
+
+    Parameters: periodic_spectrum : 1d or 2d array 
+                    Power values for the periodic spectrum extracted using IRASA shape(channel x frequency)
+                freqs : 1d array
+                    Frequency values for the periodic spectrum
+                ch_names: list, optional, default: []
+                    Channel names ordered according to the periodic spectrum. 
+                    If empty channel names are given as numbers in ascending order.
+                smoothing window : int, optional, default: 2
+                    Smoothing window in Hz handed over to the savitzky-golay filter.
+                cut_spectrum : tuple of (float, float), optional, default (1, 40)
+                    Cut the periodic spectrum to limit peak finding to a sensible range
+                peak_threshold : float, optional, default: 1
+                    Relative threshold for detecting peaks. This threshold is defined in 
+                    relative units of the periodic spectrum
+                min_peak_height : float, optional, default: 0.01
+                    Absolute threshold for identifying peaks. The threhsold is defined in relative
+                    units of the power spectrum. Setting this is somewhat necessary when a 
+                    "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
+                peak_width_limits : tuple of (float, float), optional, default (.5, 12)
+                    Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+
+    Returns:    df_peaks: DataFrame
+                    DataFrame containing the center frequency, bandwidth and peak height for each channel
+
+    '''
+
+    
+
+    if np.isnan(periodic_spectrum).sum() > 0:
+        raise ValueError("peak width detection does not work properly with nans")
+
+    freq_step = freqs[1] - freqs[0]
+    window_length = int(smoothing_window // freq_step)
+    #polyorder = 1 # polyorder for smoothing
+
+
+    assert window_length > polyorder, ('The smoothing window is too small you either need to increase \n'
+                                      '`smoothing_window` or decrease the `polyorder`.')
+
+    # generate channel names if not given
+    if len(ch_names) == 0:
+        ch_names = np.arange(periodic_spectrum.shape[0])
+
+    #cut data
+    if cut_spectrum != None:
+        freq_range = np.logical_and(freqs > cut_spectrum[0], freqs < cut_spectrum[1])
+        freqs = freqs[freq_range]
+        periodic_spectrum = periodic_spectrum[:, freq_range]
+
+    #filter signal to get a smoother spectrum for peak extraction
+    filtered_spectrum = dsp.savgol_filter(periodic_spectrum, 
+                                    window_length=window_length, 
+                                    polyorder=polyorder)
+    #zero out negative values
+    filtered_spectrum[filtered_spectrum < 0] = 0
+
+    #do peak finding on a channel by channel basis
+    peak_list = []
+    for ix, ch_name in enumerate(ch_names):
+
+        peaks, peak_dict = dsp.find_peaks(filtered_spectrum[ix],
+                                        width=peak_width_limits/freq_step, # in frequency in hz
+                                        prominence=peak_threshold*np.std(filtered_spectrum[ix]), #threshold in sd
+                                        rel_height=0.75) # relative peak height based on width
+
+        peak_list.append(pd.DataFrame({'ch_name': ch_name,
+                                       'cf': freqs[peaks],
+                                       'bw': peak_dict['widths'] * freq_step,
+                                       'pw': peak_dict['prominences']}))
+    #combine & return
+    df_peaks = pd.concat(peak_list)
+
+    #filter for peakheight
+    df_peaks = df_peaks.query(f'pw > {min_peak_height}')
+
+    return df_peaks
+
+
+
+#%% find peaks in irasa sprint
+
+def get_peak_params_sprint(periodic_spectrum,
+                           freqs,
+                           times,
+                           ch_names=[],
+                           smoothing_window=1,
+                           cut_spectrum=(1, 40),
+                           peak_threshold=1,
+                           min_peak_height=0.01,
+                           polyorder=1,
+                           peak_width_limits=(.5, 12)):
+
+        
+    '''
+    This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
+    The algorithm works by smoothing the spectrum, zeroing out negative values and 
+    extracting peaks based on user specified parameters.
+
+    Parameters: periodic_spectrum : 1d or 2d array 
+                    Power values for the periodic spectrum extracted using IRASA shape(channel x frequency)
+                freqs : 1d array
+                    Frequency values for the periodic spectrogram
+                time : 1d array
+                    time points of the periodic spectrogram
+                ch_names: list, optional, default: []
+                    Channel names ordered according to the periodic spectrum. 
+                    If empty channel names are given as numbers in ascending order.
+                smoothing window : int, optional, default: 2
+                    Smoothing window in Hz handed over to the savitzky-golay filter.
+                cut_spectrum : tuple of (float, float), optional, default (1, 40)
+                    Cut the periodic spectrum to limit peak finding to a sensible range
+                peak_threshold : float, optional, default: 1
+                    Relative threshold for detecting peaks. This threshold is defined in 
+                    relative units of the periodic spectrum
+                min_peak_height : float, optional, default: 0.01
+                    Absolute threshold for identifying peaks. The threhsold is defined in relative
+                    units of the power spectrum. Setting this is somewhat necessary when a 
+                    "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
+                peak_width_limits : tuple of (float, float), optional, default (.5, 12)
+                    Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+
+    Returns:    df_peaks: DataFrame
+                    DataFrame containing the center frequency, bandwidth and peak height for each channel and time point.
+
+    '''
+
+    time_list = []
+
+    for ix, t in enumerate(times):
+
+        cur_df = get_peak_params(periodic_spectrum[:, :, ix], 
+                                    freqs,
+                                    ch_names=ch_names,
+                                    smoothing_window=smoothing_window,
+                                    cut_spectrum=cut_spectrum,
+                                    peak_threshold=peak_threshold,
+                                    min_peak_height=min_peak_height,
+                                    peak_width_limits=peak_width_limits)
+        cur_df['time'] = t
+        time_list.append(cur_df)
+
+    df_time = pd.concat(time_list)
+
+    return df_time
+
+
+# %% find peaks irasa style
+def get_band_info(df_peaks, freq_range, ch_names):
+
+    '''
+    This function can be used to extract peaks in a specified frequency range 
+    from the Peak DataFrame obtained via "get_peak_params".
+
+    Parameters : df_peaks : DataFrame
+                    DataFrame containing peak parameters obtained via "get_peak_params".
+                 freq_range : tuple (int, int)
+                    Lower and upper limits for the to be extracted frequency range.
+                 ch_names: list
+                    Channel names used in the computation of the periodic spectrum. 
+                    This information is needed to fill channels without a peak in the specified range with nans.
+            
+    Returns:    df_band_peaks: DataFrame
+                    DataFrame containing the center frequency, bandwidth and peak height for each channel 
+                    in a specified frequency range
+
+    '''
+
+    df_range = df_peaks.query(f'cf > {freq_range[0]}').query(f'cf < {freq_range[1]}')
+
+    #we dont always get a peak in a queried range lets give those channels a nan
+    missing_channels = list(set(ch_names).difference(df_range['ch_name'].unique()))
+    missing_df = pd.DataFrame(np.nan, index = np.arange(len(missing_channels)), columns=['ch_name', 'cf', 'bw', 'pw'])
+    missing_df['ch_name'] = missing_channels
+
+    df_band_peaks = pd.concat([df_range, missing_df]).reset_index().drop(columns='index')
+    
+    return df_band_peaks
