@@ -1,4 +1,3 @@
 numpy
-fractions
 pandas
 scipy>=1.12
