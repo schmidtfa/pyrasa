@@ -42,10 +42,11 @@ def _get_gof(psd, psd_pred):
     return gof
 
 
-def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None):
+def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_factor=1):
 
     ''' get the slope of the aperiodic spectrum '''
 
+    
     curv_kwargs = {'maxfev': 10_000,
                    'ftol': 1e-5, 
                    'xtol': 1e-5, 
@@ -84,7 +85,7 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None):
         #knee value should always be positive at least intuitively
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
         
-        params = pd.DataFrame({'Offset': p[0],
+        params = pd.DataFrame({'Offset': p[0] / scale_factor,
                                'Knee': p[1],
                                'Exponent_1': p[2],
                                'Exponent_2': p[3],
@@ -100,7 +101,7 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None):
 
 
 
-def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], fit_bounds=None):
+def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[],  scale=True, fit_bounds=None):
 
     '''
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
@@ -116,6 +117,11 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], fit_bounds=N
                 ch_names : list, optional, default: []
                     Channel names ordered according to the periodic spectrum. 
                     If empty channel names are given as numbers in ascending order.
+                scale : bool
+                    scale the data by a factor of x to improve fitting. 
+                    This is helpful when fitting a knee and power values are very small eg. 1e-28, 
+                    in which case curve fits struggles to find the proper MSE (seems to be a machine precision issue).
+                    Finally the data are rescaled to return the offset in the magnitude of the original data. 
                 fit_bounds : None, tuple
                     Lower and upper bound for the fit function, should be None if the whole frequency range is desired.
                     Otherwise a tuple of (lower, upper)
@@ -150,12 +156,24 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], fit_bounds=N
     if len(ch_names) == 0:
         ch_names = np.arange(aperiodic_spectrum.shape[0])
 
+    if scale:
+        def num_zeros(decimal):
+            return np.inf if decimal == 0 else -np.floor(np.log10(abs(decimal))) - 1
+        
+        scale_factor = 10**num_zeros(aperiodic_spectrum.min())
+        aperiodic_spectrum = aperiodic_spectrum * scale_factor
+    else:
+        scale_factor = 1
+        
+        
+
     ap_list, gof_list = [], []
     for ix, ch_name in enumerate(ch_names):
 
         params, gof = _compute_slope(aperiodic_spectrum=aperiodic_spectrum[ix],
                                     freq=freqs,
                                     fit_func=fit_func,
+                                    scale_factor=scale_factor,
                                     fit_bounds=fit_bounds)
         
         params['ch_name'] = ch_name
