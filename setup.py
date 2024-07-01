@@ -9,7 +9,7 @@ from setuptools import setup
 this_directory = os.path.abspath(os.path.dirname(__file__))
 
 # Get the long description from the README file
-with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(this_directory, 'Readme.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 # Get the current version number from inside the module
