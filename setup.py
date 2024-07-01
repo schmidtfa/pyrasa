@@ -25,7 +25,7 @@ setup(
     packages=['pyrasa'],
     url='https://github.com/schmidtfa/pyrasa',
     license='BSD (2 clause)',
-    author='Fabian Schmidt',
+    author='Fabian Schmidt & Thomas Hartmann',
     author_email='schmidtfa91@gmail.com',
     description='Spectral parametrization based on IRASA',
     long_description=long_description,

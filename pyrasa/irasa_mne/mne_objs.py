@@ -267,7 +267,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
                                     polyorder=polyorder,
                                     peak_width_limits=peak_width_limits)
             
-            peak_df['epoch_type'] = event_dict[events[ix]]
+            peak_df['event_id'] = event_dict[events[ix]]
              
             peak_list.append(peak_df)
 

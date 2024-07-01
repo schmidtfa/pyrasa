@@ -80,7 +80,7 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
         knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])] 
         #convert knee freq to knee val which should be 2*exp_1 but this seems good enough
         curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)
-        print(curv_kwargs['p0'])
+        #print(curv_kwargs['p0'])
         curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf)) #make this optional
         #knee value should always be positive at least intuitively
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
