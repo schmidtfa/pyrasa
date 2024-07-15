@@ -73,6 +73,7 @@ def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
         return win, ratios
 
 
+
 def _do_sgramm(x, fs, mfft, hop, win, ratios=None, smooth=True, n_avgs=3):
             
             '''Function to compute spectrograms'''
@@ -82,7 +83,6 @@ def _do_sgramm(x, fs, mfft, hop, win, ratios=None, smooth=True, n_avgs=3):
             
             sgramm_smoother = lambda sgramm, n_avgs : np.array([_moving_average(sgramm[freq,:], w=n_avgs) 
                                                                 for freq in range(sgramm.shape[0])])
-
 
             sgramms = []
             for cur_win in win:

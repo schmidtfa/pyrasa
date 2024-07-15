@@ -29,16 +29,33 @@ def knee_model(x, b0, k, b1, b2):
     return y_hat
 
 
-def _get_gof(psd, psd_pred):
+def _get_gof(psd, psd_pred, fit_func):
 
-    ''' get goodness of fit (i.e. mean squared error and R2)'''
+    ''' 
+    get goodness of fit (i.e. mean squared error and R2)
+    BIC and AIC currently assume OLS
+    https://machinelearningmastery.com/probabilistic-model-selection-measures/
+    '''
     
     residuals = np.log10(psd) - psd_pred
     ss_res = np.sum(residuals**2)
     ss_tot = np.sum((np.log10(psd) - np.mean(np.log10(psd))) ** 2)
+    mse = np.mean(residuals**2)
 
-    gof = pd.DataFrame({'mse': np.mean(residuals**2),
-                        'r_squared': 1 - (ss_res / ss_tot)}, index=[0])
+    if fit_func == 'knee':
+        k = 3 # k -> number of params
+    elif fit_func == 'fixed':
+        k = 1
+    
+    n = len(psd)
+    bic = n * np.log(mse) + k * np.log(n)
+    aic = n * np.log(mse) + 2 * k
+
+    gof = pd.DataFrame({'mse': mse,
+                        'r_squared': 1 - (ss_res / ss_tot),
+                        'BIC': bic,
+                        'AIC': aic},
+                        index=[0])
     return gof
 
 
@@ -94,7 +111,7 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
                                 }, index=[0])
         psd_pred = fit_f(freq, *p)
     
-    gof = _get_gof(aperiodic_spectrum, psd_pred)
+    gof = _get_gof(aperiodic_spectrum, psd_pred, fit_func)
     gof['fit_type'] = fit_func
 
     return params, gof

@@ -8,11 +8,12 @@ import numpy as np
 def get_peak_params(periodic_spectrum,
                     freqs,
                     ch_names=[],
+                    smooth=True,
                     smoothing_window=1,
+                    polyorder=1,
                     cut_spectrum=(1, 40),
                     peak_threshold=1,
-                    min_peak_height=0.,
-                    polyorder=1,
+                    min_peak_height=0.01,
                     peak_width_limits=(.5, 12)):
 
     '''
@@ -52,12 +53,6 @@ def get_peak_params(periodic_spectrum,
         raise ValueError("peak width detection does not work properly with nans")
 
     freq_step = freqs[1] - freqs[0]
-    window_length = int(smoothing_window // freq_step)
-    #polyorder = 1 # polyorder for smoothing
-
-
-    assert window_length > polyorder, ('The smoothing window is too small you either need to increase \n'
-                                      '`smoothing_window` or decrease the `polyorder`.')
 
     # generate channel names if not given
     if len(ch_names) == 0:
@@ -70,25 +65,35 @@ def get_peak_params(periodic_spectrum,
         periodic_spectrum = periodic_spectrum[:, freq_range]
 
     #filter signal to get a smoother spectrum for peak extraction
-    filtered_spectrum = dsp.savgol_filter(periodic_spectrum, 
-                                    window_length=window_length, 
-                                    polyorder=polyorder)
-    #zero out negative values
-    filtered_spectrum[filtered_spectrum < 0] = 0
+    if smooth:
+        window_length = int(smoothing_window // freq_step)
+        assert window_length > polyorder, ('The smoothing window is too small you either need to increase \n'
+                                           '`smoothing_window` or decrease the `polyorder`.')
 
+        filtered_spectrum = dsp.savgol_filter(periodic_spectrum, 
+                                            window_length=window_length, 
+                                            polyorder=polyorder)
+    else:
+        filtered_spectrum = periodic_spectrum
+    #zero out negative values
+    #filtered_spectrum[filtered_spectrum < 0] = 0
+    #filtered_spectrum = np.log10(np.abs(filtered_spectrum.min()) + filtered_spectrum + 1e-1)
+    #filtered_spectrum += np.abs(filtered_spectrum.min())
     #do peak finding on a channel by channel basis
     peak_list = []
     for ix, ch_name in enumerate(ch_names):
 
         peaks, peak_dict = dsp.find_peaks(filtered_spectrum[ix],
-                                        width=peak_width_limits/freq_step, # in frequency in hz
-                                        prominence=peak_threshold*np.std(filtered_spectrum[ix]), #threshold in sd
-                                        rel_height=0.75) # relative peak height based on width
+                                          height=[filtered_spectrum[ix].min(), filtered_spectrum[ix].max()],
+                                          width=peak_width_limits/freq_step, # in frequency in hz
+                                          prominence=peak_threshold*np.std(filtered_spectrum[ix]), #threshold in sd
+                                          rel_height=0.75) # relative peak height based on width
 
         peak_list.append(pd.DataFrame({'ch_name': ch_name,
                                        'cf': freqs[peaks],
                                        'bw': peak_dict['widths'] * freq_step,
-                                       'pw': peak_dict['prominences']}))
+                                       'pw': peak_dict['peak_heights']
+                                       }))
     #combine & return
     df_peaks = pd.concat(peak_list)
 
@@ -105,11 +110,12 @@ def get_peak_params_sprint(periodic_spectrum,
                            freqs,
                            times,
                            ch_names=[],
+                           smooth=True,
                            smoothing_window=1,
+                           polyorder=1,
                            cut_spectrum=(1, 40),
                            peak_threshold=1,
                            min_peak_height=0.01,
-                           polyorder=1,
                            peak_width_limits=(.5, 12)):
 
         
@@ -153,7 +159,9 @@ def get_peak_params_sprint(periodic_spectrum,
         cur_df = get_peak_params(periodic_spectrum[:, :, ix], 
                                     freqs,
                                     ch_names=ch_names,
+                                    smooth=smooth,
                                     smoothing_window=smoothing_window,
+                                    polyorder=polyorder,
                                     cut_spectrum=cut_spectrum,
                                     peak_threshold=peak_threshold,
                                     min_peak_height=min_peak_height,
