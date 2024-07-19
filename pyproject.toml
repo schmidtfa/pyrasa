@@ -1,0 +1,61 @@
+[project]
+name = "PyRASA"
+dynamic = ["version"]
+description = "Spectral parametrization based on IRASA"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+authors = [
+    {name = "Fabian Schmidt", email = "schmidtfa91@gmail.com"},
+    {name = "Thomas Hartmann", email = "thomas.hartmann@th-ht.de"}
+]
+classifiers = [
+        'Development Status :: 1 - Beta',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+]
+keywords=['spectral parametrization', 'oscillations', 'power spectra', '1/f']
+requires-python = ">= 3.11"
+dependencies = ["numpy", "pandas", "scipy>=1.12"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "win-64"]
+
+[tool.pixi.pypi-dependencies]
+pyrasa = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+test = "pytest --cov=plus_sync --cov-report=lcov"
+ruff = "ruff format && ruff check --fix"
+ruff_ci = "ruff check"
+
+[tool.hatch.version]
+source = "regex_commit"
+path = "pyrasa/__version__.py"
+tag_sign = false
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = [
+    'E',
+    'W',
+    'I',
+    'UP',
+    'C90',
+    'N',
+    'PTH',
+    'SIM',
+    'TCH',
+    'PL'
+]
+
+[tool.ruff.format]
+quote-style = 'single'
