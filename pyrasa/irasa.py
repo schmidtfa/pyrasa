@@ -41,9 +41,9 @@ def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None
 
         # geometric mean between up and downsampled
         # be aware of the input dimensions
-        if spectra.ndim == 2:
+        if spectra.ndim == 2:  # noqa PLR2004
             spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
-        if spectra.ndim == 3:
+        if spectra.ndim == 3:  # noqa PLR2004
             spectra[i, :, :] = np.sqrt(spectrum_up * spectrum_dw)
 
     aperiodic_spectrum = np.median(spectra, axis=0)
@@ -54,7 +54,8 @@ def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None
 # %% irasa
 def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
     """
-    This function can be used to seperate aperiodic from periodic power spectra using the IRASA algorithm (Wen & Liu, 2016).
+    This function can be used to seperate aperiodic from periodic power spectra
+    using the IRASA algorithm (Wen & Liu, 2016).
     This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
 
     WARNING: This is the raw irasa algorithm that gives you maximal control over all parameters.
@@ -71,7 +72,8 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
         A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
     filter_settings : tuple
         A tuple containing the cut-off of the High- and Lowpass filter.
-        It is highly advisable to set this correctly in order to avoid filter artifacts in your evaluated frequency range.
+        It is highly advisable to set this correctly in order to avoid filter artifacts
+        in your evaluated frequency range.
     duration : float
         The time window of each segment in seconds used to calculate the psd.
     kwargs_psd : dict
@@ -102,7 +104,7 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
     assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
     if data.ndim == 1:
         data = data[np.newaxis, :]
-    assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'
+    assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'  # noqa PLR2004
     assert isinstance(hset_info, tuple), 'hset should be a tuple of (min, max, step)'
 
     hset = np.round(np.arange(*hset_info), 4)
@@ -165,7 +167,7 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
 
 
 # %% irasa sprint
-def irasa_sprint(
+def irasa_sprint(  # noqa PLR0915 C901
     data,
     fs,
     band=(1, 100),
@@ -191,14 +193,17 @@ def irasa_sprint(
     data : :py:class:˚numpy.ndarray˚, :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚
         The timeseries data used to extract aperiodic and periodic power spectra.
         Can also be :py:class:˚mne.io.BaseRaw˚ in which case 'fs' and 'filter_settings' will be automatically extracted
-        or :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings', 'duration' and 'overlap' will be automatically extracted.
+        or :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings',
+        'duration' and 'overlap' will be automatically extracted.
     fs : int
-        The sampling frequency of the data. Can be omitted if data is :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚.
+        The sampling frequency of the data. Can be omitted
+        if data is :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚.
     band : tuple
         A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
     filter_settings : tuple
         A tuple containing the cut-off of the High- and Lowpass filter.
-        It is highly advisable to set this correctly in order to avoid filter artifacts in your evaluated frequency range.
+        It is highly advisable to set this correctly in order to avoid
+        filter artifacts in your evaluated frequency range.
         Can be omitted if data is :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚.
     win_duration : float
         The time width of window in seconds used to calculate the stffts.
@@ -240,7 +245,7 @@ def irasa_sprint(
 
     # TODO: Add safety checks
     assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
-    assert data.ndim == 2, 'Data shape needs to be of shape (Channels, Samples).'
+    assert data.ndim == 2, 'Data shape needs to be of shape (Channels, Samples).'  # noqa PLR2004
     assert band[1] < nyquist, 'Upper band limit must be <  Nyquist (fs / 2).'
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
     assert band_evaluated[1] < nyquist, 'The evaluated frequency range is higher than Nyquist (fs / 2)'
@@ -266,7 +271,7 @@ def irasa_sprint(
         'n_avgs': n_avgs,
     }
 
-    def _compute_sgramm(
+    def _compute_sgramm(  # noqa C901
         x,
         fs,
         mfft,
@@ -302,7 +307,7 @@ def irasa_sprint(
 
         sgramms = []
         for cur_win in win:
-            SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft, fs=fs, scale_to='psd')
+            SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft, fs=fs, scale_to='psd')  # noqa N806
             cur_sgramm = SFT.spectrogram(x, detr='constant')
             sgramms.append(cur_sgramm)
 

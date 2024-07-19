@@ -4,8 +4,6 @@ from copy import copy
 
 import numpy as np
 import scipy.signal as dsp
-from scipy.signal import ShortTimeFFT
-from scipy.stats.mstats import gmean
 
 
 def _crop_data(band, freqs, psd_aperiodic, psd_periodic, axis):
@@ -19,7 +17,7 @@ def _crop_data(band, freqs, psd_aperiodic, psd_periodic, axis):
     return freqs, psd_aperiodic, psd_periodic
 
 
-def _gen_time_from_sft(SFT, sgramm):
+def _gen_time_from_sft(SFT, sgramm):  # noqa N803
     """Generates time from SFT object"""
 
     tmin, tmax = SFT.extent(sgramm.shape[-1])[:2]
@@ -44,14 +42,15 @@ def _find_nearest(sgramm_ud, time_array, time_value):
 
 def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
     """Generate a window function used for tapering"""
-
+    low_bias_ratio = 0.9
+    max_time_bandwidth = 2.0
     win_func_kwargs = copy(win_func_kwargs)
 
     # special settings in case multitapering is required
     if win_func == dsp.windows.dpss:
         time_bandwidth = dpss_settings['time_bandwidth']
-        if time_bandwidth < 2.0:
-            raise ValueError('time_bandwidth should be >= 2.0 for good tapers')
+        if time_bandwidth < max_time_bandwidth:
+            raise ValueError(f'time_bandwidth should be >= {max_time_bandwidth} for good tapers')
 
         n_taps = int(np.floor(time_bandwidth - 1))
         win_func_kwargs.update(
@@ -64,13 +63,14 @@ def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
         )
         win, ratios = win_func(nperseg, **win_func_kwargs)
         if dpss_settings['low_bias']:
-            win = win[ratios > 0.9]
-            ratios = ratios[ratios > 0.9]
+            win = win[ratios > low_bias_ratio]
+            ratios = ratios[ratios > low_bias_ratio]
     else:
         win = [win_func(nperseg, **win_func_kwargs)]
         ratios = None
 
     return win, ratios
+
 
 def _check_input_data_mne(data, hset, band):
     """Check if the input parameters for irasa are specified correctly"""
