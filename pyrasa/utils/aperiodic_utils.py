@@ -64,10 +64,10 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
         'gtol': 1e-5,
     }
 
-    off_guess = [aperiodic_spectrum[0]] if fit_bounds == None else fit_bounds[0]
+    off_guess = [aperiodic_spectrum[0]] if fit_bounds is None else fit_bounds[0]
     exp_guess = (
         [np.abs(np.log10(aperiodic_spectrum[0] / aperiodic_spectrum[-1]) / np.log10(freq[-1] / freq[0]))]
-        if fit_bounds == None
+        if fit_bounds is None
         else fit_bounds[1]
     )
 
@@ -163,7 +163,7 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=True, 
 
     assert isinstance(ch_names, list), 'Channel names should be of type list'
 
-    if fit_bounds != None:
+    if fit_bounds is not None:
         fmin, fmax = freqs.min(), freqs.max()
         assert fit_bounds[0] > fmin, f'The selected lower bound is lower than the lowest frequency of {fmin}Hz'
         assert fit_bounds[0] < fmax, f'The selected upper bound is higher than the highest frequency of {fmax}Hz'

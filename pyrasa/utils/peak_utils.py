@@ -59,7 +59,7 @@ def get_peak_params(
         ch_names = np.arange(periodic_spectrum.shape[0])
 
     # cut data
-    if cut_spectrum != None:
+    if cut_spectrum is not None:
         freq_range = np.logical_and(freqs > cut_spectrum[0], freqs < cut_spectrum[1])
         freqs = freqs[freq_range]
         periodic_spectrum = periodic_spectrum[:, freq_range]
