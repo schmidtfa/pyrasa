@@ -73,17 +73,33 @@ def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
         return win, ratios
 
 
-
-
-def _compute_psd_welch(data, fs, irasa_kwargs, spectrum_only=False):
+def _compute_psd_welch(data, fs, 
+                       window='hann', nperseg=None, 
+                       noverlap=None, nfft=None, 
+                       detrend='constant', 
+                       return_onesided=True, 
+                       scaling='density', 
+                       axis=-1, 
+                       average='mean',
+                       spectrum_only=False,
+                       ):
 
     '''Function to compute power spectral densities using welchs method'''
-     
-    kwargs2drop = ['h', 'up_down', 'time_orig'] #drop sprint specific keys
-    for k in kwargs2drop:
-        irasa_kwargs.pop(k, None)
+           
+    # kwargs2drop = ['h', 'up_down', 'time_orig'] #drop sprint specific keys
+    # for k in kwargs2drop:
+    #     irasa_kwargs.pop(k, None)
 
-    freq, psd = dsp.welch(data, fs=fs, **irasa_kwargs)
+    freq, psd = dsp.welch(data, fs=fs,
+                           window=window, 
+                           nperseg=nperseg, 
+                           noverlap=noverlap, 
+                           nfft=nfft, 
+                           detrend=detrend, 
+                           return_onesided=return_onesided, 
+                           scaling=scaling, 
+                           axis=axis, 
+                           average=average)
 
     if spectrum_only:
         return psd
