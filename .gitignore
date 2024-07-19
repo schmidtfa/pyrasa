@@ -36,4 +36,6 @@ dist
 
 
 # Ignore ruff stuff
-.ruff_cache
+.ruff_cache# pixi environments
+.pixi
+*.egg-info

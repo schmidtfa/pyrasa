@@ -1,2 +1,3 @@
+from .irasa_mne import irasa_epochs, irasa_raw
 
-from .irasa_mne import irasa_raw, irasa_epochs
+__all__ = ['irasa_epochs', 'irasa_raw']
