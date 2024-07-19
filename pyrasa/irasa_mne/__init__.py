@@ -1,2 +1,1 @@
-
-from .irasa_mne import irasa_raw, irasa_epochs
+from .irasa_mne import irasa_epochs, irasa_raw

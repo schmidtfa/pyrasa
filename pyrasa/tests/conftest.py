@@ -1,25 +1,21 @@
-import pytest
 import os
 import shutil
 
+import pytest
 from neurodsp.sim import sim_combined
 from neurodsp.utils.sim import set_random_seed
 
-from pyrasa.tests.test_settings import (N_SECONDS, FS, FREQ, EXPONENT, BASE_TEST_FILE_PATH)
+from pyrasa.tests.test_settings import BASE_TEST_FILE_PATH, EXPONENT, FREQ, FS, N_SECONDS
 
 
 def pytest_configure(config):
-
     set_random_seed(42)
 
 
 @pytest.fixture(scope='session')
 def combined_signal():
-
-    components = {'sim_powerlaw': {'exponent' : EXPONENT},
-                  'sim_oscillation': {'freq' : FREQ}}
+    components = {'sim_powerlaw': {'exponent': EXPONENT}, 'sim_oscillation': {'freq': FREQ}}
     yield sim_combined(n_seconds=N_SECONDS, fs=FS, components=components)
-
 
 
 @pytest.fixture(scope='session', autouse=True)
