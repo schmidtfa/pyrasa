@@ -2,12 +2,11 @@ import scipy.signal as dsp
 import fractions
 import numpy as np
 
-from pyrasa.utils.irasa_utils import (_crop_data, _find_nearest, 
-                                      _get_windows, _do_sgramm)
+from pyrasa.utils.irasa_utils import (_crop_data, _compute_psd_welch, _compute_sgramm)
 #TODO: Port to Cython
 
 #%%
-def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, freq_axis=0):
+def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None):
 
     '''
     This function is implementing the IRASA algorithm using a custom function to 
@@ -25,14 +24,23 @@ def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, freq_axis
         data_down = dsp.resample_poly(data, down, up, axis=-1)
 
         # Calculate an up/downsampled version of the PSD using same params as original
-        _, spectrum_up = irasa_fun(data_up, fs * h,  **irasa_kwargs)
-        _, spectrum_dw = irasa_fun(data_down, fs / h, **irasa_kwargs)
+        irasa_kwargs['h'] = h 
+        irasa_kwargs['time_orig'] = time
+        irasa_kwargs['up_down'] = 'up'
+        spectrum_up = irasa_fun(data_up, int(fs * h), spectrum_only=True, **irasa_kwargs)
+        irasa_kwargs['up_down'] = 'down'
+        spectrum_dw = irasa_fun(data_down, int(fs / h), spectrum_only=True, **irasa_kwargs)
 
         # geometric mean between up and downsampled
-        spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
+        # be aware of the input dimensions
+        if spectra.ndim == 2:
+            spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
+        if spectra.ndim == 3:
+            spectra[i, :, :] = np.sqrt(spectrum_up * spectrum_dw)
 
     aperiodic_spectrum = np.median(spectra, axis=0)
-    return aperiodic_spectrum
+    periodic_spectrum = orig_spectrum - aperiodic_spectrum
+    return orig_spectrum, aperiodic_spectrum, periodic_spectrum
 
 #%% irasa
 def irasa(data, fs, band, kwargs_psd, hset_info=(1., 2., 0.05)):
@@ -91,18 +99,15 @@ def irasa(data, fs, band, kwargs_psd, hset_info=(1., 2., 0.05)):
 
     hset = np.round(np.arange(*hset_info), 4)
     # Calculate original spectrum
-    freq, psd = dsp.welch(data, fs=fs, **kwargs_psd)
-
-
-    psd_aperiodic = _gen_irasa(data=data,
-                               orig_spectrum=psd,
-                               fs=fs,
-                               irasa_fun=dsp.welch,
-                               hset=hset,
-                               irasa_kwargs=kwargs_psd,
-                               )
-
-    psd_periodic = psd - psd_aperiodic
+    freq, psd = _compute_psd_welch(data, fs=fs, **kwargs_psd)
+    
+    psd, psd_aperiodic, psd_periodic = _gen_irasa(data=data,
+                                                    orig_spectrum=psd,
+                                                    fs=fs,
+                                                    irasa_fun=_compute_psd_welch,
+                                                    hset=hset,
+                                                    irasa_kwargs=kwargs_psd,
+                                                    )
 
     freq, psd_aperiodic, psd_periodic = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
 
@@ -189,7 +194,6 @@ def irasa_sprint(data,
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
     assert band_evaluated[1] < nyquist, 'The evaluated frequency range is higher than Nyquist (fs / 2)'
 
-    nperseg = int(np.floor(fs*win_duration))
     mfft = int(fs / freq_res)
     win_kwargs = {'win_func': win_func, 
                   'win_func_kwargs': win_func_kwargs}
@@ -198,67 +202,36 @@ def irasa_sprint(data,
                      'eigenvalue_weighting': dpss_eigenvalue_weighting,
                      }
 
-    #get windows
-    wins, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
+    irasa_kwargs = {'mfft': mfft,
+                    'hop': hop,
+                    'win_duration': win_duration,
+                    'h': None,
+                    'up_down': None,
+                    'dpss_settings': dpss_settings,
+                    'win_kwargs': win_kwargs,
+                    'time_orig': None,
+                    'smooth': smooth, 
+                    'n_avgs': n_avgs}
+
     #get time and frequency info
-    freq, time, sgramm = _do_sgramm(data, fs, mfft, hop, 
-                                    win=wins, ratios=ratios,
-                                    smooth=smooth, n_avgs=n_avgs)
-    max_t = sgramm.shape[2]
-    time = time[:max_t]
+    freq, time, sgramm = _compute_sgramm(data, fs, **irasa_kwargs)
 
-    sgramms = np.zeros((len(hset), *sgramm.shape))
-    #TODO: Only up/ downsampling of specific window
-    for i, h in enumerate(hset):
-
-        rat = fractions.Fraction(str(h))
-        up, down = rat.numerator, rat.denominator
-
-        # Much faster than FFT-based resampling
-        data_up = dsp.resample_poly(data, up, down, axis=-1)
-        data_down = dsp.resample_poly(data, down, up, axis=-1)
-
-        # Calculate an up/downsampled version of the PSD using same params as original    
-        wins, ratios = _get_windows(int(np.floor(fs*win_duration*h)), dpss_settings, **win_kwargs)    
-        _, time_up, sgramm_up = _do_sgramm(data_up, 
-                                           fs=int(fs * h),
-                                           mfft=mfft,
-                                           hop=int(hop * h),
-                                           win=wins,
-                                           ratios=ratios,
-                                           smooth=smooth, 
-                                           n_avgs=n_avgs)
-        #print(sgramm_up.shape)
-
-        wins, ratios = _get_windows(int(np.floor(fs*win_duration/h)), dpss_settings, **win_kwargs)
-        _, time_dw, sgramm_dw = _do_sgramm(data_down, 
-                                           fs=int(fs / h),
-                                           mfft=mfft,
-                                           hop=int(hop / h),
-                                           win=wins,
-                                           ratios=ratios,
-                                           smooth=smooth, 
-                                           n_avgs=n_avgs)
-        #print(sgramm_dw.shape)
-        #subsample the upsampled data in the time domain to allow averaging
-        #This is necessary as division by h can cause slight rounding differences that
-        #result in actual unintended temporal differences in up/dw for very long segments.
-        sgramm_ss_up = np.array([_find_nearest(sgramm_up, time_up, t) for t in time])
-        sgramm_ss_dw = np.array([_find_nearest(sgramm_dw, time_dw, t) for t in time])
-
-        # geometric mean between up and downsampled
-        sgramms[i, :, :] = np.swapaxes(np.swapaxes(np.sqrt(sgramm_ss_up[:max_t,:,:] * sgramm_ss_dw[:max_t,:,:]), 1, 2), 0, 2)
-
-    sgramm_aperiodic = np.median(sgramms, axis=0)
-    sgramm_periodic = sgramm - sgramm_aperiodic
+    sgramm, sgramm_aperiodic, sgramm_periodic = _gen_irasa(data=data,
+                                                orig_spectrum=sgramm,
+                                                fs=fs,
+                                                irasa_fun=_compute_sgramm,
+                                                hset=hset,
+                                                irasa_kwargs=irasa_kwargs,
+                                                time=time,
+                                                )
 
     #NOTE: we need to transpose the data as crop_data extracts stuff from the last axis
-    freq, sgramm_aperiodic, sgramm_periodic = _crop_data(band, freq, sgramm_aperiodic, sgramm_periodic, axis=1)
+    freq, sgramm_aperiodic, sgramm_periodic = _crop_data(band, freq, sgramm_aperiodic, sgramm_periodic, axis=0)
 
     #adjust time info (i.e. cut the padded stuff)
     tmax = data.shape[1] / fs 
-    t_mask = np.logical_and(time >= 0, time < tmax)[:max_t]
+    t_mask = np.logical_and(time >= 0, time < tmax)
 
-    return sgramm_aperiodic[:, :,t_mask], sgramm_periodic[:, :,t_mask], freq, time[t_mask]
+    return sgramm_aperiodic[:, t_mask], sgramm_periodic[:, t_mask], freq, time[t_mask]
 
 
