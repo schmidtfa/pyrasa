@@ -2,7 +2,6 @@
 import numpy as np
 from cluster_jobs.analyze_eo_ec import eo_ec_analysis
 from plus_slurm import JobCluster, PermuteArgument
-import os
 
 
 #% get jobcluster

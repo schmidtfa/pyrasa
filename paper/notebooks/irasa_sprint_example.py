@@ -1,14 +1,12 @@
 #%%
 import sys
 from neurodsp.sim import set_random_seed
-from neurodsp.sim import sim_knee, sim_powerlaw, sim_oscillation, sim_variable_oscillation, sim_damped_oscillation
+from neurodsp.sim import sim_powerlaw, sim_oscillation
 from neurodsp.utils import create_times
 from neurodsp.plts import plot_timefrequency#
 
 from neurodsp.timefrequency import compute_wavelet_transform
-from mne.time_frequency import tfr_array_multitaper
 import numpy as np
-import scipy.signal as dsp
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -150,7 +148,7 @@ f.tight_layout()
 f.savefig('../results/time_resolved_peak_params.svg')
 #%%
 sys.path.append('/home/schmidtfa/git/SPRiNT')
-from SPRiNT_py import SPRiNT_stft_py, SPRiNT_remove_outliers
+from SPRiNT_py import SPRiNT_stft_py
 # %%
 
 
@@ -168,7 +166,6 @@ opt = {
 output = SPRiNT_stft_py(sim_ts, opt)
 
 from fooof import FOOOFGroup, fit_fooof_3d
-from fooof.objs.utils import combine_fooofs
 
 
 fg = FOOOFGroup(peak_width_limits=[1, 8],

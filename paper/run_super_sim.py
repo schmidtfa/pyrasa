@@ -2,7 +2,6 @@
 import numpy as np
 from cluster_jobs.super_simulation import super_simulation
 from plus_slurm import JobCluster, PermuteArgument
-import os
 
 
 #% get jobcluster

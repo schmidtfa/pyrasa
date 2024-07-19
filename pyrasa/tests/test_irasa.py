@@ -1,7 +1,5 @@
-from neurodsp.sim import sim_combined
 
-from pyrasa import irasa, irasa_sprint
-from pyrasa.tests.conftest import combined_signal
+from pyrasa import irasa
 from pyrasa.tests.test_settings import FS
 
 def test_irasa(combined_signal):

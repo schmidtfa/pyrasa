@@ -1,8 +1,6 @@
 #%%
 import sys
-from neurodsp.sim import sim_combined
 from neurodsp.sim import sim_powerlaw, sim_oscillation
-from neurodsp.utils import create_times
 import numpy as np
 import scipy.signal as dsp
 import matplotlib.pyplot as plt
@@ -116,7 +114,6 @@ for ch in [0, 1]:
     plt.tight_layout()
 # %%
 from pyrasa.utils.peak_utils import get_peak_params_sprint, get_band_info
-import pandas as pd
 
 df_peaks = get_peak_params_sprint(sgramm_periodic, freqs=freqs_ap, times=time_ap, min_peak_height=0.2)
 df_alpha_peaks = get_band_info(df_peaks, freq_range=(8, 12), ch_names=[0,1]).query('ch_name == 0')

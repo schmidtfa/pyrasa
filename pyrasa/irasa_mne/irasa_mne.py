@@ -2,7 +2,6 @@ import numpy as np
 import mne
 from pyrasa.irasa_mne.mne_objs import (PeriodicSpectrumArray, AperiodicSpectrumArray,
                                        PeriodicEpochsSpectrum, AperiodicEpochsSpectrum)
-import mne
 from pyrasa.irasa import irasa
 from pyrasa.utils.irasa_utils import _check_input_data_mne
 

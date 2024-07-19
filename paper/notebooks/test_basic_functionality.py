@@ -1,11 +1,9 @@
 #%%
 from neurodsp.sim import sim_combined
 from neurodsp.utils import create_times
-import numpy as np
 import scipy.signal as dsp
 import matplotlib.pyplot as plt
 import seaborn as sns
-import pandas as pd
 
 sns.set_style('ticks')
 sns.set_context('poster')

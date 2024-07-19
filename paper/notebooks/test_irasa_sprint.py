@@ -1,17 +1,13 @@
 #%%
-import sys
 from neurodsp.sim import set_random_seed
-from neurodsp.sim import sim_knee, sim_powerlaw, sim_oscillation, sim_variable_oscillation, sim_damped_oscillation
+from neurodsp.sim import sim_powerlaw, sim_oscillation
 from neurodsp.utils import create_times
 from neurodsp.plts import plot_timefrequency#
 
 from neurodsp.timefrequency import compute_wavelet_transform
-from mne.time_frequency import tfr_array_multitaper
 import numpy as np
-import scipy.signal as dsp
 import matplotlib.pyplot as plt
 import seaborn as sns
-import pandas as pd
 
 sns.set_style('ticks')
 sns.set_context('talk')

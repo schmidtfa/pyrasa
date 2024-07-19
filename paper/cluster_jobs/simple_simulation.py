@@ -1,7 +1,6 @@
 #%%
 from neurodsp.sim import (sim_powerlaw, sim_peak_oscillation, 
-                         sim_combined, sim_oscillation, 
-                         sim_knee, sim_bursty_oscillation)
+                         sim_combined, sim_knee, sim_bursty_oscillation)
 
 from cluster_jobs.meta_job import Job
 import joblib

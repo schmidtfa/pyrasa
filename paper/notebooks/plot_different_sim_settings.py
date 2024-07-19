@@ -1,11 +1,8 @@
 #%%
 from neurodsp.sim import (sim_powerlaw, sim_peak_oscillation, 
-                         sim_combined, sim_oscillation, 
-                         sim_knee, sim_bursty_oscillation)
+                         sim_combined, sim_knee)
 
 import joblib
-from neurodsp.utils.data import create_times
-from neurodsp.sim import set_random_seed
 
 import scipy.signal as dsp
 import numpy as np

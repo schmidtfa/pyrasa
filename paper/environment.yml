@@ -4,6 +4,7 @@ channels:
 dependencies:
   - mne
   - h5py
+  - ruff
   - ipython
   - pip
   - pymc>=5

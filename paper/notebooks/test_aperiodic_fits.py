@@ -1,7 +1,6 @@
 #%%
 import sys
-from neurodsp.sim import sim_combined
-from neurodsp.sim import sim_knee, sim_powerlaw, sim_oscillation, sim_variable_oscillation, sim_damped_oscillation
+from neurodsp.sim import sim_knee
 from neurodsp.utils import create_times
 import numpy as np
 import scipy.signal as dsp

@@ -141,5 +141,5 @@ f, ax = plt.subplots(figsize=(4,4))
 sns.set_context('talk')
 ec_eo_im.plot_topomap(ch_type='eeg', times=0, 
                    colorbar=False,
-                   cmap='Reds', axes=ax);
+                   cmap='Reds', axes=ax)
 # %%

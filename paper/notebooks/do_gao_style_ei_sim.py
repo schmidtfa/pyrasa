@@ -1,9 +1,8 @@
 #%%
 from neurodsp.sim import sim_synaptic_current
-from neurodsp.utils import set_random_seed, create_times
+from neurodsp.utils import create_times
 import pandas as pd
 
-import scipy.stats as stats
 import scipy.signal as dsp
 import numpy as np
 
@@ -47,7 +46,7 @@ for ix, psd in enumerate(psds):
     ax.loglog(freqs[0], psd, color=cmap[ix])
 
 # %%
-from fooof import FOOOF, FOOOFGroup
+from fooof import FOOOFGroup
 
 fg = FOOOFGroup(max_n_peaks=0, aperiodic_mode = 'knee')
 fg.fit(freqs[0], np.array(psds))

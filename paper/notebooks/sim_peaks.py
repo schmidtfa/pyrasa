@@ -1,5 +1,5 @@
 #%%
-from neurodsp.sim import sim_powerlaw, sim_oscillation, sim_peak_oscillation
+from neurodsp.sim import sim_powerlaw, sim_peak_oscillation
 import numpy as np
 import scipy.signal as dsp
 
@@ -10,7 +10,7 @@ sns.set_style('ticks')
 sns.set_context('poster')
 
 from pyrasa.irasa import irasa
-from pyrasa.utils.peak_utils import get_peak_params, get_band_info
+from pyrasa.utils.peak_utils import get_peak_params
 from pyrasa.utils.aperiodic_utils import compute_slope
 # %%
 n_secs = 4

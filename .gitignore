@@ -29,4 +29,5 @@ paper/results
 paper/old
 
 
-
+# Ignore ruff stuff
+.ruff_cache

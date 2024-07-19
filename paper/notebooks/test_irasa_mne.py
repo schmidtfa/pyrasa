@@ -2,10 +2,7 @@
 import sys
 from neurodsp.sim import sim_combined
 import numpy as np
-import scipy.signal as dsp
-import matplotlib.pyplot as plt
 import seaborn as sns
-import pandas as pd
 
 sns.set_style('ticks')
 sns.set_context('paper')
@@ -170,23 +167,23 @@ periodic.get_peaks(polyorder=0)
 aperiodic.get_slopes()
 
 #%%
-periodic["Auditory/Left"].average().plot_topomap(dB=False);
+periodic["Auditory/Left"].average().plot_topomap(dB=False)
 #%%
-periodic["Auditory/Right"].average().plot_topomap(dB=False);
+periodic["Auditory/Right"].average().plot_topomap(dB=False)
 #%%
-periodic["Visual/Left"].average().plot_topomap(dB=False);
+periodic["Visual/Left"].average().plot_topomap(dB=False)
 #%%
-periodic["Visual/Right"].average().plot_topomap(dB=False);
+periodic["Visual/Right"].average().plot_topomap(dB=False)
 
 
 
 #%%
-aperiodic["Auditory/Left"].average().plot_topomap(dB=False);
+aperiodic["Auditory/Left"].average().plot_topomap(dB=False)
 #%%
-aperiodic["Auditory/Right"].average().plot_topomap(dB=False);
+aperiodic["Auditory/Right"].average().plot_topomap(dB=False)
 #%%
-aperiodic["Visual/Left"].average().plot_topomap(dB=False);
+aperiodic["Visual/Left"].average().plot_topomap(dB=False)
 #%%
-aperiodic["Visual/Right"].average().plot_topomap(dB=False);
+aperiodic["Visual/Right"].average().plot_topomap(dB=False)
 
 # %%

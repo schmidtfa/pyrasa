@@ -28,9 +28,9 @@ cur_data = joblib.load(list(Path(INDIR).glob(f'{subject_id}/{subject_id}__fft_me
 freq_range_ap = cur_data['freq'] < 100
 freq_range_p = np.logical_and(cur_data['freq'] < 40, cur_data['freq'] > 1)
 # %%
-plt.loglog(cur_data['freq'][freq_range_ap], cur_data['src']['label_tc_ap'].T[freq_range_ap,:]);
+plt.loglog(cur_data['freq'][freq_range_ap], cur_data['src']['label_tc_ap'].T[freq_range_ap,:])
 # %%
-plt.plot(cur_data['freq'][freq_range_p], cur_data['src']['label_tc_p'].T[freq_range_p,:]);
+plt.plot(cur_data['freq'][freq_range_p], cur_data['src']['label_tc_p'].T[freq_range_p,:])
 # %%
 
 # %% find peaks irasa style

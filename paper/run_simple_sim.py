@@ -2,7 +2,6 @@
 import numpy as np
 from cluster_jobs.simple_simulation import simple_simulation
 from plus_slurm import JobCluster, PermuteArgument
-import os
 
 #% get jobcluster
 job_kwargs = {'required_ram': '2G',

@@ -3,7 +3,6 @@ import joblib
 from pathlib import Path
 from pyrasa.utils.peak_utils import get_peak_params, get_band_info
 from pyrasa.utils.aperiodic_utils import compute_slope
-import mne
 import os
 from pymatreader import read_mat
 import scipy.signal as dsp
