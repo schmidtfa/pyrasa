@@ -45,8 +45,8 @@ matplotlib = ">=3.9.1,<3.10"
 
 [tool.pixi.tasks]
 test = "pytest --cov=plus_sync --cov-report=lcov"
-ruff = "ruff format && ruff check --fix"
-ruff_ci = "ruff check"
+lint = "ruff format && ruff check --fix"
+lint_ci = "ruff check"
 
 [tool.pixi.dependencies]
 hatch = ">=1.12.0,<1.13"
