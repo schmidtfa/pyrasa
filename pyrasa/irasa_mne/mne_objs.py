@@ -38,7 +38,7 @@ class PeriodicSpectrumArray(SpectrumArray):
         *,
         picks=None,
         average=False,
-        dB=False,
+        dB=False,  # noqa N803
         amplitude=False,
         xscale='linear',
         ci='sd',
@@ -71,7 +71,7 @@ class PeriodicSpectrumArray(SpectrumArray):
     def plot_topo(
         self,
         *,
-        dB=False,
+        dB=False,  # noqa N803
         layout=None,
         color='w',
         fig_facecolor='k',
@@ -175,7 +175,8 @@ class AperiodicSpectrumArray(SpectrumArray):
                     fit_func : string
                         Can be either "fixed" or "knee".
                     fit_bounds : None, tuple
-                        Lower and upper bound for the fit function, should be None if the whole frequency range is desired.
+                        Lower and upper bound for the fit function,
+                        should be None if the whole frequency range is desired.
                         Otherwise a tuple of (lower, upper)
 
         Returns:    df_aps: DataFrame
@@ -239,7 +240,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         *,
         picks=None,
         average=False,
-        dB=False,
+        dB=False,  # noqa N803
         amplitude=False,
         xscale='linear',
         ci='sd',
@@ -272,7 +273,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
     def plot_topo(
         self,
         *,
-        dB=False,
+        dB=False,  # noqa N803
         layout=None,
         color='w',
         fig_facecolor='k',
@@ -396,7 +397,8 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
                     fit_func : string
                         Can be either "fixed" or "knee".
                     fit_bounds : None, tuple
-                        Lower and upper bound for the fit function, should be None if the whole frequency range is desired.
+                        Lower and upper bound for the fit function,
+                        should be None if the whole frequency range is desired.
                         Otherwise a tuple of (lower, upper)
 
         Returns:    df_aps: DataFrame

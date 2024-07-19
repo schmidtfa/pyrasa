@@ -156,7 +156,7 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=True, 
     """
 
     assert isinstance(aperiodic_spectrum, np.ndarray), 'aperiodic_spectrum should be a numpy array.'
-    assert aperiodic_spectrum.ndim == 2, 'aperiodic_spectrum needs to be of shape (Channels, Samples).'
+    assert aperiodic_spectrum.ndim == 2, 'aperiodic_spectrum needs to be of shape (Channels, Samples).'  # noqa PLR2004
 
     assert isinstance(freqs, np.ndarray), 'freqs should be a numpy array.'
     assert freqs.ndim == 1, 'freqs needs to be of shape (freqs,).'

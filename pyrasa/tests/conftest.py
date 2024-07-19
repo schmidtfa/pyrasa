@@ -1,4 +1,3 @@
-import os
 import shutil
 
 import pytest
@@ -23,8 +22,8 @@ def check_dir():
     """Once, prior to session, this will clear and re-initialize the test file directories."""
 
     # If the directories already exist, clear them
-    if os.path.exists(BASE_TEST_FILE_PATH):
+    if BASE_TEST_FILE_PATH.exists():
         shutil.rmtree(BASE_TEST_FILE_PATH)
 
     # Remake (empty) directories
-    os.mkdir(BASE_TEST_FILE_PATH)
+    BASE_TEST_FILE_PATH.mkdir(parents=True, exist_ok=True)

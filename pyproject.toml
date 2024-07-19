@@ -56,7 +56,7 @@ tag_sign = false
 
 [tool.ruff]
 line-length = 120
-exclude = ['paper', 'example']
+exclude = ['paper', 'examples']
 
 [tool.ruff.lint]
 extend-select = [
@@ -71,6 +71,8 @@ extend-select = [
     'TCH',
     'PL'
 ]
+ignore = ['PLR0913']
+
 
 [tool.ruff.format]
 quote-style = 'single'

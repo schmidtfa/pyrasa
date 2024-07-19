@@ -154,7 +154,8 @@ def get_peak_params_sprint(
                     Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
 
     Returns:    df_peaks: DataFrame
-                    DataFrame containing the center frequency, bandwidth and peak height for each channel and time point.
+                    DataFrame containing the center frequency,
+                    bandwidth and peak height for each channel and time point.
 
     """
 
