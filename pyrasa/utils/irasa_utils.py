@@ -73,8 +73,43 @@ def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
         return win, ratios
 
 
+def _compute_psd_welch(data, fs, 
+                       window='hann', nperseg=None, 
+                       noverlap=None, nfft=None, 
+                       detrend='constant', 
+                       return_onesided=True, 
+                       scaling='density', 
+                       axis=-1, 
+                       average='mean',
+                       spectrum_only=False,
+                       ):
 
-def _do_sgramm(x, fs, mfft, hop, win, ratios=None, smooth=True, n_avgs=3):
+    '''Function to compute power spectral densities using welchs method'''
+           
+    # kwargs2drop = ['h', 'up_down', 'time_orig'] #drop sprint specific keys
+    # for k in kwargs2drop:
+    #     irasa_kwargs.pop(k, None)
+
+    freq, psd = dsp.welch(data, fs=fs,
+                           window=window, 
+                           nperseg=nperseg, 
+                           noverlap=noverlap, 
+                           nfft=nfft, 
+                           detrend=detrend, 
+                           return_onesided=return_onesided, 
+                           scaling=scaling, 
+                           axis=axis, 
+                           average=average)
+
+    if spectrum_only:
+        return psd
+    else: 
+        return freq, psd
+
+
+def _compute_sgramm(x, fs, mfft, hop, win_duration, dpss_settings, win_kwargs, 
+               up_down=None, h=None, time_orig=None, smooth=True, n_avgs=3, spectrum_only=False,
+               ):
             
             '''Function to compute spectrograms'''
 
@@ -83,11 +118,21 @@ def _do_sgramm(x, fs, mfft, hop, win, ratios=None, smooth=True, n_avgs=3):
             
             sgramm_smoother = lambda sgramm, n_avgs : np.array([_moving_average(sgramm[freq,:], w=n_avgs) 
                                                                 for freq in range(sgramm.shape[0])])
+            
+            if h is None:
+                 nperseg = int(np.floor(fs*win_duration))
+            elif np.logical_and(h is not None, up_down == 'up'):
+                 nperseg = int(np.floor(fs*win_duration*h))
+                 hop = int(hop * h)
+            elif np.logical_and(h is not None, up_down == 'down'):
+                 nperseg = int(np.floor(fs*win_duration/h))
+                 hop = int(hop / h)
+
+            win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
 
             sgramms = []
             for cur_win in win:
-                SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft,
-                                fs=fs, scale_to='psd')
+                SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft, fs=fs, scale_to='psd')
                 cur_sgramm = SFT.spectrogram(x, detr='constant')
                 sgramms.append(cur_sgramm)
 
@@ -111,11 +156,25 @@ def _do_sgramm(x, fs, mfft, hop, win, ratios=None, smooth=True, n_avgs=3):
                 sgramm = np.median(avgs, axis=0)                
                 sgramm = sgramm[np.newaxis, :, :]
                 
-
+            
             time = _gen_time_from_sft(SFT, x)
             freq = SFT.f[SFT.f > 0]
 
-            return freq, time, sgramm
+            #subsample the upsampled data in the time domain to allow averaging
+            #This is necessary as division by h can cause slight rounding differences that
+            #result in actual unintended temporal differences in up/dw for very long segments.
+            if time_orig is not None:
+                sgramm = np.array([_find_nearest(sgramm, time, t) for t in time_orig])
+                max_t_ix = time_orig.shape[0]
+                #swapping axes is necessitated by _find_nearest
+                sgramm = np.swapaxes(np.swapaxes(sgramm[:max_t_ix,:,:], 1, 2), 0, 2) #cut time axis for up/downsampled data to allow averaging
+
+            sgramm = np.squeeze(sgramm) #bring in proper format
+
+            if spectrum_only:
+                return sgramm
+            else: 
+                return freq, time, sgramm
 
 
 def _check_input_data_mne(data, hset, band):

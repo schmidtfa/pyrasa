@@ -97,7 +97,7 @@ def irasa_raw(data,
                   'noverlap': int(fs*duration*overlap)}
     
     freq, psd_aperiodic, psd_periodic = irasa(data_array, fs=fs, band=band, 
-                                              hset_info=hset_info, kwargs_psd=kwargs_psd)
+                                              hset_info=hset_info, irasa_kwargs=kwargs_psd)
     
     if as_array==True:
         return psd_aperiodic, psd_periodic, freq
@@ -182,7 +182,7 @@ def irasa_epochs(data,
     for epoch in data_array:
     
         freq, psd_aperiodic, psd_periodic = irasa(epoch, fs=fs, band=band, 
-                                                  hset_info=hset_info, kwargs_psd=kwargs_psd)
+                                                  hset_info=hset_info, irasa_kwargs=kwargs_psd)
         psd_list_aperiodic.append(psd_aperiodic)
         psd_list_periodic.append(psd_periodic)
     

@@ -82,11 +82,11 @@ plot_timefrequency(times, freqs, mwt, vmin=0, ax=axes[0])
 plot_timefrequency(times_ir, freqs_ir, np.squeeze(sgramm_ap), vmin=0, ax=axes[1])
 plot_timefrequency(times_ir, freqs_ir, np.squeeze(sgramm_p), vmin=0, ax=axes[2])
 
-f.savefig('../results/time_freq_split.svg')
+#f.savefig('../results/time_freq_split.svg')
 # %% now extract the aperiodic features
 from pyrasa.utils.aperiodic_utils import compute_slope_sprint
 
-df_aps, df_gof = compute_slope_sprint(sgramm_ap, freqs=freqs_ir, 
+df_aps, df_gof = compute_slope_sprint(sgramm_ap[np.newaxis, :, :], freqs=freqs_ir, 
                                       times=times_ir, fit_func='fixed')
 
 #%%
@@ -121,18 +121,18 @@ ax[2].set_ylabel('R2')
 ax[2].set_xlabel('time (s)')
 
 f.tight_layout()
-f.savefig('../results/time_resolved_exp_r2.svg')
+#f.savefig('../results/time_resolved_exp_r2.svg')
 # %%
 # %%
 from pyrasa.utils.peak_utils import get_peak_params_sprint
 
-df_peaks = get_peak_params_sprint(sgramm_p, 
+df_peaks = get_peak_params_sprint(sgramm_p[np.newaxis, :, :], 
                                   freqs=freqs_ir, 
                                   times=times_ir,
                                   smooth=True,
                                   min_peak_height=0.1)
 
-plot_timefrequency(times_ir, freqs_ir, np.squeeze(sgramm_p), vmin=0)
+plot_timefrequency(times_ir, freqs_ir, sgramm_p, vmin=0)
 
 # %% Plot peak results
 f, ax = plt.subplots(nrows=3, figsize=(8, 7))
@@ -145,7 +145,7 @@ for ix, cur_key in enumerate(['cf', 'pw', 'bw']):
     ax[ix].set_xlim(0, 15)
 
 f.tight_layout()
-f.savefig('../results/time_resolved_peak_params.svg')
+#f.savefig('../results/time_resolved_peak_params.svg')
 #%%
 sys.path.append('/home/schmidtfa/git/SPRiNT')
 from SPRiNT_py import SPRiNT_stft_py
@@ -203,7 +203,7 @@ for ix, c_ax in enumerate(ax):
 
 sns.despine()
 f.tight_layout()
-f.savefig('../results/detected_peaks_pyrasa.svg')
+#f.savefig('../results/detected_peaks_pyrasa.svg')
 
 #%%
 plt.plot(df_beta['time'], df_beta['pw'] )
@@ -223,7 +223,7 @@ for ix, c_ax in enumerate(ax):
 
 sns.despine()
 f.tight_layout()
-f.savefig('../results/detected_peaks_sprint.svg')
+#f.savefig('../results/detected_peaks_sprint.svg')
 
 
 #%%
