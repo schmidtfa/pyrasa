@@ -2356,8 +2356,8 @@ packages:
 - kind: pypi
   name: numpy
   version: 2.0.0
-  url: https://files.pythonhosted.org/packages/28/95/b56fc6b2abe37c03923b50415df483cf93e09e7438872280a5486131d804/numpy-2.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 49d9f7d256fbc804391a7f72d4a617302b1afac1112fac19b6c6cec63fe7fe8a
+  url: https://files.pythonhosted.org/packages/ad/9c/4a93b8e395b755c53628573d75d7b21985d9a0f416e978d637084ccc8ec3/numpy-2.0.0-cp312-cp312-win_amd64.whl
+  sha256: a356364941fb0593bb899a1076b92dfa2029f6f5b8ba88a14fd0984aaf76d0df
   requires_python: '>=3.9'
 - kind: pypi
   name: numpy
@@ -2368,8 +2368,8 @@ packages:
 - kind: pypi
   name: numpy
   version: 2.0.0
-  url: https://files.pythonhosted.org/packages/ad/9c/4a93b8e395b755c53628573d75d7b21985d9a0f416e978d637084ccc8ec3/numpy-2.0.0-cp312-cp312-win_amd64.whl
-  sha256: a356364941fb0593bb899a1076b92dfa2029f6f5b8ba88a14fd0984aaf76d0df
+  url: https://files.pythonhosted.org/packages/28/95/b56fc6b2abe37c03923b50415df483cf93e09e7438872280a5486131d804/numpy-2.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: 49d9f7d256fbc804391a7f72d4a617302b1afac1112fac19b6c6cec63fe7fe8a
   requires_python: '>=3.9'
 - kind: conda
   name: openssl
@@ -2451,8 +2451,8 @@ packages:
 - kind: pypi
   name: pandas
   version: 2.2.2
-  url: https://files.pythonhosted.org/packages/40/10/79e52ef01dfeb1c1ca47a109a01a248754ebe990e159a844ece12914de83/pandas-2.2.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: eee3a87076c0756de40b05c5e9a6069c035ba43e8dd71c379e68cab2c20f16ad
+  url: https://files.pythonhosted.org/packages/22/a5/a0b255295406ed54269814bc93723cfd1a0da63fb9aaf99e1364f07923e5/pandas-2.2.2-cp312-cp312-win_amd64.whl
+  sha256: d187d355ecec3629624fccb01d104da7d7f391db0311145817525281e2804d23
   requires_dist:
   - numpy>=1.22.4 ; python_version < '3.11'
   - numpy>=1.23.2 ; python_version == '3.11'
@@ -2635,8 +2635,8 @@ packages:
 - kind: pypi
   name: pandas
   version: 2.2.2
-  url: https://files.pythonhosted.org/packages/22/a5/a0b255295406ed54269814bc93723cfd1a0da63fb9aaf99e1364f07923e5/pandas-2.2.2-cp312-cp312-win_amd64.whl
-  sha256: d187d355ecec3629624fccb01d104da7d7f391db0311145817525281e2804d23
+  url: https://files.pythonhosted.org/packages/40/10/79e52ef01dfeb1c1ca47a109a01a248754ebe990e159a844ece12914de83/pandas-2.2.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: eee3a87076c0756de40b05c5e9a6069c035ba43e8dd71c379e68cab2c20f16ad
   requires_dist:
   - numpy>=1.22.4 ; python_version < '3.11'
   - numpy>=1.23.2 ; python_version == '3.11'
@@ -3013,11 +3013,12 @@ packages:
   name: pyrasa
   version: 0.1.0.dev0
   path: .
-  sha256: c93595ad848e312f682df30d26eb7b85844693d166d9a5e13d92f5818008ae88
+  sha256: 64a624ed3b084d5649e9849fb86264cace8e4c7c0490991e38d6a34718cdb328
   requires_dist:
   - numpy
   - pandas
   - scipy>=1.12
+  - mne ; extra == 'irasa-mne'
   requires_python: '>=3.11'
   editable: true
 - kind: conda
@@ -3504,8 +3505,8 @@ packages:
 - kind: pypi
   name: scipy
   version: 1.14.0
-  url: https://files.pythonhosted.org/packages/9b/00/ce54410e344b3a6032cd42ed53fe425cf57a66d28e337670292bbb419ebc/scipy-1.14.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: a01cc03bcdc777c9da3cfdcc74b5a75caffb48a6c39c8450a9a05f82c4250a14
+  url: https://files.pythonhosted.org/packages/3f/72/305686527c68f33f1dd3ebdd28f53340d372b2f9e44dccaf6f92e17739d3/scipy-1.14.0-cp312-cp312-win_amd64.whl
+  sha256: 4c4161597c75043f7154238ef419c29a64ac4a7c889d588ea77690ac4d0d9b20
   requires_dist:
   - numpy<2.3,>=1.23.5
   - pytest ; extra == 'test'
@@ -3588,8 +3589,8 @@ packages:
 - kind: pypi
   name: scipy
   version: 1.14.0
-  url: https://files.pythonhosted.org/packages/3f/72/305686527c68f33f1dd3ebdd28f53340d372b2f9e44dccaf6f92e17739d3/scipy-1.14.0-cp312-cp312-win_amd64.whl
-  sha256: 4c4161597c75043f7154238ef419c29a64ac4a7c889d588ea77690ac4d0d9b20
+  url: https://files.pythonhosted.org/packages/9b/00/ce54410e344b3a6032cd42ed53fe425cf57a66d28e337670292bbb419ebc/scipy-1.14.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: a01cc03bcdc777c9da3cfdcc74b5a75caffb48a6c39c8450a9a05f82c4250a14
   requires_dist:
   - numpy<2.3,>=1.23.5
   - pytest ; extra == 'test'

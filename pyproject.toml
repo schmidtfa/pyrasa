@@ -8,6 +8,7 @@ authors = [
     {name = "Fabian Schmidt", email = "schmidtfa91@gmail.com"},
     {name = "Thomas Hartmann", email = "thomas.hartmann@th-ht.de"}
 ]
+homepage = "https://github.com/schmidtfa/pyrasa"
 classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
@@ -18,6 +19,9 @@ classifiers = [
 keywords=['spectral parametrization', 'oscillations', 'power spectra', '1/f']
 requires-python = ">= 3.11"
 dependencies = ["numpy", "pandas", "scipy>=1.12"]
+
+[project.optional-dependencies]
+irasa_mne = ['mne']
 
 [build-system]
 requires = ["hatchling", "hatch-regex-commit"]
