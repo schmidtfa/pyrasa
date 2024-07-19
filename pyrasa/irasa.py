@@ -5,6 +5,35 @@ import numpy as np
 from pyrasa.utils.irasa_utils import (_crop_data, _find_nearest, 
                                       _get_windows, _do_sgramm)
 #TODO: Port to Cython
+
+#%%
+def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, freq_axis=0):
+
+    '''
+    This function is implementing the IRASA algorithm using a custom function to 
+    compute a power/crossspectral density and returns an "aperiodic spectrum".
+    '''
+
+    spectra = np.zeros((len(hset), *orig_spectrum.shape))
+    for i, h in enumerate(hset):
+
+        rat = fractions.Fraction(str(h))
+        up, down = rat.numerator, rat.denominator
+
+        # Much faster than FFT-based resampling
+        data_up = dsp.resample_poly(data, up, down, axis=-1)
+        data_down = dsp.resample_poly(data, down, up, axis=-1)
+
+        # Calculate an up/downsampled version of the PSD using same params as original
+        _, spectrum_up = irasa_fun(data_up, fs * h,  **irasa_kwargs)
+        _, spectrum_dw = irasa_fun(data_down, fs / h, **irasa_kwargs)
+
+        # geometric mean between up and downsampled
+        spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
+
+    aperiodic_spectrum = np.median(spectra, axis=0)
+    return aperiodic_spectrum
+
 #%% irasa
 def irasa(data, fs, band, kwargs_psd, hset_info=(1., 2., 0.05)):
 
@@ -64,24 +93,15 @@ def irasa(data, fs, band, kwargs_psd, hset_info=(1., 2., 0.05)):
     # Calculate original spectrum
     freq, psd = dsp.welch(data, fs=fs, **kwargs_psd)
 
-    psds = np.zeros((len(hset), *psd.shape))
-    for i, h in enumerate(hset):
 
-        rat = fractions.Fraction(str(h))
-        up, down = rat.numerator, rat.denominator
+    psd_aperiodic = _gen_irasa(data=data,
+                               orig_spectrum=psd,
+                               fs=fs,
+                               irasa_fun=dsp.welch,
+                               hset=hset,
+                               irasa_kwargs=kwargs_psd,
+                               )
 
-        # Much faster than FFT-based resampling
-        data_up = dsp.resample_poly(data, up, down, axis=-1)
-        data_down = dsp.resample_poly(data, down, up, axis=-1)
-
-        # Calculate an up/downsampled version of the PSD using same params as original
-        _, psd_up = dsp.welch(data_up, fs * h,  **kwargs_psd)
-        _, psd_dw = dsp.welch(data_down, fs / h, **kwargs_psd)
-
-        # geometric mean between up and downsampled
-        psds[i, :] = np.sqrt(psd_up * psd_dw)
-
-    psd_aperiodic = np.median(psds, axis=0)
     psd_periodic = psd - psd_aperiodic
 
     freq, psd_aperiodic, psd_periodic = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
