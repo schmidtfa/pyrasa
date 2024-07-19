@@ -28,5 +28,11 @@ paper/data
 paper/results
 paper/old
 
+.venv
+.pixi
+.idea
+.vscode
+dist
+
 
 
