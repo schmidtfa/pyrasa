@@ -1,7 +1,6 @@
 ## Pyrasa
 
 [![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
-
 [![codecov](https://codecov.io/github/schmidtfa/pyrasa/graph/badge.svg?token=4AL4NJUQU6)](https://codecov.io/github/schmidtfa/pyrasa)
 
 
