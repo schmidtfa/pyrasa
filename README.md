@@ -26,7 +26,9 @@ or conda:
 The minimum required dependencies to run PyRASA are:
 
 [numpy](https://github.com/numpy/numpy)
+
 [scipy](https://github.com/scipy/scipy)
+
 [pandas](https://github.com/pandas-dev/pandas)
 
 For full functionality, some functions require:
