@@ -1,10 +1,11 @@
 import shutil
 
+import numpy as np
 import pytest
-from neurodsp.sim import sim_combined
+from neurodsp.sim import sim_combined, sim_knee, sim_powerlaw
 from neurodsp.utils.sim import set_random_seed
 
-from pyrasa.tests.test_settings import BASE_TEST_FILE_PATH, EXPONENT, FREQ, FS, N_SECONDS
+from pyrasa.tests.test_settings import BASE_TEST_FILE_PATH, N_SECONDS
 
 
 def pytest_configure(config):
@@ -12,9 +13,19 @@ def pytest_configure(config):
 
 
 @pytest.fixture(scope='session')
-def combined_signal():
-    components = {'sim_powerlaw': {'exponent': EXPONENT}, 'sim_oscillation': {'freq': FREQ}}
-    yield sim_combined(n_seconds=N_SECONDS, fs=FS, components=components)
+def combined_signal(exponent, osc_freq, fs):
+    components = {'sim_powerlaw': {'exponent': exponent}, 'sim_oscillation': {'freq': osc_freq}}
+    yield sim_combined(n_seconds=N_SECONDS, fs=fs, components=components)
+
+
+@pytest.fixture(scope='session')
+def fixed_aperiodic_signal(exponent, fs):
+    yield sim_powerlaw(n_seconds=N_SECONDS, fs=fs, exponent=exponent)
+
+
+@pytest.fixture(scope='session')
+def knee_aperiodic_signal(exponent, knee_freq, fs):
+    yield sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq ** np.abs(exponent))
 
 
 @pytest.fixture(scope='session', autouse=True)

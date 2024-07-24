@@ -149,14 +149,16 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False,
                     Otherwise a tuple of (lower, upper)
 
     Returns:    df_aps: DataFrame
-                    DataFrame containing the center frequency, bandwidth and peak height for each channel
+                    DataFrame containing the aperiodic parameters for each channel depending on the fit func.
                 df_gof: DataFrame
                     DataFrame containing the goodness of fit of the specific fit function for each channel.
 
     """
 
     assert isinstance(aperiodic_spectrum, np.ndarray), 'aperiodic_spectrum should be a numpy array.'
-    assert aperiodic_spectrum.ndim == 2, 'aperiodic_spectrum needs to be of shape (Channels, Samples).'  # noqa PLR2004
+    if aperiodic_spectrum.ndim == 1:
+        aperiodic_spectrum = aperiodic_spectrum[np.newaxis, :]
+    assert aperiodic_spectrum.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'  # noqa PLR2004
 
     assert isinstance(freqs, np.ndarray), 'freqs should be a numpy array.'
     assert freqs.ndim == 1, 'freqs needs to be of shape (freqs,).'
