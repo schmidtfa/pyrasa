@@ -71,7 +71,7 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
         else fit_bounds[1]
     )
 
-    valid_slope_functions = ['fixed', 'knee', 'mixed']
+    valid_slope_functions = ['fixed', 'knee']
     assert fit_func in valid_slope_functions, f'The slope fitting function has to be in {valid_slope_functions}'
 
     if fit_func == 'fixed':
@@ -161,7 +161,9 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False,
     assert isinstance(freqs, np.ndarray), 'freqs should be a numpy array.'
     assert freqs.ndim == 1, 'freqs needs to be of shape (freqs,).'
 
-    assert isinstance(ch_names, list), 'Channel names should be of type list'
+    assert isinstance(
+        ch_names, list | tuple | np.ndarray
+    ), 'Channel names should be of type list, tuple or numpy.ndarray'
 
     if fit_bounds is not None:
         fmin, fmax = freqs.min(), freqs.max()
