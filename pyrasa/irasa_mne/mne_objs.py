@@ -165,7 +165,7 @@ class AperiodicSpectrumArray(SpectrumArray):
             )
         )
 
-    def get_slopes(self, fit_func='fixed', fit_bounds=None):
+    def get_slopes(self, fit_func='fixed', scale=False, fit_bounds=None):
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -190,6 +190,7 @@ class AperiodicSpectrumArray(SpectrumArray):
             self.get_data(),
             self.freqs,
             ch_names=self.ch_names,
+            scale=scale,
             fit_func=fit_func,
             fit_bounds=fit_bounds,
         )
@@ -387,7 +388,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             )
         )
 
-    def get_slopes(self, fit_func='fixed', fit_bounds=None):
+    def get_slopes(self, fit_func='fixed', scale=False, fit_bounds=None):
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -417,6 +418,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
                 cur_epoch,
                 self.freqs,
                 ch_names=self.ch_names,
+                scale=scale,
                 fit_func=fit_func,
                 fit_bounds=fit_bounds,
             )

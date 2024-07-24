@@ -72,31 +72,47 @@ def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
     return win, ratios
 
 
-def _check_input_data_mne(data, hset, band):
+def _check_irasa_settings(irasa_params, hset_info):
     """Check if the input parameters for irasa are specified correctly"""
 
-    # check if hset is specified correctly
-    assert isinstance(hset, tuple), 'hset should be a tuple of (min, max, step)'
+    valid_hset_shape = 3
+    assert isinstance(irasa_params['data'], np.ndarray), 'Data should be a numpy array.'
 
-    fs = data.info['sfreq']
-    filter_settings = (data.info['highpass'], data.info['lowpass'])
+    # check if hset is specified correctly
+    assert isinstance(
+        hset_info, tuple | list | np.ndarray
+    ), 'hset should be a tuple, list or numpy array of (min, max, step)'
+    assert np.shape(hset_info)[0] == valid_hset_shape, 'shape of hset_info should be 3 i.e. (min, max, step)'
 
     # check that evaluated range fits with the data settings
-    nyquist = fs / 2
-    hmax = np.max(hset)
-    band_evaluated = (band[0] / hmax, band[1] * hmax)
+    nyquist = irasa_params['fs'] / 2
+    hmax = np.max(hset_info)
+    band_evaluated = (irasa_params['band'][0] / hmax, irasa_params['band'][1] * hmax)
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
-    assert band_evaluated[1] < nyquist, 'The evaluated frequency range is higher than Nyquist (fs / 2)'
-    assert np.logical_and(band_evaluated[0] > filter_settings[0], band_evaluated[1] < filter_settings[1]), (
+    assert band_evaluated[1] < nyquist, (
+        f'The evaluated frequency range goes up to {np.round(band_evaluated[1], 2)}Hz '
+        'which is higher than Nyquist (fs / 2)'
+    )
+
+    filter_settings = list(irasa_params['filter_settings'])
+    if filter_settings[0] is None:
+        filter_settings[0] = band_evaluated[0]
+    if filter_settings[1] is None:
+        filter_settings[1] = band_evaluated[1]
+
+    assert np.logical_and(band_evaluated[0] >= filter_settings[0], band_evaluated[1] <= filter_settings[1]), (
         f'You run IRASA in a frequency range from'
-        f'{np.round(band_evaluated[0], 2)} - {np.round(band_evaluated[1], 2)}Hz. \n'
-        f'Your settings specified in "filter_settings" indicate that you have'
-        f'a bandpass filter from'
-        f'{np.round(filter_settings[0], 2)} - {np.round(filter_settings[1], 2)}Hz. \n'
+        f'{np.round(band_evaluated[0], irasa_params['hset_accuracy'])} -'
+        f'{np.round(band_evaluated[1], irasa_params['hset_accuracy'])}Hz. \n'
+        'Your settings specified in "filter_settings" indicate that you have '
+        'a bandpass filter from '
+        f'{np.round(filter_settings[0], irasa_params['hset_accuracy'])} - '
+        f'{np.round(filter_settings[1], irasa_params['hset_accuracy'])}Hz. \n'
         'This means that your evaluated range likely contains filter artifacts. \n'
         'Either change your filter settings, adjust hset or the parameter "band" accordingly. \n'
-        f'You want to make sure that band[0]/hset.max() > {np.round(filter_settings[0], 2)}'
-        f'and that band[1] * hset.max() < {np.round(filter_settings[1], 2)}'
+        f'You want to make sure that band[0] / hset.max() '
+        f'> {np.round(filter_settings[0], irasa_params['hset_accuracy'])} '
+        f'and that band[1] * hset.max() < {np.round(filter_settings[1], irasa_params['hset_accuracy'])}'
     )
 
 

@@ -124,7 +124,7 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
     return params, gof
 
 
-def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=True, fit_bounds=None):
+def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False, fit_bounds=None):
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,

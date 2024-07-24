@@ -5,21 +5,19 @@ import scipy.signal as dsp
 from scipy.signal import ShortTimeFFT
 from scipy.stats.mstats import gmean
 
-from pyrasa.utils.irasa_utils import (
-    _crop_data,  # _compute_psd_welch,
-    _find_nearest,
-    _gen_time_from_sft,
-    _get_windows,
-)
+from pyrasa.utils.irasa_utils import _check_irasa_settings, _crop_data, _find_nearest, _gen_time_from_sft, _get_windows
+
 
 # TODO: Port to Cython
-
-
-# %%
 def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None):
     """
     This function is implementing the IRASA algorithm using a custom function to
-    compute a power/crossspectral density and returns an "aperiodic spectrum".
+    compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
+    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
+
+    [1] Vallat, Raphael, and Matthew P. Walker. “An open-source,
+    high-performance tool for automated sleep staging.”
+    Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
     """
 
     spectra = np.zeros((len(hset), *orig_spectrum.shape))
@@ -52,15 +50,16 @@ def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None
 
 
 # %% irasa
-def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
+def irasa(data, fs, band, irasa_kwargs, filter_settings=(None, None), hset_info=(1.05, 2.0, 0.05), hset_accuracy=4):
     """
-    This function can be used to seperate aperiodic from periodic power spectra
+    This function can be used to generate aperiodic and periodic power spectra from a time series
     using the IRASA algorithm (Wen & Liu, 2016).
-    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
 
-    WARNING: This is the raw irasa algorithm that gives you maximal control over all parameters.
-    It will not inform or warn you when your parameter settings are invalid. Use this only if you know what you do!
-    Otherwise it is recommend to use the irasa_raw, irasa_epochs or irasa_sprint functions from irasa_mne.
+    This function gives you maximal control over all parameters so its up to you set things up properly.
+
+    If you have preprocessed your data in mne python we recommend that you use the
+    irasa_raw or irasa_epochs functions from `pyrasa.irasa_mne`, as they directly work on your
+    `mne.io.BaseRaw` and `mne.io.BaseEpochs` classes and take care of the necessary checks.
 
     Parameters
     ----------
@@ -70,14 +69,16 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
         The sampling frequency of the data. Can be omitted if data is :py:class:˚mne.io.BaseRaw˚.
     band : tuple
         A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
+    irasa_kwargs : dict
+        A dictionary containing all the keyword arguments that are passed onto `scipy.signal.welch`.
     filter_settings : tuple
-        A tuple containing the cut-off of the High- and Lowpass filter.
-        It is highly advisable to set this correctly in order to avoid filter artifacts
-        in your evaluated frequency range.
-    duration : float
-        The time window of each segment in seconds used to calculate the psd.
-    kwargs_psd : dict
-        A dictionary containing all the keyword arguments that are passed onto
+        A tuple containing the cut-off of the High- and Lowpass filter. It is highly advisable to set this
+        correctly in order to avoid filter artifacts in your evaluated frequency range.
+    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
+        Contains information about the range of the up/downsampling factors.
+        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
+    hset_accuracy : int
+        floating point accuracy for the up/downsampling factor of the signal (default=4).
 
     Returns
     -------
@@ -94,20 +95,25 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
         Components in the Power Spectrum of Neurophysiological Signal.
         Brain Topography, 29(1), 13–26.
         https://doi.org/10.1007/s10548-015-0448-0
-    [2] Vallat, Raphael, and Matthew P. Walker. “An open-source,
-        high-performance tool for automated sleep staging.”
-        Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
 
     """
 
     # Minimal safety checks
-    assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
     if data.ndim == 1:
         data = data[np.newaxis, :]
     assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'  # noqa PLR2004
-    assert isinstance(hset_info, tuple), 'hset should be a tuple of (min, max, step)'
 
-    hset = np.round(np.arange(*hset_info), 4)
+    irasa_params = {
+        'data': data,
+        'fs': fs,
+        'band': band,
+        'filter_settings': filter_settings,
+        'hset_accuracy': hset_accuracy,
+    }
+
+    _check_irasa_settings(irasa_params=irasa_params, hset_info=hset_info)
+
+    hset = np.round(np.arange(*hset_info), hset_accuracy)
 
     # Calculate original spectrum
     def _compute_psd_welch(
@@ -126,10 +132,6 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
         **irasa_kwargs,
     ):
         """Function to compute power spectral densities using welchs method"""
-
-        # kwargs2drop = ['h', 'up_down', 'time_orig'] #drop sprint specific keys
-        # for k in kwargs2drop:
-        #     irasa_kwargs.pop(k, None)
 
         freq, psd = dsp.welch(
             data,
@@ -166,22 +168,24 @@ def irasa(data, fs, band, irasa_kwargs, hset_info=(1.0, 2.0, 0.05)):
     return freq, psd_aperiodic, psd_periodic
 
 
-# %% irasa sprint
+# irasa sprint
 def irasa_sprint(  # noqa PLR0915 C901
     data,
     fs,
     band=(1, 100),
     freq_res=0.5,
+    smooth=True,
+    n_avgs=1,
     win_duration=0.4,
+    hop=10,
     win_func=dsp.windows.hann,
     win_func_kwargs=None,
     dpss_settings_time_bandwidth=2,
     dpss_settings_low_bias=True,
     dpss_eigenvalue_weighting=True,
-    hop=10,
-    smooth=True,
-    n_avgs=1,
-    hset=(1.0, 2.0, 0.05),
+    filter_settings=(None, None),
+    hset_info=(1.0, 2.0, 0.05),
+    hset_accuracy=4,
 ):
     """
 
@@ -190,29 +194,46 @@ def irasa_sprint(  # noqa PLR0915 C901
 
     Parameters
     ----------
-    data : :py:class:˚numpy.ndarray˚, :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚
+    data : :py:class:˚numpy.ndarray˚
         The timeseries data used to extract aperiodic and periodic power spectra.
-        Can also be :py:class:˚mne.io.BaseRaw˚ in which case 'fs' and 'filter_settings' will be automatically extracted
-        or :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings',
-        'duration' and 'overlap' will be automatically extracted.
     fs : int
-        The sampling frequency of the data. Can be omitted
-        if data is :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚.
+        The sampling frequency of the data.
     band : tuple
         A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
+    freq_res : float
+        The desired frequency resolution in Hz.
+    smooth : bool
+        Whether or not to smooth the time-frequency data before computing IRASA
+        by averaging over adjacent fft bins using n_avgs.
+    n_avgs :  int
+        Number indicating the amount of fft bins to average across.
+    win_duration : float
+        The time width of window in seconds used to calculate the stffts.
+    hop : int
+        Time increment in signal samples for sliding window.
+    win_duration : float
+        The time width of window in seconds used to calculate the stffts.
+    win_func : :py:class:`scipy.signal.windows`
+        The desired window function. Can be any window function
+        specified in :py:class:`scipy.signal.windows`.
+        The default is `scipy.signal.windows.hann`.
+    win_func_kwargs: dict
+        A dictionary containing keyword arguments passed to win_func.
+    dpss_settings:
+        In case that you want to do multitapering using dpss
+        we added a "sensible" preconfiguration as `scipy.signal.windows.dpss`
+        requires more parameters than the window functions in :py:class:`scipy.signal.windows`.
+        To change the settings adjust the parameter `win_func_kwargs`.
     filter_settings : tuple
         A tuple containing the cut-off of the High- and Lowpass filter.
         It is highly advisable to set this correctly in order to avoid
         filter artifacts in your evaluated frequency range.
-        Can be omitted if data is :py:class:˚mne.io.BaseRaw˚ or :py:class:˚mne.io.BaseEpochs˚.
-    win_duration : float
-        The time width of window in seconds used to calculate the stffts.
-    win_func : :py:class:`scipy.signal.windows`
-        The desired window function. Can be any window specified in :py:class:`scipy.signal.windows`.
-        The default is multitapering via dpss with sensible preconfigurations.
-        To change the settings adjust the parameter `win_func_kwargs`.
-    win_func_kwargs: dict
-        A dictionary containing keyword arguments passed to win_func.
+    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
+        Contains information about the range of the up/downsampling factors.
+        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
+    hset_accuracy : int
+        floating point accuracy for the up/downsampling factor of the signal (default=4).
+
 
     Returns
     -------
@@ -235,20 +256,23 @@ def irasa_sprint(  # noqa PLR0915 C901
     """
 
     # set parameters
-    assert isinstance(hset, tuple), 'hset should be a tuple of (min, max, step)'
-    hset = np.round(np.arange(*hset), 4)
-    nyquist = fs / 2
-    hmax = np.max(hset)
-    band_evaluated = (band[0] / hmax, band[1] * hmax)
     if win_func_kwargs is None:
         win_func_kwargs = {}
 
-    # TODO: Add safety checks
+    # Safety checks
     assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
     assert data.ndim == 2, 'Data shape needs to be of shape (Channels, Samples).'  # noqa PLR2004
-    assert band[1] < nyquist, 'Upper band limit must be <  Nyquist (fs / 2).'
-    assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
-    assert band_evaluated[1] < nyquist, 'The evaluated frequency range is higher than Nyquist (fs / 2)'
+
+    irasa_params = {
+        'data': data,
+        'fs': fs,
+        'band': band,
+        'filter_settings': filter_settings,
+    }
+
+    _check_irasa_settings(irasa_params=irasa_params, hset_info=hset_info)
+
+    hset = np.round(np.arange(*hset_info), hset_accuracy)
 
     mfft = int(fs / freq_res)
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
