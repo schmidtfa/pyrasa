@@ -2,7 +2,7 @@ import shutil
 
 import numpy as np
 import pytest
-from neurodsp.sim import sim_combined, sim_knee, sim_powerlaw
+from neurodsp.sim import sim_combined, sim_knee, sim_oscillation, sim_powerlaw
 from neurodsp.utils.sim import set_random_seed
 
 from pyrasa.tests.test_settings import BASE_TEST_FILE_PATH, N_SECONDS
@@ -26,6 +26,11 @@ def fixed_aperiodic_signal(exponent, fs):
 @pytest.fixture(scope='session')
 def knee_aperiodic_signal(exponent, knee_freq, fs):
     yield sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq ** np.abs(exponent))
+
+
+@pytest.fixture(scope='session')
+def oscillation(osc_freq, fs):
+    yield sim_oscillation(n_seconds=N_SECONDS, fs=fs, freq=osc_freq)
 
 
 @pytest.fixture(scope='session', autouse=True)
