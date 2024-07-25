@@ -2,8 +2,9 @@ import numpy as np
 import pytest
 import scipy.signal as dsp
 
-from pyrasa.tests.test_settings import EXPONENT, FS, TOLERANCE
 from pyrasa.utils.aperiodic_utils import compute_slope
+
+from .settings import EXPONENT, FS, TOLERANCE
 
 
 # Test slope fitting functionality
