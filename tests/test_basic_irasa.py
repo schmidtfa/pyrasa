@@ -7,8 +7,11 @@ from pyrasa.tests.test_settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ,
 from pyrasa.utils.aperiodic_utils import compute_slope
 from pyrasa.utils.peak_utils import get_peak_params
 
-
 # Estimate periodic and aperiodic components with IRASA
+# These tests should cover the basic functionality of the IRASA workflow
+
+
+# fixed slope
 @pytest.mark.parametrize('exponent', EXPONENT, scope='session')
 @pytest.mark.parametrize('osc_freq', OSC_FREQ, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
