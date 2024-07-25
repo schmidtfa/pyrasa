@@ -14,7 +14,7 @@ permissions:
   checks: write
 jobs:
   test:
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: prefix-dev/setup-pixi@v0.8.0
