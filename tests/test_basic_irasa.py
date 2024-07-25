@@ -3,9 +3,10 @@ import pytest
 import scipy.signal as dsp
 
 from pyrasa import irasa
-from pyrasa.tests.test_settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 from pyrasa.utils.aperiodic_utils import compute_slope
 from pyrasa.utils.peak_utils import get_peak_params
+
+from .settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 
 # Estimate periodic and aperiodic components with IRASA
 # These tests should cover the basic functionality of the IRASA workflow

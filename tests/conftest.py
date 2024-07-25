@@ -5,7 +5,7 @@ import pytest
 from neurodsp.sim import sim_combined, sim_knee, sim_oscillation, sim_powerlaw
 from neurodsp.utils.sim import set_random_seed
 
-from pyrasa.tests.test_settings import BASE_TEST_FILE_PATH, N_SECONDS
+from .settings import BASE_TEST_FILE_PATH, N_SECONDS
 
 
 def pytest_configure(config):

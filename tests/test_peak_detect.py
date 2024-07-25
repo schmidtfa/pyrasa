@@ -2,8 +2,9 @@ import numpy as np
 import pytest
 import scipy.signal as dsp
 
-from pyrasa.tests.test_settings import FS, MANY_OSC_FREQ
 from pyrasa.utils.peak_utils import get_peak_params
+
+from .settings import FS, MANY_OSC_FREQ
 
 
 # Test slope fitting functionality
