@@ -23,3 +23,5 @@ jobs:
           cache: true
       - run: pixi run lint_ci
       - run: pixi run test
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
