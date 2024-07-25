@@ -87,6 +87,8 @@ extend-select = [
 ]
 ignore = ['PLR0913']
 
-
 [tool.ruff.format]
 quote-style = 'single'
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
