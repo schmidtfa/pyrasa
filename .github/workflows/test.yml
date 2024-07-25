@@ -1,0 +1,16 @@
+name: Run pytest tests
+on: [push, pull_request]
+permissions:
+    contents: read
+    pull-requests: read
+    checks: write
+jobs:
+  test:
+    runs-on: debian-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.0
+        with:
+          pixi_version: latest
+          cache: true
+      - run: pixi run test
