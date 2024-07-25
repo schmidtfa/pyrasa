@@ -70,7 +70,7 @@ tag_sign = false
 
 [tool.ruff]
 line-length = 120
-exclude = ['simulations', 'examples']
+exclude = ['simulations', 'examples', 'paper']
 
 [tool.ruff.lint]
 extend-select = [
