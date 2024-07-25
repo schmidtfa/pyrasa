@@ -1,5 +1,5 @@
 ---
-title: PyRASA - Spectral parameterization in python based on IRASA
+title: 'PyRASA - Spectral parameterization in python based on IRASA'
 tags:
     - Python
     - spectral parametrization
@@ -14,11 +14,12 @@ tags:
     - MEG
 authors:
     - name: Fabian Schmidt
+      corresponding: true
       orcid: 0000-0002-9839-1614
-      affiliation: "1"
+      affiliation: 1
     - name: Thomas Hartmann
       orcid: 0000-0002-8298-8125
-      affiliation: "1"
+      affiliation: 1
     - name: Nathan Weisz
       orcid: 0000-0001-7816-0037
       affiliation: "1, 2"
