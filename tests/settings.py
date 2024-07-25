@@ -16,6 +16,5 @@ MIN_CORR_PSD_CMB = 0.99
 
 # Path Settings
 TESTS_PATH = Path(__file__).parent.absolute()
-BASE_TEST_FILE_PATH = TESTS_PATH / 'test_files'
 
 # %%

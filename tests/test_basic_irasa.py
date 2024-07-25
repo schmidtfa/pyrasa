@@ -3,7 +3,6 @@ import pytest
 import scipy.signal as dsp
 
 from pyrasa import irasa
-
 from pyrasa.utils.aperiodic_utils import compute_slope
 from pyrasa.utils.peak_utils import get_peak_params
 
