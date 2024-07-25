@@ -1,4 +1,5 @@
 import fractions
+from collections.abc import Callable
 
 import numpy as np
 import scipy.signal as dsp
@@ -9,7 +10,15 @@ from pyrasa.utils.irasa_utils import _check_irasa_settings, _crop_data, _find_ne
 
 
 # TODO: Port to Cython
-def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None):
+def _gen_irasa(
+    data: np.ndarray,
+    orig_spectrum: np.ndarray,
+    fs: int,
+    irasa_fun: Callable,
+    hset: np.ndarray,
+    irasa_kwargs: dict,
+    time=None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function is implementing the IRASA algorithm using a custom function to
     compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
@@ -50,7 +59,15 @@ def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None
 
 
 # %% irasa
-def irasa(data, fs, band, irasa_kwargs, filter_settings=(None, None), hset_info=(1.05, 2.0, 0.05), hset_accuracy=4):
+def irasa(
+    data: np.ndarray,
+    fs: int,
+    band: tuple[float, float],
+    irasa_kwargs: dict,
+    filter_settings: tuple[float | None, float | None] = (None, None),
+    hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
+    hset_accuracy: int = 4,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function can be used to generate aperiodic and periodic power spectra from a time series
     using the IRASA algorithm (Wen & Liu, 2016).
@@ -170,23 +187,23 @@ def irasa(data, fs, band, irasa_kwargs, filter_settings=(None, None), hset_info=
 
 # irasa sprint
 def irasa_sprint(  # noqa PLR0915 C901
-    data,
-    fs,
-    band=(1, 100),
-    freq_res=0.5,
-    smooth=True,
-    n_avgs=1,
-    win_duration=0.4,
-    hop=10,
-    win_func=dsp.windows.hann,
-    win_func_kwargs=None,
-    dpss_settings_time_bandwidth=2,
-    dpss_settings_low_bias=True,
-    dpss_eigenvalue_weighting=True,
-    filter_settings=(None, None),
-    hset_info=(1.0, 2.0, 0.05),
-    hset_accuracy=4,
-):
+    data: np.ndarray,
+    fs: int,
+    band: tuple[float, float] = (1.0, 100.0),
+    freq_res: float = 0.5,
+    smooth: bool = True,
+    n_avgs: int = 1,
+    win_duration: float = 0.4,
+    hop: int = 10,
+    win_func: Callable = dsp.windows.hann,
+    win_func_kwargs: dict | None = None,
+    dpss_settings_time_bandwidth: float = 2.0,
+    dpss_settings_low_bias: bool = True,
+    dpss_eigenvalue_weighting: bool = True,
+    filter_settings: tuple[float | None, float | None] = (None, None),
+    hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
+    hset_accuracy: int = 4,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
 
     This function can be used to seperate aperiodic from periodic power spectra

@@ -1,6 +1,7 @@
 """Utilities for slope fitting."""
 
 import warnings
+from collections.abc import Callable, Iterable
 
 import numpy as np
 import pandas as pd
@@ -29,7 +30,7 @@ def knee_model(x, b0, k, b1, b2):
     return y_hat
 
 
-def _get_gof(psd, psd_pred, fit_func):
+def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: Callable) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
@@ -54,7 +55,9 @@ def _get_gof(psd, psd_pred, fit_func):
     return gof
 
 
-def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_factor=1):
+def _compute_slope(
+    aperiodic_spectrum: np.ndarray, freq: np.ndarray, fit_func: str, fit_bounds: tuple | None = None, scale_factor=1
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
     curv_kwargs = {
@@ -124,7 +127,14 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
     return params, gof
 
 
-def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False, fit_bounds=None):
+def compute_slope(
+    aperiodic_spectrum: np.ndarray,
+    freqs: np.ndarray,
+    fit_func: str,
+    ch_names: Iterable = [],
+    scale: bool = False,
+    fit_bounds: tuple[float, float] | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -215,16 +225,25 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False,
     return df_aps, df_gof
 
 
-def compute_slope_sprint(aperiodic_spectrum, freqs, times, fit_func, ch_names=[], fit_bounds=None):
+def compute_slope_sprint(
+    aperiodic_spectrum: np.ndarray,
+    freqs: np.ndarray,
+    times: np.ndarray,
+    fit_func: str,
+    ch_names: Iterable = [],
+    fit_bounds: tuple[float, float] | None = None,
+):
     """
-    This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+    This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
     as well as the respective goodness of fit.
 
     Parameters: aperiodic_spectrum : 2d array
-                    Power values for the aeriodic spectrum extracted using IRASA shape (channel x frequency)
+                    Power values for the aeriodic spectrogram extracted using IRASA shape (channel x frequency)
                 freqs : 1d array
-                    Frequency values for the aperiodic spectrum
+                    Frequency values for the aperiodic spectrogram
+                times : 1d array
+                    time values for the aperiodic spectrogram
                 fit_func : string
                     Can be either "fixed" or "knee".
                 ch_names : list, optional, default: []
