@@ -70,7 +70,7 @@ tag_sign = false
 
 [tool.ruff]
 line-length = 120
-exclude = ['simulations', 'examples']
+exclude = ['simulations', 'examples', 'paper']
 
 [tool.ruff.lint]
 extend-select = [
@@ -87,6 +87,8 @@ extend-select = [
 ]
 ignore = ['PLR0913']
 
-
 [tool.ruff.format]
 quote-style = 'single'
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
