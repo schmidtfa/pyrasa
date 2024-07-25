@@ -23,10 +23,10 @@ __pycache__
 *.ipynb_checkpoints*
 
 # Ignore files generated for the related paper
-paper/jobs
-paper/data
-paper/results
-paper/old
+simulations/jobs
+simulations/data
+simulations/results
+simulations/old
 
 .venv
 .pixi

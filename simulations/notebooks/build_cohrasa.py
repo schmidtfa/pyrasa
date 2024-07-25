@@ -2,14 +2,14 @@ import numpy as np
 import scipy.signal as dsp
 import fractions
 
-#%%cohrasa
+
+# %%cohrasa
 def cohrasa(x, y, fs, hset, kwargs_psd):
-
-    '''
+    """
     Function to compute irasa for coherence data - Cohrasa
-    '''
+    """
 
-    #TODO: add safety checks
+    # TODO: add safety checks
 
     # Calculate the original coherence over the whole data
     freq, cxy = dsp.coherence(x, y, fs=fs, **kwargs_psd)
@@ -34,11 +34,11 @@ def cohrasa(x, y, fs, hset, kwargs_psd):
         # Geometric mean of h and 1/h
         cxys[i, :] = np.sqrt(coh_up * coh_down)
 
-    #median resampled data
+    # median resampled data
     Cxy_aperiodic = np.median(cxys, axis=0)
     Cxy_periodic = np.abs(cxy - Cxy_aperiodic)
 
     return Cxy_periodic, Cxy_aperiodic, freq
 
 
-#%% temporal cohrasa
+# %% temporal cohrasa
