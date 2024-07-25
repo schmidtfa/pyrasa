@@ -39,3 +39,4 @@ dist
 .ruff_cache# pixi environments
 .pixi
 *.egg-info
+*.lcov

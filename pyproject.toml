@@ -44,7 +44,7 @@ seaborn = ">=0.13.2,<0.14"
 matplotlib = ">=3.9.1,<3.10"
 
 [tool.pixi.tasks]
-test = "pytest --cov=plus_sync --cov-report=lcov"
+test = "pytest --cov=pyrasa --cov-report=lcov"
 lint = "ruff format && ruff check --fix"
 lint_ci = "ruff check"
 
@@ -70,7 +70,7 @@ tag_sign = false
 
 [tool.ruff]
 line-length = 120
-exclude = ['simulations', 'examples']
+exclude = ['simulations', 'examples', 'paper']
 
 [tool.ruff.lint]
 extend-select = [
@@ -87,6 +87,8 @@ extend-select = [
 ]
 ignore = ['PLR0913']
 
-
 [tool.ruff.format]
 quote-style = 'single'
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
