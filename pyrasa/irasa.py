@@ -134,20 +134,23 @@ def irasa(
 
     # Calculate original spectrum
     def _compute_psd_welch(
-        data,
-        fs,
-        window='hann',
-        nperseg=None,
-        noverlap=None,
-        nfft=None,
-        detrend='constant',
-        return_onesided=True,
-        scaling='density',
-        axis=-1,
-        average='mean',
-        spectrum_only=False,
-        **irasa_kwargs,
-    ):
+        data: np.ndarray,
+        fs: int,
+        window: str = 'hann',
+        nperseg: int | None = None,
+        noverlap: int | None = None,
+        nfft: int | None = None,
+        detrend: str = 'constant',
+        return_onesided: bool = True,
+        scaling: str = 'density',
+        axis: int = -1,
+        average: str = 'mean',
+        spectrum_only: bool = False,
+        h: float | None = None,
+        time_orig: np.ndarray | None = None,
+        up_down: str | None = None,
+        # **irasa_kwargs ,
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Function to compute power spectral densities using welchs method"""
 
         freq, psd = dsp.welch(
@@ -313,26 +316,26 @@ def irasa_sprint(  # noqa PLR0915 C901
     }
 
     def _compute_sgramm(  # noqa C901
-        x,
-        fs,
-        mfft,
-        hop,
-        win_duration,
-        dpss_settings,
-        win_kwargs,
-        up_down=None,
-        h=None,
-        time_orig=None,
-        smooth=True,
-        n_avgs=3,
-        spectrum_only=False,
-    ):
+        x: np.ndarray,
+        fs: int,
+        mfft: int,
+        hop: int,
+        win_duration: float,
+        dpss_settings: dict,
+        win_kwargs: dict,
+        up_down: str | None = None,
+        h: int | None = None,
+        time_orig: np.ndarray | None = None,
+        smooth: bool = True,
+        n_avgs: int = 3,
+        spectrum_only: bool = False,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
         """Function to compute spectrograms"""
 
-        def _moving_average(x, w):
+        def _moving_average(x: np.ndarray, w: int) -> np.ndarray:
             return np.convolve(x, np.ones(w), 'valid') / w
 
-        def sgramm_smoother(sgramm, n_avgs):
+        def sgramm_smoother(sgramm: np.ndarray, n_avgs: int) -> np.ndarray:
             return np.array([_moving_average(sgramm[freq, :], w=n_avgs) for freq in range(sgramm.shape[0])])
 
         if h is None:

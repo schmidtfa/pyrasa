@@ -98,4 +98,4 @@ testpaths = ["tests"]
 
 [tool.mypy]
 disable_error_code = "import-untyped"
-disallow_untyped_defs = false
+disallow_untyped_defs = true
