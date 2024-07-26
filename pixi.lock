@@ -18540,7 +18540,7 @@ packages:
   name: pyrasa
   version: 0.1.0.dev0
   path: .
-  sha256: 5b422129b8fc58d38ea530dcd96891fef58646ace9445a2a46c0749bc40c8cab
+  sha256: d463cad55b7c51c42ade0e2609ecf828d74f75ab92b4e1e726570e2f3db3da70
   requires_dist:
   - numpy
   - pandas
