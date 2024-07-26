@@ -11,7 +11,7 @@ import scipy.signal as dsp
 def get_peak_params(
     periodic_spectrum: np.ndarray,
     freqs: np.ndarray,
-    ch_names: Iterable = (),
+    ch_names: Iterable | None = None,
     smooth: bool = True,
     smoothing_window: int = 1,
     polyorder: int = 1,
@@ -57,7 +57,7 @@ def get_peak_params(
     freq_step = freqs[1] - freqs[0]
 
     # generate channel names if not given
-    if len(ch_names) == 0:
+    if ch_names is None:
         ch_names = np.arange(periodic_spectrum.shape[0])
 
     # cut data

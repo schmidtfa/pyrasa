@@ -1,7 +1,7 @@
 """Utilities for slope fitting."""
 
 import warnings
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -30,7 +30,7 @@ def knee_model(x, b0, k, b1, b2):
     return y_hat
 
 
-def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: Callable) -> tuple[pd.DataFrame, pd.DataFrame]:
+def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
     """
     get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
@@ -79,8 +79,6 @@ def _compute_slope(
 
     if fit_func == 'fixed':
         fit_f = fixed_model
-        curv_kwargs['p0'] = np.array(off_guess + exp_guess)
-        curv_kwargs['bounds'] = np.array([(0, 0), (np.inf, np.inf)])
 
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum))
 
@@ -95,16 +93,17 @@ def _compute_slope(
         psd_pred = fit_f(freq, *p)
 
     elif fit_func == 'knee':
-        fit_f = knee_model
+        fit_f = knee_model  # type: ignore
         # curve_fit_specs
         cumsum_psd = np.cumsum(aperiodic_spectrum)
         half_pw_freq = freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
         # make the knee guess the point where we have half the power in the spectrum seems plausible to me
         knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])]
         # convert knee freq to knee val which should be 2*exp_1 but this seems good enough
-        curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)
+        curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)  # type: ignore
         # print(curv_kwargs['p0'])
-        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf))  # make this optional
+        # make this optional
+        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf))  # type: ignore
         # knee value should always be positive at least intuitively
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
 
