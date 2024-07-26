@@ -11,7 +11,7 @@ import scipy.signal as dsp
 def get_peak_params(
     periodic_spectrum: np.ndarray,
     freqs: np.ndarray,
-    ch_names: Iterable = [],
+    ch_names: Iterable = (),
     smooth: bool = True,
     smoothing_window: int = 1,
     polyorder: int = 1,
@@ -118,7 +118,7 @@ def get_peak_params_sprint(
     periodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     times: np.ndarray,
-    ch_names: Iterable = [],
+    ch_names: Iterable = (),
     smooth: bool = True,
     smoothing_window: int = 1,
     polyorder: int = 1,

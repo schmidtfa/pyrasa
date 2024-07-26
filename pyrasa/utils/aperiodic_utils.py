@@ -131,7 +131,7 @@ def compute_slope(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     fit_func: str,
-    ch_names: Iterable = [],
+    ch_names: Iterable = (),
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -230,7 +230,7 @@ def compute_slope_sprint(
     freqs: np.ndarray,
     times: np.ndarray,
     fit_func: str,
-    ch_names: Iterable = [],
+    ch_names: Iterable = (),
     fit_bounds: tuple[float, float] | None = None,
 ):
     """

@@ -17,7 +17,7 @@ def _gen_irasa(
     irasa_fun: Callable,
     hset: np.ndarray,
     irasa_kwargs: dict,
-    time=None,
+    time: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function is implementing the IRASA algorithm using a custom function to
