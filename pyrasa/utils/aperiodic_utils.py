@@ -45,7 +45,7 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFra
     if fit_func == 'knee':
         k = 3  # k -> number of params
     elif fit_func == 'fixed':
-        k = 1
+        k = 1  # k -> number of params
 
     n = len(psd)
     bic = n * np.log(mse) + k * np.log(n)
