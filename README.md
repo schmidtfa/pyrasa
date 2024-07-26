@@ -1,7 +1,7 @@
 ## PyRASA
 
 [![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
-
+[![Coverage Status](https://coveralls.io/repos/github/schmidtfa/pyrasa/badge.svg?branch=main)](https://coveralls.io/github/schmidtfa/pyrasa?branch=main)
 
 
 Pyrasa is a repository that is build around the IRASA algorithm (Wen & Liu, 2016) to parametrize power and coherence spectra.
