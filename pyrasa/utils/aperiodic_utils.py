@@ -79,8 +79,6 @@ def _compute_slope(
 
     if fit_func == 'fixed':
         fit_f = fixed_model
-        curv_kwargs['p0'] = np.array(off_guess + exp_guess)
-        curv_kwargs['bounds'] = np.array([(0, 0), (np.inf, np.inf)])
 
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum))
 
