@@ -21,6 +21,8 @@ jobs:
         with:
           pixi-version: latest
           cache: true
+          locked: false
+          frozen: false
       - run: pixi run lint_ci
       - run: pixi run test
       - name: Coveralls
@@ -33,6 +35,8 @@ jobs:
         with:
           pixi-version: latest
           cache: true
+          locked: false
+          frozen: false
       - run: pixi run lint_ci
   type_check:
     runs-on: ubuntu-latest
@@ -42,4 +46,6 @@ jobs:
         with:
           pixi-version: latest
           cache: true
+          locked: false
+          frozen: false
       - run: pixi run -e mne check_types
