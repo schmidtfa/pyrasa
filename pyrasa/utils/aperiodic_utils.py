@@ -1,7 +1,7 @@
 """Utilities for slope fitting."""
 
 import warnings
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -30,7 +30,7 @@ def knee_model(x, b0, k, b1, b2):
     return y_hat
 
 
-def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: Callable) -> tuple[pd.DataFrame, pd.DataFrame]:
+def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
     """
     get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
