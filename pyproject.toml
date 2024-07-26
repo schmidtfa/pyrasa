@@ -98,4 +98,8 @@ testpaths = ["tests"]
 
 [tool.mypy]
 disable_error_code = "import-untyped"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "pyrasa.*"
 disallow_untyped_defs = true
