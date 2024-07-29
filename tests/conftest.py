@@ -3,7 +3,7 @@ import pytest
 from neurodsp.sim import sim_combined, sim_knee, sim_oscillation, sim_powerlaw
 from neurodsp.utils.sim import set_random_seed
 
-from .settings import KNEE_FREQ, N_SECONDS
+from .settings import N_SECONDS
 
 # def pytest_configure(config):
 set_random_seed(42)
@@ -21,8 +21,8 @@ def fixed_aperiodic_signal(exponent, fs):
 
 
 @pytest.fixture(scope='session')
-def knee_aperiodic_signal(exponent, fs):
-    yield sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=KNEE_FREQ ** np.abs(exponent))
+def knee_aperiodic_signal(exponent, fs, knee_freq):
+    yield sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq ** np.abs(exponent))
 
 
 @pytest.fixture(scope='session')
