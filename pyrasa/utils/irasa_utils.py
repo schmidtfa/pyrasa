@@ -35,10 +35,11 @@ def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: flo
 
     idx = (np.abs(time_array - time_value)).argmin()
 
-    if sgramm_ud.shape[2] >= idx:
-        idx = idx - 1
+    if idx < sgramm_ud.shape[2]:
+        sgramm_sel = sgramm_ud[:, :, idx]
 
-    sgramm_sel = sgramm_ud[:, :, idx]
+    elif idx == sgramm_ud.shape[2]:
+        sgramm_sel = sgramm_ud[:, :, idx - 1]
 
     return sgramm_sel
 
@@ -48,14 +49,14 @@ def _get_windows(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Generate a window function used for tapering"""
     low_bias_ratio = 0.9
-    max_time_bandwidth = 2.0
+    min_time_bandwidth = 2.0
     win_func_kwargs = copy(win_func_kwargs)
 
     # special settings in case multitapering is required
     if win_func == dsp.windows.dpss:
         time_bandwidth = dpss_settings['time_bandwidth']
-        if time_bandwidth < max_time_bandwidth:
-            raise ValueError(f'time_bandwidth should be >= {max_time_bandwidth} for good tapers')
+        if time_bandwidth > min_time_bandwidth:
+            raise ValueError(f'time_bandwidth should be >= {min_time_bandwidth} for good tapers')
 
         n_taps = int(np.floor(time_bandwidth - 1))
         win_func_kwargs.update(

@@ -5,8 +5,8 @@ from typing import TypedDict
 import numpy as np
 import scipy.signal as dsp
 from scipy.signal import ShortTimeFFT
-from scipy.stats.mstats import gmean
 
+# from scipy.stats.mstats import gmean
 from pyrasa.utils.irasa_utils import _check_irasa_settings, _crop_data, _find_nearest, _gen_time_from_sft, _get_windows
 
 
@@ -176,7 +176,7 @@ def irasa(
     freq, psd = _compute_psd_welch(data, fs=fs, **irasa_kwargs)
 
     psd, psd_aperiodic, psd_periodic = _gen_irasa(
-        data=data,
+        data=np.squeeze(data),
         orig_spectrum=psd,
         fs=fs,
         irasa_fun=_compute_psd_welch,
@@ -195,8 +195,8 @@ def irasa_sprint(  # noqa PLR0915 C901
     fs: int,
     band: tuple[float, float] = (1.0, 100.0),
     freq_res: float = 0.5,
-    smooth: bool = True,
-    n_avgs: list = [1],
+    # smooth: bool = True,
+    # n_avgs: list = [1],
     win_duration: float = 0.4,
     hop: int = 10,
     win_func: Callable = dsp.windows.hann,
@@ -312,8 +312,8 @@ def irasa_sprint(  # noqa PLR0915 C901
         dpss_settings: dict
         win_kwargs: dict
         time_orig: None | np.ndarray
-        smooth: bool
-        n_avgs: list
+        # smooth: bool
+        # n_avgs: list
 
     irasa_kwargs: IrasaKwargsTyped = {
         'mfft': mfft,
@@ -324,8 +324,8 @@ def irasa_sprint(  # noqa PLR0915 C901
         'dpss_settings': dpss_settings,
         'win_kwargs': win_kwargs,
         'time_orig': None,
-        'smooth': smooth,
-        'n_avgs': n_avgs,
+        #'smooth': smooth,
+        #'n_avgs': n_avgs,
     }
 
     def _compute_sgramm(  # noqa C901
@@ -339,17 +339,11 @@ def irasa_sprint(  # noqa PLR0915 C901
         up_down: str | None = None,
         h: int | None = None,
         time_orig: np.ndarray | None = None,
-        smooth: bool = True,
-        n_avgs: list = [3],
+        # smooth: bool = True,
+        # n_avgs: list = [3],
         spectrum_only: bool = False,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
         """Function to compute spectrograms"""
-
-        def _moving_average(x: np.ndarray, w: int) -> np.ndarray:
-            return np.convolve(x, np.ones(w), 'valid') / w
-
-        def sgramm_smoother(sgramm: np.ndarray, n_avgs: int) -> np.ndarray:
-            return np.array([_moving_average(sgramm[freq, :], w=n_avgs) for freq in range(sgramm.shape[0])])
 
         if h is None:
             nperseg = int(np.floor(fs * win_duration))
@@ -374,18 +368,23 @@ def irasa_sprint(  # noqa PLR0915 C901
             weighted_sgramms = [ratios[ix] * cur_sgramm for ix, cur_sgramm in enumerate(sgramms)]
             sgramm = np.sum(weighted_sgramms, axis=0) / np.sum(ratios)
 
-        if smooth:
-            avgs = []
+        # TODO: smoothing doesnt work properly
+        # if smooth:
+        #     avgs = []
+        # def _moving_average(x: np.ndarray, w: int) -> np.ndarray:
+        #     return np.convolve(x, np.ones(w), 'valid') / w
 
-            n_avgs_r = n_avgs[::-1]
-            for avg, avg_r in zip(n_avgs, n_avgs_r):
-                sgramm_fwd = sgramm_smoother(sgramm=np.squeeze(sgramm), n_avgs=avg)[:, avg_r:]
-                sgramm_bwd = sgramm_smoother(sgramm=np.squeeze(sgramm)[:, ::-1], n_avgs=avg)[:, ::-1][:, avg_r:]
-                sgramm_n = gmean([sgramm_fwd, sgramm_bwd], axis=0)
-                avgs.append(sgramm_n)
+        # def sgramm_smoother(sgramm: np.ndarray, n_avgs: int) -> np.ndarray:
+        #     return np.array([_moving_average(sgramm[freq, :], w=n_avgs) for freq in range(sgramm.shape[0])])
+        #     n_avgs_r = n_avgs[::-1]
+        #     for avg, avg_r in zip(n_avgs, n_avgs_r):
+        #         sgramm_fwd = sgramm_smoother(sgramm=np.squeeze(sgramm), n_avgs=avg)[:, avg_r:]
+        #         sgramm_bwd = sgramm_smoother(sgramm=np.squeeze(sgramm)[:, ::-1], n_avgs=avg)[:, ::-1][:, avg_r:]
+        #         sgramm_n = gmean([sgramm_fwd, sgramm_bwd], axis=0)
+        #         avgs.append(sgramm_n)
 
-            sgramm = np.median(avgs, axis=0)
-            sgramm = sgramm[np.newaxis, :, :]
+        #     sgramm = np.median(avgs, axis=0)
+        #     sgramm = sgramm[np.newaxis, :, :]
 
         time = _gen_time_from_sft(SFT, x)
         freq = SFT.f[SFT.f > 0]

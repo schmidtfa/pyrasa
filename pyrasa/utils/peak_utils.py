@@ -89,8 +89,8 @@ def get_peak_params(
             height=[filtered_spectrum[ix].min(), filtered_spectrum[ix].max()],
             width=peak_width_limits / freq_step,  # in frequency in hz
             prominence=peak_threshold * np.std(filtered_spectrum[ix]),  # threshold in sd
-            rel_height=0.75,
-        )  # relative peak height based on width
+            rel_height=0.75,  # relative peak height based on width
+        )
 
         peak_list.append(
             pd.DataFrame(
@@ -103,10 +103,14 @@ def get_peak_params(
             )
         )
     # combine & return
-    df_peaks = pd.concat(peak_list)
-
-    # filter for peakheight
-    df_peaks = df_peaks.query(f'pw > {min_peak_height}')
+    if len(peak_list) >= 1:
+        df_peaks = pd.concat(peak_list)
+        # filter for peakheight
+        df_peaks = df_peaks.query(f'pw > {min_peak_height}')
+    else:
+        df_peaks = pd.DataFrame({'ch_name': ch_names, 'cf': np.nan, 'bw': 0, 'pw': 0})
+        # 0 is reasonable for power and bandwidth as "no" peaks are detected
+        # therefore no power and bandwidth
 
     return df_peaks
 
@@ -118,14 +122,14 @@ def get_peak_params_sprint(
     periodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     times: np.ndarray,
-    ch_names: Iterable = (),
+    ch_names: Iterable | None = None,
     smooth: bool = True,
-    smoothing_window: int | float = 1,
+    smoothing_window: int | float = 2,
     polyorder: int = 1,
     cut_spectrum: tuple[float, float] | None = None,
     peak_threshold: int | float = 1,
     min_peak_height: float = 0.01,
-    peak_width_limits: tuple[float, float] = (0.5, 6),
+    peak_width_limits: tuple[float, float] = (0.5, 12),
 ) -> pd.DataFrame:
     """
     This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
