@@ -186,10 +186,13 @@ def compute_slope(
         assert fit_bounds[0] < fmax, f'The selected upper bound is higher than the highest frequency of {fmax}Hz'
 
     if freqs[0] == 0:
-        warnings.warn(f'The first frequency appears to be 0 this will result in slope fitting problems. \
-                        Frequencies will be evaluated starting from the next highest, which is {freqs[1]}Hz')
+        warnings.warn(
+            'The first frequency appears to be 0 this will result in slope fitting problems. '
+            + 'Frequencies will be evaluated starting from the next highest in Hz'
+        )
+        # , which is {freqs[1]}Hz')
         freqs = freqs[1:]
-        aperiodic_spectrum = aperiodic_spectrum[1:]
+        aperiodic_spectrum = aperiodic_spectrum[:, 1:]
 
     # generate channel names if not given
     if len(ch_names) == 0:
