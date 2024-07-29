@@ -1,5 +1,7 @@
+import mne
 import numpy as np
 import pytest
+from mne.datasets import sample
 from neurodsp.sim import sim_combined, sim_knee, sim_oscillation, sim_powerlaw
 from neurodsp.utils.sim import set_random_seed
 
@@ -56,3 +58,67 @@ def ts4sprint():
         ]
     )
     yield sim_ts
+
+
+@pytest.fixture(scope='session')
+def gen_mne_data_raw():
+    data_path = sample.data_path()
+    # subjects_dir = data_path / 'subjects'
+    # subject = 'sample'
+
+    meg_path = data_path / 'MEG' / 'sample'
+    raw_fname = meg_path / 'sample_audvis_raw.fif'
+    # fwd_fname = meg_path / 'sample_audvis-meg-eeg-oct-6-fwd.fif'
+    # fwd = mne.read_forward_solution(fwd_fname)
+    # src = fwd['src']
+
+    raw = mne.io.read_raw_fif(raw_fname)
+    picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')
+    raw.pick(picks)
+
+    yield raw
+
+
+@pytest.fixture(scope='session')
+def gen_mne_data_epoched():
+    data_path = sample.data_path()
+    # subjects_dir = data_path / 'subjects'
+    # subject = 'sample'
+
+    meg_path = data_path / 'MEG' / 'sample'
+    raw_fname = meg_path / 'sample_audvis_raw.fif'
+    # fwd_fname = meg_path / 'sample_audvis-meg-eeg-oct-6-fwd.fif'
+    # fwd = mne.read_forward_solution(fwd_fname)
+    # src = fwd['src']
+
+    raw = mne.io.read_raw_fif(raw_fname)
+    picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')
+    raw.pick(picks)
+
+    # % now lets check-out the events
+    event_id = {
+        'Auditory/Left': 1,
+        'Auditory/Right': 2,
+        'Visual/Left': 3,
+        'Visual/Right': 4,
+    }
+    tmin = -0.2
+    tmax = 0.5
+
+    # Load real data as the template
+    event_fname = meg_path / 'sample_audvis_filt-0-40_raw-eve.fif'
+    events = mne.read_events(event_fname)
+
+    epochs = mne.Epochs(
+        raw,
+        events,
+        event_id,
+        tmin,
+        tmax,
+        # picks=picks,
+        baseline=None,
+        preload=True,
+        verbose=False,
+    )
+
+    yield epochs
