@@ -95,7 +95,7 @@ quote-style = 'single'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = --ignore=pyrasa/__version__.py
+addopts = "--ignore=__version__.py"
 
 [tool.mypy]
 disable_error_code = "import-untyped"
