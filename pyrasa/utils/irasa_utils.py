@@ -49,14 +49,14 @@ def _get_windows(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Generate a window function used for tapering"""
     low_bias_ratio = 0.9
-    max_time_bandwidth = 2.0
+    min_time_bandwidth = 2.0
     win_func_kwargs = copy(win_func_kwargs)
 
     # special settings in case multitapering is required
     if win_func == dsp.windows.dpss:
         time_bandwidth = dpss_settings['time_bandwidth']
-        if time_bandwidth < max_time_bandwidth:
-            raise ValueError(f'time_bandwidth should be >= {max_time_bandwidth} for good tapers')
+        if time_bandwidth > min_time_bandwidth:
+            raise ValueError(f'time_bandwidth should be >= {min_time_bandwidth} for good tapers')
 
         n_taps = int(np.floor(time_bandwidth - 1))
         win_func_kwargs.update(

@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from neurodsp.utils.sim import set_random_seed
 
 from pyrasa.irasa import irasa_sprint
@@ -80,7 +81,7 @@ def test_irasa_sprint_settings(ts4sprint):
     # test dpss
     import scipy.signal as dsp
 
-    sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
+    irasa_sprint(
         ts4sprint[np.newaxis, :],
         fs=500,
         band=(1, 100),
@@ -89,3 +90,16 @@ def test_irasa_sprint_settings(ts4sprint):
         # smooth=False,
         # n_avgs=[3, 7, 11],
     )
+
+    # test too much bandwidht
+    with pytest.raises(ValueError):
+        irasa_sprint(
+            ts4sprint[np.newaxis, :],
+            fs=500,
+            band=(1, 100),
+            win_func=dsp.windows.dpss,
+            dpss_settings_time_bandwidth=1,
+            freq_res=0.5,
+            # smooth=False,
+            # n_avgs=[3, 7, 11],
+        )

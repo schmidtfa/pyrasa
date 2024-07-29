@@ -24,6 +24,18 @@ def test_peak_detection(oscillation, fs, osc_freq):
     assert bool(np.isclose(pe_filt['cf'][0], osc_freq, atol=2))
 
 
+@pytest.mark.parametrize('fs, exponent', [(500, -1)], scope='session')
+def test_no_peak_detection(fixed_aperiodic_signal, fs):
+    f_range = [1, 250]
+    # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
+    freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
+    freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
+    freqs, psd = freqs[freq_logical], psd[freq_logical]
+    # test whether we can reconstruct the peaks correctly
+    pe_params = get_peak_params(psd[np.newaxis, :], freqs, min_peak_height=0.1)
+    assert pe_params.shape[0] == 0
+
+
 @pytest.mark.parametrize('osc_freq, fs', [(10, 500)], scope='session')
 def test_peak_detection_setings(oscillation, fs, osc_freq):
     f_range = [1, 250]
