@@ -8,7 +8,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 
-def fixed_model(x, b0, b):
+def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
     """
     Specparams fixed fitting function.
     Use this to model aperiodic activity without a spectral knee
@@ -19,7 +19,7 @@ def fixed_model(x, b0, b):
     return y_hat
 
 
-def knee_model(x, b0, k, b1, b2):
+def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.ndarray:
     """
     Model aperiodic activity with a spectral knee and a pre-knee slope.
     Use this to model aperiodic activity with a spectral knee
@@ -56,7 +56,11 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFra
 
 
 def _compute_slope(
-    aperiodic_spectrum: np.ndarray, freq: np.ndarray, fit_func: str, fit_bounds: tuple | None = None, scale_factor=1
+    aperiodic_spectrum: np.ndarray,
+    freq: np.ndarray,
+    fit_func: str,
+    fit_bounds: tuple | None = None,
+    scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
@@ -193,7 +197,7 @@ def compute_slope(
 
     if scale:
 
-        def num_zeros(decimal):
+        def num_zeros(decimal: int) -> float:
             return np.inf if decimal == 0 else -np.floor(np.log10(abs(decimal))) - 1
 
         scale_factor = 10 ** num_zeros(aperiodic_spectrum.min())
@@ -231,7 +235,7 @@ def compute_slope_sprint(
     fit_func: str,
     ch_names: Iterable = (),
     fit_bounds: tuple[float, float] | None = None,
-):
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,

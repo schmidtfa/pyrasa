@@ -19,7 +19,7 @@ def get_peak_params(
     peak_threshold: float = 1.0,
     min_peak_height: float = 0.01,
     peak_width_limits: tuple[float, float] = (0.5, 6.0),
-):
+) -> pd.DataFrame:
     """
     This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
     The algorithm works by smoothing the spectrum, zeroing out negative values and
@@ -123,10 +123,10 @@ def get_peak_params_sprint(
     smoothing_window: int = 1,
     polyorder: int = 1,
     cut_spectrum: tuple[float, float] | None = None,
-    peak_threshold=1,
-    min_peak_height=0.01,
-    peak_width_limits=(0.5, 6),
-):
+    peak_threshold: int = 1,
+    min_peak_height: float = 0.01,
+    peak_width_limits: tuple[float, float] = (0.5, 6),
+) -> pd.DataFrame:
     """
     This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
     The algorithm works by smoothing the spectrum, zeroing out negative values and
@@ -185,7 +185,7 @@ def get_peak_params_sprint(
 
 
 # %% find peaks irasa style
-def get_band_info(df_peaks, freq_range, ch_names):
+def get_band_info(df_peaks: pd.DataFrame, freq_range: tuple[int, int], ch_names: list) -> pd.DataFrame:
     """
     This function can be used to extract peaks in a specified frequency range
     from the Peak DataFrame obtained via "get_peak_params".

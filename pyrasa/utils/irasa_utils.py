@@ -1,12 +1,15 @@
 """Utilities for signal decompositon using IRASA"""
 
+from collections.abc import Callable
 from copy import copy
 
 import numpy as np
 import scipy.signal as dsp
 
 
-def _crop_data(band, freqs, psd_aperiodic, psd_periodic, axis):
+def _crop_data(
+    band: list | tuple, freqs: np.ndarray, psd_aperiodic: np.ndarray, psd_periodic: np.ndarray, axis: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Utility function to crop spectra to a defined frequency range"""
 
     mask_freqs = np.ma.masked_outside(freqs, *band).mask
@@ -17,7 +20,7 @@ def _crop_data(band, freqs, psd_aperiodic, psd_periodic, axis):
     return freqs, psd_aperiodic, psd_periodic
 
 
-def _gen_time_from_sft(SFT, sgramm):  # noqa N803
+def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.ndarray:  # noqa N803
     """Generates time from SFT object"""
 
     tmin, tmax = SFT.extent(sgramm.shape[-1])[:2]
@@ -27,7 +30,7 @@ def _gen_time_from_sft(SFT, sgramm):  # noqa N803
     return time
 
 
-def _find_nearest(sgramm_ud, time_array, time_value):
+def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: float) -> np.ndarray:
     """Find the nearest time point in an up/downsampled spectrogram"""
 
     idx = (np.abs(time_array - time_value)).argmin()
@@ -40,7 +43,9 @@ def _find_nearest(sgramm_ud, time_array, time_value):
     return sgramm_sel
 
 
-def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
+def _get_windows(
+    nperseg: int, dpss_settings: dict, win_func: Callable, win_func_kwargs: dict
+) -> tuple[np.ndarray, np.ndarray]:
     """Generate a window function used for tapering"""
     low_bias_ratio = 0.9
     max_time_bandwidth = 2.0
@@ -72,7 +77,7 @@ def _get_windows(nperseg, dpss_settings, win_func, win_func_kwargs):
     return win, ratios
 
 
-def _check_irasa_settings(irasa_params, hset_info):
+def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
     """Check if the input parameters for irasa are specified correctly"""
 
     valid_hset_shape = 3
@@ -87,14 +92,14 @@ def _check_irasa_settings(irasa_params, hset_info):
     # check that evaluated range fits with the data settings
     nyquist = irasa_params['fs'] / 2
     hmax = np.max(hset_info)
-    band_evaluated = (irasa_params['band'][0] / hmax, irasa_params['band'][1] * hmax)
+    band_evaluated: tuple[float, float] = (irasa_params['band'][0] / hmax, irasa_params['band'][1] * hmax)
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
     assert band_evaluated[1] < nyquist, (
         f'The evaluated frequency range goes up to {np.round(band_evaluated[1], 2)}Hz '
         'which is higher than Nyquist (fs / 2)'
     )
 
-    filter_settings = list(irasa_params['filter_settings'])
+    filter_settings: list[float] = list(irasa_params['filter_settings'])
     if filter_settings[0] is None:
         filter_settings[0] = band_evaluated[0]
     if filter_settings[1] is None:
@@ -114,15 +119,3 @@ def _check_irasa_settings(irasa_params, hset_info):
         f'> {np.round(filter_settings[0], irasa_params['hset_accuracy'])} '
         f'and that band[1] * hset.max() < {np.round(filter_settings[1], irasa_params['hset_accuracy'])}'
     )
-
-
-def _check_psd_settings_raw(data_array, fs, duration, overlap):
-    """LEGACY:  Check if the kwargs for welch are specified correctly"""
-
-    # check parameters for welch
-    overlap /= 100
-    assert isinstance(duration, int | float), 'You need to set the duration of your time window in seconds'
-    assert data_array.shape[1] > int(fs * duration), 'The duration for each segment cant be longer than the actual data'
-    assert np.logical_and(
-        overlap < 1, overlap > 0
-    ), 'The overlap between segments cant be larger than 100% or less than 0%'

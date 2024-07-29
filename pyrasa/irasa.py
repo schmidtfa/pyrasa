@@ -1,5 +1,6 @@
 import fractions
 from collections.abc import Callable
+from typing import TypedDict
 
 import numpy as np
 import scipy.signal as dsp
@@ -195,7 +196,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     band: tuple[float, float] = (1.0, 100.0),
     freq_res: float = 0.5,
     smooth: bool = True,
-    n_avgs: int = 1,
+    n_avgs: list = [1],
     win_duration: float = 0.4,
     hop: int = 10,
     win_func: Callable = dsp.windows.hann,
@@ -302,7 +303,19 @@ def irasa_sprint(  # noqa PLR0915 C901
         'eigenvalue_weighting': dpss_eigenvalue_weighting,
     }
 
-    irasa_kwargs = {
+    class IrasaKwargsTyped(TypedDict):
+        mfft: int
+        hop: int
+        win_duration: float
+        h: int | None
+        up_down: str | None
+        dpss_settings: dict
+        win_kwargs: dict
+        time_orig: None | np.ndarray
+        smooth: bool
+        n_avgs: list
+
+    irasa_kwargs: IrasaKwargsTyped = {
         'mfft': mfft,
         'hop': hop,
         'win_duration': win_duration,
@@ -327,7 +340,7 @@ def irasa_sprint(  # noqa PLR0915 C901
         h: int | None = None,
         time_orig: np.ndarray | None = None,
         smooth: bool = True,
-        n_avgs: int = 3,
+        n_avgs: list = [3],
         spectrum_only: bool = False,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
         """Function to compute spectrograms"""
@@ -404,7 +417,7 @@ def irasa_sprint(  # noqa PLR0915 C901
         fs=fs,
         irasa_fun=_compute_sgramm,
         hset=hset,
-        irasa_kwargs=irasa_kwargs,
+        irasa_kwargs=dict(irasa_kwargs),
         time=time,
     )
 
