@@ -10,7 +10,14 @@ from pyrasa.irasa_mne.mne_objs import (
 )
 
 
-def irasa_raw(data, band=(1, 100), duration=None, overlap=50, hset_info=(1.05, 2.0, 0.05), as_array=False):
+def irasa_raw(
+    data: mne.io.Raw,
+    band: tuple[float, float] = (1.0, 100.0),
+    duration: float | None = None,
+    overlap: float | int = 50,
+    hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
+    as_array: bool = False,
+) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function can be used to seperate aperiodic from periodic power spectra using
     the IRASA algorithm (Wen & Liu, 2016).
@@ -99,7 +106,12 @@ def irasa_raw(data, band=(1, 100), duration=None, overlap=50, hset_info=(1.05, 2
         return aperiodic, periodic
 
 
-def irasa_epochs(data, band=(1, 100), hset_info=(1.05, 2.0, 0.05), as_array=False):
+def irasa_epochs(
+    data: mne.Epochs,
+    band: tuple[float, float] = (1.0, 100.0),
+    hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
+    as_array: bool = False,
+) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function can be used to seperate aperiodic from periodic power spectra
     using the IRASA algorithm (Wen & Liu, 2016).
