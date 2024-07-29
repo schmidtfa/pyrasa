@@ -49,9 +49,9 @@ def _gen_irasa(
 
         # geometric mean between up and downsampled
         # be aware of the input dimensions
-        if spectra.ndim == 3:  # noqa PLR2004
+        if spectra.ndim == 2:  # noqa PLR2004
             spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
-        if spectra.ndim == 4:  # noqa PLR2004
+        if spectra.ndim == 3:  # noqa PLR2004
             spectra[i, :, :] = np.sqrt(spectrum_up * spectrum_dw)
 
     aperiodic_spectrum = np.median(spectra, axis=0)
@@ -176,7 +176,7 @@ def irasa(
     freq, psd = _compute_psd_welch(data, fs=fs, **irasa_kwargs)
 
     psd, psd_aperiodic, psd_periodic = _gen_irasa(
-        data=data,
+        data=np.squeeze(data),
         orig_spectrum=psd,
         fs=fs,
         irasa_fun=_compute_psd_welch,
