@@ -61,6 +61,7 @@ def test_slope_fitting_settings(
     with pytest.raises(AssertionError):
         compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(1, 1000))
 
+    # test for warning
     with pytest.warns(UserWarning, match=match_txt):
         compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed')
 
