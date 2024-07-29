@@ -35,12 +35,18 @@ def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: flo
 
     idx = (np.abs(time_array - time_value)).argmin()
 
-    if sgramm_ud.shape[2] >= idx:
-        idx = idx - 1
-
-    sgramm_sel = sgramm_ud[:, :, idx]
-
-    return sgramm_sel
+    # if sgramm_ud.shape[2] >= idx:
+    #     idx = idx
+    # elif sgramm_ud.shape[2] <= idx:
+    #     idx = sgramm_ud.shape[2] - 1
+    if idx < sgramm_ud.shape[2]:
+        sgramm_sel = sgramm_ud[:, :, idx]
+        return sgramm_sel
+    elif idx == sgramm_ud.shape[2]:
+        sgramm_sel = sgramm_ud[:, :, idx - 1]
+        return sgramm_sel
+    else:
+        pass
 
 
 def _get_windows(

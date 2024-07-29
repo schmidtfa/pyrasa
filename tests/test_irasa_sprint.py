@@ -10,10 +10,12 @@ from .settings import MIN_R2_SPRINT, TOLERANCE
 set_random_seed(42)
 
 
-# @pytest.mark.parametrize('fs', [(500)], scope='session')
-def test_irasa(ts4sprint):
+def test_irasa_sprint(ts4sprint):
     sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
-        ts4sprint[np.newaxis, :], fs=500, band=(1, 100), freq_res=0.5, smooth=False, n_avgs=[3, 7, 11]
+        ts4sprint[np.newaxis, :],
+        fs=500,
+        band=(1, 100),
+        freq_res=0.5,  # smooth=False, n_avgs=[3, 7, 11]
     )
 
     # check basic aperiodic detection
@@ -66,3 +68,24 @@ def test_irasa(ts4sprint):
 
     # one missing burst is ok for now
     assert np.isclose(n_peaks, 12, atol=1)
+
+
+# test settings
+def test_irasa_sprint_settings(ts4sprint):
+    # test smoothing
+    # sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
+    #     ts4sprint[np.newaxis, :], fs=500, band=(1, 100), freq_res=0.5, smooth=True, n_avgs=[3]
+    # )
+
+    # test dpss
+    import scipy.signal as dsp
+
+    sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
+        ts4sprint[np.newaxis, :],
+        fs=500,
+        band=(1, 100),
+        win_func=dsp.windows.dpss,
+        freq_res=0.5,
+        # smooth=False,
+        # n_avgs=[3, 7, 11],
+    )

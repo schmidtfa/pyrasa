@@ -72,8 +72,9 @@ mwt = compute_wavelet_transform(sim_ts, fs=fs,
 sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(sim_ts[np.newaxis, :], fs=fs,
                                                        band=(1, 100),
                                                        freq_res=0.5,
-                                                       smooth=False, 
-                                                       n_avgs=[3, 7, 11])
+                                                       #smooth=True, 
+                                                       #n_avgs=[3, 7, 11]
+                                                       )
 
 #%%
 f, axes = plt.subplots(figsize=(14, 4), ncols=3)
