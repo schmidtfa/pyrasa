@@ -1,4 +1,6 @@
 # %% inherit from spectrum array
+import matplotlib
+import mne
 import numpy as np
 import pandas as pd
 from mne.time_frequency import EpochsSpectrumArray, SpectrumArray
@@ -11,13 +13,13 @@ class PeriodicSpectrumArray(SpectrumArray):
     """Subclass of SpectrumArray"""
 
     def __init__(
-        self,
-        data,
-        info,
-        freqs,
+        self: SpectrumArray,
+        data: np.ndarray,
+        info: mne.Info,
+        freqs: np.ndarray,
         *,
-        verbose=None,
-    ):
+        verbose: bool | str | int | None = None,
+    ) -> None:
         # _check_data_shape(data, freqs, info, ndim=2)
 
         self.__setstate__(
@@ -34,23 +36,23 @@ class PeriodicSpectrumArray(SpectrumArray):
         )
 
     def plot(
-        self,
+        self: SpectrumArray,
         *,
-        picks=None,
-        average=False,
-        dB=False,  # noqa N803
-        amplitude=False,
-        xscale='linear',
-        ci='sd',
-        ci_alpha=0.3,
-        color='black',
-        alpha=None,
-        spatial_colors=True,
-        sphere=None,
-        exclude=(),
-        axes=None,
-        show=True,
-    ):
+        picks: str | np.ndarray | slice | None = None,
+        average: bool = False,
+        dB: bool = False,  # noqa N803
+        amplitude: bool | str = False,
+        xscale: str = 'linear',
+        ci: float | str | None = 'sd',
+        ci_alpha: float = 0.3,
+        color: str | tuple = 'black',
+        alpha: float | None = None,
+        spatial_colors: bool = True,
+        sphere: float | np.ndarray | mne.bem.ConductorModel | None | str = None,
+        exclude: tuple | list | str = (),
+        axes: matplotlib.axes.Axes | list | None = None,
+        show: bool = True,
+    ) -> None:
         super().plot(
             picks=picks,
             average=average,
@@ -69,17 +71,17 @@ class PeriodicSpectrumArray(SpectrumArray):
         )
 
     def plot_topo(
-        self,
+        self: SpectrumArray,
         *,
-        dB=False,  # noqa N803
-        layout=None,
-        color='w',
-        fig_facecolor='k',
-        axis_facecolor='k',
-        axes=None,
-        block=False,
-        show=True,
-    ):
+        dB: bool = False,  # noqa N803
+        layout: mne.channels.Layout | None = None,
+        color: str | tuple = 'w',
+        fig_facecolor: str | tuple = 'k',
+        axis_facecolor: str | tuple = 'k',
+        axes: matplotlib.axes.Axes | list | None = None,
+        block: bool = False,
+        show: bool = True,
+    ) -> None:
         super().plot_topo(
             dB=dB,
             layout=layout,
@@ -92,14 +94,14 @@ class PeriodicSpectrumArray(SpectrumArray):
         )
 
     def get_peaks(
-        self,
-        smoothing_window=1,
-        cut_spectrum=(1, 40),
-        peak_threshold=2.5,
-        min_peak_height=0.0,
-        polyorder=1,
-        peak_width_limits=(0.5, 12),
-    ):
+        self: SpectrumArray,
+        smoothing_window: float | int = 1,
+        cut_spectrum: tuple[float, float] = (1, 40),
+        peak_threshold: float = 2.5,
+        min_peak_height: float = 0.0,
+        polyorder: int = 1,
+        peak_width_limits: tuple[float, float] = (0.5, 6),
+    ) -> pd.DataFrame:
         """
         This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
         The algorithm works by smoothing the spectrum, zeroing out negative values and
@@ -143,12 +145,12 @@ class AperiodicSpectrumArray(SpectrumArray):
     """Subclass of SpectrumArray"""
 
     def __init__(
-        self,
-        data,
-        info,
-        freqs,
+        self: SpectrumArray,
+        data: np.ndarray,
+        info: mne.Info,
+        freqs: np.ndarray,
         *,
-        verbose=None,
+        verbose: bool | str | int | None = None,
     ):
         # _check_data_shape(data, freqs, info, ndim=2)
 
@@ -165,7 +167,9 @@ class AperiodicSpectrumArray(SpectrumArray):
             )
         )
 
-    def get_slopes(self, fit_func='fixed', scale=False, fit_bounds=None):
+    def get_slopes(
+        self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -203,15 +207,15 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
     """Subclass of EpochsSpectrumArray"""
 
     def __init__(
-        self,
-        data,
-        info,
-        freqs,
-        events=None,
-        event_id=None,
+        self: EpochsSpectrumArray,
+        data: np.ndarray,
+        info: mne.Info,
+        freqs: np.ndarray,
+        events: np.ndarray | None = None,
+        event_id: int | list | dict | str | None = None,
         *,
-        verbose=None,
-    ):
+        verbose: bool | str | int | None = None,
+    ) -> None:
         if events is not None and data.shape[0] != events.shape[0]:
             raise ValueError(
                 f'The first dimension of `data` ({data.shape[0]}) must match the '
@@ -237,23 +241,23 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         )
 
     def plot(
-        self,
+        self: EpochsSpectrumArray,
         *,
-        picks=None,
-        average=False,
-        dB=False,  # noqa N803
-        amplitude=False,
-        xscale='linear',
-        ci='sd',
-        ci_alpha=0.3,
-        color='black',
-        alpha=None,
-        spatial_colors=True,
-        sphere=None,
-        exclude=(),
-        axes=None,
-        show=True,
-    ):
+        picks: str | np.ndarray | slice | None = None,
+        average: bool = False,
+        dB: bool = False,  # noqa N803
+        amplitude: bool = False,
+        xscale: str = 'linear',
+        ci: float | str | None = 'sd',
+        ci_alpha: float = 0.3,
+        color: str | tuple = 'black',
+        alpha: float | None = None,
+        spatial_colors: bool = True,
+        sphere: float | np.ndarray | mne.bem.ConductorModel | None | str = None,
+        exclude: list | tuple | str = (),
+        axes: matplotlib.axes.Axes | list | None = None,
+        show: bool = True,
+    ) -> None:
         super().plot(
             picks=picks,
             average=average,
@@ -272,17 +276,17 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         )
 
     def plot_topo(
-        self,
+        self: EpochsSpectrumArray,
         *,
-        dB=False,  # noqa N803
-        layout=None,
-        color='w',
-        fig_facecolor='k',
-        axis_facecolor='k',
-        axes=None,
-        block=False,
-        show=True,
-    ):
+        dB: bool = False,  # noqa N803
+        layout: mne.channels.Layout | None = None,
+        color: str | tuple = 'w',
+        fig_facecolor: str | tuple = 'k',
+        axis_facecolor: str | tuple = 'k',
+        axes: matplotlib.axes.Axes | list | None = None,
+        block: bool = False,
+        show: bool = True,
+    ) -> None:
         super().plot_topo(
             dB=dB,
             layout=layout,
@@ -295,14 +299,14 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         )
 
     def get_peaks(
-        self,
-        smoothing_window=1,
-        cut_spectrum=(1, 40),
-        peak_threshold=2.5,
-        min_peak_height=0.0,
-        polyorder=1,
-        peak_width_limits=(0.5, 12),
-    ):
+        self: EpochsSpectrumArray,
+        smoothing_window: float | int = 1,
+        cut_spectrum: tuple[float, float] = (1.0, 40.0),
+        peak_threshold: float = 2.5,
+        min_peak_height: float = 0.0,
+        polyorder: int = 1,
+        peak_width_limits: tuple[float, float] = (0.5, 6.0),
+    ) -> pd.DataFrame:
         """
         This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
         The algorithm works by smoothing the spectrum, zeroing out negative values and
@@ -355,14 +359,14 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
     """Subclass of EpochsSpectrumArray"""
 
     def __init__(
-        self,
-        data,
-        info,
-        freqs,
-        events=None,
-        event_id=None,
+        self: EpochsSpectrumArray,
+        data: np.ndarray,
+        info: mne.Info,
+        freqs: np.ndarray,
+        events: np.ndarray | None = None,
+        event_id: int | list | dict | str | None = None,
         *,
-        verbose=None,
+        verbose: bool | str | int | None = None,
     ):
         if events is not None and data.shape[0] != events.shape[0]:
             raise ValueError(
@@ -388,7 +392,9 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             )
         )
 
-    def get_slopes(self, fit_func='fixed', scale=False, fit_bounds=None):
+    def get_slopes(
+        self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,

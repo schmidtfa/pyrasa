@@ -5,9 +5,9 @@
 
 
 Pyrasa is a repository that is build around the IRASA algorithm (Wen & Liu, 2016) to parametrize power and coherence spectra.
+
 WARNING - This repository is under heavy development and core functionality may change on a daily basis...
 
-Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. Brain topography, 29, 13-26.
 
 ### Documentation
 Documentation for PyRASA will soon be available [here].
@@ -35,7 +35,6 @@ For full functionality, some functions require:
 
 [mne](https://github.com/mne-tools/mne-python)
 
-TODO: We should maybe test which versions of numpy and pandas work and force this more explicitely
 
 ### How to contribute
 Please take a look at the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
@@ -43,10 +42,10 @@ Please take a look at the [CONTRIBUTING.md](CONTRIBUTING.md) file for more infor
 
 ### Reference
 
-If you are using the IRASA algorithm it probably makes sense to cite the smart people who came up with it:
+If you are using the IRASA algorithm it probably makes sense to cite the smart people who came up with the algorithm:
 
-Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. Brain topography, 29, 13-26.
+```Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. Brain topography, 29, 13-26.```
 
-If you are using PyRASA it would be nice, if you could additionally cite us:
+If you are using PyRASA it would be nice, if you could additionally cite us (whenever the paper is finally ready):
 
-Schmidt F., Hartmann T., & Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. EVERY JOURNAL JUST NOT FRONTIERS
+Schmidt F., Hartmann T., & Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. SOME JOURNAL THAT LIKES US

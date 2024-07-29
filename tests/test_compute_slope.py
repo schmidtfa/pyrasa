@@ -4,7 +4,7 @@ import scipy.signal as dsp
 
 from pyrasa.utils.aperiodic_utils import compute_slope
 
-from .settings import EXPONENT, FS, TOLERANCE
+from .settings import EXPONENT, FS, MIN_R2, TOLERANCE
 
 
 # Test slope fitting functionality
@@ -20,7 +20,7 @@ def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
     ap_params, gof = compute_slope(psd, freqs, fit_func='fixed')
     assert bool(np.isclose(ap_params['Exponent'][0], np.abs(exponent), atol=TOLERANCE))
     # test goodness of fit should be close to r_squared == 1 for linear model
-    assert np.isclose(gof['r_squared'][0], 0.99, atol=TOLERANCE)
+    assert gof['r_squared'][0] > MIN_R2
 
 
 # Takes too long need to pregenerate

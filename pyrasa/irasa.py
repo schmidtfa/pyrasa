@@ -1,4 +1,6 @@
 import fractions
+from collections.abc import Callable
+from typing import TypedDict
 
 import numpy as np
 import scipy.signal as dsp
@@ -9,7 +11,15 @@ from pyrasa.utils.irasa_utils import _check_irasa_settings, _crop_data, _find_ne
 
 
 # TODO: Port to Cython
-def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None):
+def _gen_irasa(
+    data: np.ndarray,
+    orig_spectrum: np.ndarray,
+    fs: int,
+    irasa_fun: Callable,
+    hset: np.ndarray,
+    irasa_kwargs: dict,
+    time: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function is implementing the IRASA algorithm using a custom function to
     compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
@@ -50,7 +60,15 @@ def _gen_irasa(data, orig_spectrum, fs, irasa_fun, hset, irasa_kwargs, time=None
 
 
 # %% irasa
-def irasa(data, fs, band, irasa_kwargs, filter_settings=(None, None), hset_info=(1.05, 2.0, 0.05), hset_accuracy=4):
+def irasa(
+    data: np.ndarray,
+    fs: int,
+    band: tuple[float, float],
+    irasa_kwargs: dict,
+    filter_settings: tuple[float | None, float | None] = (None, None),
+    hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
+    hset_accuracy: int = 4,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     This function can be used to generate aperiodic and periodic power spectra from a time series
     using the IRASA algorithm (Wen & Liu, 2016).
@@ -117,20 +135,23 @@ def irasa(data, fs, band, irasa_kwargs, filter_settings=(None, None), hset_info=
 
     # Calculate original spectrum
     def _compute_psd_welch(
-        data,
-        fs,
-        window='hann',
-        nperseg=None,
-        noverlap=None,
-        nfft=None,
-        detrend='constant',
-        return_onesided=True,
-        scaling='density',
-        axis=-1,
-        average='mean',
-        spectrum_only=False,
-        **irasa_kwargs,
-    ):
+        data: np.ndarray,
+        fs: int,
+        window: str = 'hann',
+        nperseg: int | None = None,
+        noverlap: int | None = None,
+        nfft: int | None = None,
+        detrend: str = 'constant',
+        return_onesided: bool = True,
+        scaling: str = 'density',
+        axis: int = -1,
+        average: str = 'mean',
+        spectrum_only: bool = False,
+        h: float | None = None,
+        time_orig: np.ndarray | None = None,
+        up_down: str | None = None,
+        # **irasa_kwargs ,
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Function to compute power spectral densities using welchs method"""
 
         freq, psd = dsp.welch(
@@ -170,23 +191,23 @@ def irasa(data, fs, band, irasa_kwargs, filter_settings=(None, None), hset_info=
 
 # irasa sprint
 def irasa_sprint(  # noqa PLR0915 C901
-    data,
-    fs,
-    band=(1, 100),
-    freq_res=0.5,
-    smooth=True,
-    n_avgs=1,
-    win_duration=0.4,
-    hop=10,
-    win_func=dsp.windows.hann,
-    win_func_kwargs=None,
-    dpss_settings_time_bandwidth=2,
-    dpss_settings_low_bias=True,
-    dpss_eigenvalue_weighting=True,
-    filter_settings=(None, None),
-    hset_info=(1.0, 2.0, 0.05),
-    hset_accuracy=4,
-):
+    data: np.ndarray,
+    fs: int,
+    band: tuple[float, float] = (1.0, 100.0),
+    freq_res: float = 0.5,
+    smooth: bool = True,
+    n_avgs: list = [1],
+    win_duration: float = 0.4,
+    hop: int = 10,
+    win_func: Callable = dsp.windows.hann,
+    win_func_kwargs: dict | None = None,
+    dpss_settings_time_bandwidth: float = 2.0,
+    dpss_settings_low_bias: bool = True,
+    dpss_eigenvalue_weighting: bool = True,
+    filter_settings: tuple[float | None, float | None] = (None, None),
+    hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
+    hset_accuracy: int = 4,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
 
     This function can be used to seperate aperiodic from periodic power spectra
@@ -282,7 +303,19 @@ def irasa_sprint(  # noqa PLR0915 C901
         'eigenvalue_weighting': dpss_eigenvalue_weighting,
     }
 
-    irasa_kwargs = {
+    class IrasaKwargsTyped(TypedDict):
+        mfft: int
+        hop: int
+        win_duration: float
+        h: int | None
+        up_down: str | None
+        dpss_settings: dict
+        win_kwargs: dict
+        time_orig: None | np.ndarray
+        smooth: bool
+        n_avgs: list
+
+    irasa_kwargs: IrasaKwargsTyped = {
         'mfft': mfft,
         'hop': hop,
         'win_duration': win_duration,
@@ -296,26 +329,26 @@ def irasa_sprint(  # noqa PLR0915 C901
     }
 
     def _compute_sgramm(  # noqa C901
-        x,
-        fs,
-        mfft,
-        hop,
-        win_duration,
-        dpss_settings,
-        win_kwargs,
-        up_down=None,
-        h=None,
-        time_orig=None,
-        smooth=True,
-        n_avgs=3,
-        spectrum_only=False,
-    ):
+        x: np.ndarray,
+        fs: int,
+        mfft: int,
+        hop: int,
+        win_duration: float,
+        dpss_settings: dict,
+        win_kwargs: dict,
+        up_down: str | None = None,
+        h: int | None = None,
+        time_orig: np.ndarray | None = None,
+        smooth: bool = True,
+        n_avgs: list = [3],
+        spectrum_only: bool = False,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
         """Function to compute spectrograms"""
 
-        def _moving_average(x, w):
+        def _moving_average(x: np.ndarray, w: int) -> np.ndarray:
             return np.convolve(x, np.ones(w), 'valid') / w
 
-        def sgramm_smoother(sgramm, n_avgs):
+        def sgramm_smoother(sgramm: np.ndarray, n_avgs: int) -> np.ndarray:
             return np.array([_moving_average(sgramm[freq, :], w=n_avgs) for freq in range(sgramm.shape[0])])
 
         if h is None:
@@ -384,7 +417,7 @@ def irasa_sprint(  # noqa PLR0915 C901
         fs=fs,
         irasa_fun=_compute_sgramm,
         hset=hset,
-        irasa_kwargs=irasa_kwargs,
+        irasa_kwargs=dict(irasa_kwargs),
         time=time,
     )
 

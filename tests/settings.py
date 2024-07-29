@@ -2,7 +2,7 @@
 
 import numpy as np
 
-N_SECONDS = 90
+N_SECONDS = 60
 FS = [500, 750, 1000]
 OSC_FREQ = [5, 10, 20]
 MANY_OSC_FREQ = np.arange(2, 30, 1)

@@ -21,7 +21,31 @@ jobs:
         with:
           pixi-version: latest
           cache: true
+          locked: false
+          frozen: false
       - run: pixi run lint_ci
       - run: pixi run test
       - name: Coveralls
         uses: coverallsapp/github-action@v2
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          pixi-version: latest
+          cache: true
+          locked: false
+          frozen: false
+      - run: pixi run lint_ci
+  type_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          pixi-version: latest
+          cache: true
+          locked: false
+          frozen: false
+      - run: pixi run -e mne check_types

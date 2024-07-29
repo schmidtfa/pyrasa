@@ -1,13 +1,14 @@
 """Utilities for slope fitting."""
 
 import warnings
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
 
-def fixed_model(x, b0, b):
+def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
     """
     Specparams fixed fitting function.
     Use this to model aperiodic activity without a spectral knee
@@ -18,7 +19,7 @@ def fixed_model(x, b0, b):
     return y_hat
 
 
-def knee_model(x, b0, k, b1, b2):
+def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.ndarray:
     """
     Model aperiodic activity with a spectral knee and a pre-knee slope.
     Use this to model aperiodic activity with a spectral knee
@@ -29,7 +30,7 @@ def knee_model(x, b0, k, b1, b2):
     return y_hat
 
 
-def _get_gof(psd, psd_pred, fit_func):
+def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
     """
     get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
@@ -44,7 +45,7 @@ def _get_gof(psd, psd_pred, fit_func):
     if fit_func == 'knee':
         k = 3  # k -> number of params
     elif fit_func == 'fixed':
-        k = 1
+        k = 1  # k -> number of params
 
     n = len(psd)
     bic = n * np.log(mse) + k * np.log(n)
@@ -54,7 +55,13 @@ def _get_gof(psd, psd_pred, fit_func):
     return gof
 
 
-def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_factor=1):
+def _compute_slope(
+    aperiodic_spectrum: np.ndarray,
+    freq: np.ndarray,
+    fit_func: str,
+    fit_bounds: tuple | None = None,
+    scale_factor: float | int = 1,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
     curv_kwargs = {
@@ -76,8 +83,6 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
 
     if fit_func == 'fixed':
         fit_f = fixed_model
-        curv_kwargs['p0'] = np.array(off_guess + exp_guess)
-        curv_kwargs['bounds'] = np.array([(0, 0), (np.inf, np.inf)])
 
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum))
 
@@ -92,16 +97,17 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
         psd_pred = fit_f(freq, *p)
 
     elif fit_func == 'knee':
-        fit_f = knee_model
+        fit_f = knee_model  # type: ignore
         # curve_fit_specs
         cumsum_psd = np.cumsum(aperiodic_spectrum)
         half_pw_freq = freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
         # make the knee guess the point where we have half the power in the spectrum seems plausible to me
         knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])]
         # convert knee freq to knee val which should be 2*exp_1 but this seems good enough
-        curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)
+        curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)  # type: ignore
         # print(curv_kwargs['p0'])
-        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf))  # make this optional
+        # make this optional
+        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf))  # type: ignore
         # knee value should always be positive at least intuitively
         p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
 
@@ -124,7 +130,14 @@ def _compute_slope(aperiodic_spectrum, freq, fit_func, fit_bounds=None, scale_fa
     return params, gof
 
 
-def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False, fit_bounds=None):
+def compute_slope(
+    aperiodic_spectrum: np.ndarray,
+    freqs: np.ndarray,
+    fit_func: str,
+    ch_names: Iterable = (),
+    scale: bool = False,
+    fit_bounds: tuple[float, float] | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -184,7 +197,7 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False,
 
     if scale:
 
-        def num_zeros(decimal):
+        def num_zeros(decimal: int) -> float:
             return np.inf if decimal == 0 else -np.floor(np.log10(abs(decimal))) - 1
 
         scale_factor = 10 ** num_zeros(aperiodic_spectrum.min())
@@ -215,16 +228,25 @@ def compute_slope(aperiodic_spectrum, freqs, fit_func, ch_names=[], scale=False,
     return df_aps, df_gof
 
 
-def compute_slope_sprint(aperiodic_spectrum, freqs, times, fit_func, ch_names=[], fit_bounds=None):
+def compute_slope_sprint(
+    aperiodic_spectrum: np.ndarray,
+    freqs: np.ndarray,
+    times: np.ndarray,
+    fit_func: str,
+    ch_names: Iterable = (),
+    fit_bounds: tuple[float, float] | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
-    This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+    This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
     as well as the respective goodness of fit.
 
     Parameters: aperiodic_spectrum : 2d array
-                    Power values for the aeriodic spectrum extracted using IRASA shape (channel x frequency)
+                    Power values for the aeriodic spectrogram extracted using IRASA shape (channel x frequency)
                 freqs : 1d array
-                    Frequency values for the aperiodic spectrum
+                    Frequency values for the aperiodic spectrogram
+                times : 1d array
+                    time values for the aperiodic spectrogram
                 fit_func : string
                     Can be either "fixed" or "knee".
                 ch_names : list, optional, default: []
