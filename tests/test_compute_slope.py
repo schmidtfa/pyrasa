@@ -19,6 +19,10 @@ def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
     # test whether we can reconstruct the exponent correctly
     ap_params, gof = compute_slope(psd, freqs, fit_func='fixed')
     assert bool(np.isclose(ap_params['Exponent'][0], np.abs(exponent), atol=TOLERANCE))
+    # test the effect of scaling
+    ap_params_s, gof_s = compute_slope(psd, freqs, fit_func='fixed', scale=True)
+    assert np.isclose(ap_params_s['Exponent'], ap_params['Exponent'])
+
     # test goodness of fit should be close to r_squared == 1 for linear model
     assert gof['r_squared'][0] > MIN_R2
 
