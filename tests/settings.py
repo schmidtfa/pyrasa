@@ -11,4 +11,5 @@ KNEE_FREQ = 15
 TOLERANCE = 0.2
 KNEE_TOLERANCE = 3
 MIN_R2 = 0.8  # seems like a sensible minimum
+MIN_R2_SPRINT = 0.7
 MIN_CORR_PSD_CMB = 0.99

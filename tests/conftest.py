@@ -28,3 +28,31 @@ def knee_aperiodic_signal(exponent, fs, knee_freq):
 @pytest.fixture(scope='session')
 def oscillation(osc_freq, fs):
     yield sim_oscillation(n_seconds=N_SECONDS, fs=fs, freq=osc_freq)
+
+
+@pytest.fixture(scope='session')
+def ts4sprint():
+    fs = 500
+    alpha = sim_oscillation(n_seconds=0.5, fs=fs, freq=10)
+    no_alpha = np.zeros(len(alpha))
+    beta = sim_oscillation(n_seconds=0.5, fs=fs, freq=25)
+    no_beta = np.zeros(len(beta))
+
+    exp_1 = sim_powerlaw(n_seconds=2.5, fs=fs, exponent=-1)
+    exp_2 = sim_powerlaw(n_seconds=2.5, fs=fs, exponent=-2)
+
+    # %%
+    alphas = np.concatenate([no_alpha, alpha, no_alpha, alpha, no_alpha])
+    betas = np.concatenate([beta, no_beta, beta, no_beta, beta])
+
+    sim_ts = np.concatenate(
+        [
+            exp_1 + alphas,
+            exp_1 + alphas + betas,
+            exp_1 + betas,
+            exp_2 + alphas,
+            exp_2 + alphas + betas,
+            exp_2 + betas,
+        ]
+    )
+    yield sim_ts

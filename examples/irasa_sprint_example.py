@@ -126,11 +126,15 @@ f.tight_layout()
 # %%
 from pyrasa.utils.peak_utils import get_peak_params_sprint
 
-df_peaks = get_peak_params_sprint(sgramm_p[np.newaxis, :, :], 
+df_peaks = get_peak_params_sprint(sgramm_p[np.newaxis,:, :], 
                                   freqs=freqs_ir, 
                                   times=times_ir,
+                                  cut_spectrum=(1, 40),
                                   smooth=True,
-                                  min_peak_height=0.1)
+                                  smoothing_window=1,
+                                  peak_threshold=1,
+                                  min_peak_height=0.01,
+                                  peak_width_limits=(0.5, 12))
 
 plot_timefrequency(times_ir, freqs_ir, sgramm_p, vmin=0)
 
@@ -188,7 +192,36 @@ df_alpha_fooof
 from pyrasa.utils.peak_utils import get_band_info
 
 df_alpha = get_band_info(df_peaks, freq_range=(8,12), ch_names=[])
+alpha_peaks = df_alpha.query('pw > 0.10')
+
+beta_ts = alpha_peaks['time'].to_numpy()
+t1 = beta_ts[0]
+n_peaks = 0
+for ix, i in enumerate(beta_ts):
+    try: 
+        diff = beta_ts[ix + 1] - i
+        if diff > 0.025:
+            n_peaks += 1
+    except IndexError:
+        pass
+n_peaks
+
+#%%
 df_beta = get_band_info(df_peaks, freq_range=(20, 30), ch_names=[])
+beta_peaks = df_beta.query('pw > 0.10')
+
+beta_ts = beta_peaks['time'].to_numpy()
+t1 = beta_ts[0]
+n_peaks = 0
+for ix, i in enumerate(beta_ts):
+    try: 
+        diff = beta_ts[ix + 1] - i
+        if diff > 0.025:
+            n_peaks += 1
+    except IndexError:
+        pass
+n_peaks
+
 
 # %%
 f, ax = plt.subplots(figsize=(12, 4), ncols=2)

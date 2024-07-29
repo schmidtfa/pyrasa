@@ -33,7 +33,7 @@ axes[1].set_xlabel('Frequency (Hz)')
 plt.tight_layout()
 
 #from pyrasa.irasa import irasa
-
+#%%
 freq_irasa, psd_ap, psd_p = irasa(sig, 
                                   fs=fs, 
                                   band=(1, 100), 
