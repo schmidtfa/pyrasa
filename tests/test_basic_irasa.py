@@ -18,7 +18,7 @@ from .settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_irasa(combined_signal, fs, osc_freq, exponent):
     f_range = [1, 100]
-    freqs_rasa, psd_ap, psd_pe = irasa(combined_signal, fs, f_range, irasa_kwargs={'nperseg': int(fs * 4)})
+    freqs_rasa, psd_ap, psd_pe = irasa(combined_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
     # test the shape of the output
     assert freqs_rasa.shape[0] == psd_ap.shape[1] == psd_pe.shape[1]
     # test the selected frequency range

@@ -5,6 +5,7 @@ from copy import copy
 
 import numpy as np
 import scipy.signal as dsp
+from scipy.signal import ShortTimeFFT
 
 
 def _crop_data(
@@ -120,3 +121,117 @@ def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
         f'> {np.round(filter_settings[0], irasa_params['hset_accuracy'])} '
         f'and that band[1] * hset.max() < {np.round(filter_settings[1], irasa_params['hset_accuracy'])}'
     )
+
+
+# Calculate original spectrum
+def _compute_psd_welch(
+    data: np.ndarray,
+    fs: int,
+    nperseg: int | None,
+    win_kwargs: dict,
+    dpss_settings: dict,
+    noverlap: int | None = None,
+    nfft: int | None = None,
+    detrend: str = 'constant',
+    return_onesided: bool = True,
+    scaling: str = 'density',
+    axis: int = -1,
+    average: str = 'mean',
+    up_down: str | None = None,
+    spectrum_only: bool = False,
+    h: float | None = None,
+    time_orig: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Function to compute power spectral densities using welchs method"""
+
+    if nperseg is None:
+        nperseg = data.shape[-1]
+    win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
+
+    psds = []
+    for cur_win in win:
+        freq, psd = dsp.welch(
+            data,
+            fs=fs,
+            window=cur_win,
+            nperseg=nperseg,
+            noverlap=noverlap,
+            nfft=nfft,
+            detrend=detrend,
+            return_onesided=return_onesided,
+            scaling=scaling,
+            axis=axis,
+            average=average,
+        )
+        psds.append(psd)
+
+    if ratios is None:
+        psd = np.mean(psds, axis=0)
+    else:
+        weighted_psds = [ratios[ix] * cur_sgramm for ix, cur_sgramm in enumerate(psds)]
+        psd = np.sum(weighted_psds, axis=0) / np.sum(ratios)
+
+    if spectrum_only:
+        return psd
+    else:
+        return freq, psd
+
+
+def _compute_sgramm(  # noqa C901
+    x: np.ndarray,
+    fs: int,
+    mfft: int,
+    hop: int,
+    win_duration: float,
+    dpss_settings: dict,
+    win_kwargs: dict,
+    up_down: str | None = None,
+    h: int | None = None,
+    time_orig: np.ndarray | None = None,
+    spectrum_only: bool = False,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
+    """Function to compute spectrograms"""
+
+    if h is None:
+        nperseg = int(np.floor(fs * win_duration))
+    elif np.logical_and(h is not None, up_down == 'up'):
+        nperseg = int(np.floor(fs * win_duration * h))
+        hop = int(hop * h)
+    elif np.logical_and(h is not None, up_down == 'down'):
+        nperseg = int(np.floor(fs * win_duration / h))
+        hop = int(hop / h)
+
+    win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
+
+    sgramms = []
+    for cur_win in win:
+        SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft, fs=fs, scale_to='psd')  # noqa N806
+        cur_sgramm = SFT.spectrogram(x, detr='constant')
+        sgramms.append(cur_sgramm)
+
+    if ratios is None:
+        sgramm = np.mean(sgramms, axis=0)
+    else:
+        weighted_sgramms = [ratios[ix] * cur_sgramm for ix, cur_sgramm in enumerate(sgramms)]
+        sgramm = np.sum(weighted_sgramms, axis=0) / np.sum(ratios)
+
+    time = _gen_time_from_sft(SFT, x)
+    freq = SFT.f[SFT.f > 0]
+
+    # subsample the upsampled data in the time domain to allow averaging
+    # This is necessary as division by h can cause slight rounding differences that
+    # result in actual unintended temporal differences in up/dw for very long segments.
+    if time_orig is not None:
+        sgramm = np.array([_find_nearest(sgramm, time, t) for t in time_orig])
+        max_t_ix = time_orig.shape[0]
+        # swapping axes is necessitated by _find_nearest
+        sgramm = np.swapaxes(
+            np.swapaxes(sgramm[:max_t_ix, :, :], 1, 2), 0, 2
+        )  # cut time axis for up/downsampled data to allow averaging
+
+    sgramm = np.squeeze(sgramm)  # bring in proper format
+
+    if spectrum_only:
+        return sgramm
+    else:
+        return freq, time, sgramm

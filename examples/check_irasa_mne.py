@@ -68,7 +68,6 @@ beta = sim_combined(
 # %% now lets simulate some data
 # TODO: put in a helper function
 
-
 def simulate_raw_(signal, scaling_fator, region, subject, info, subjects_dir):
     """Shorthand function to simulate a dipole"""
 
