@@ -167,7 +167,7 @@ def irasa(
             nfft=psd_kwargs.get('nfft'),
         )[1]
 
-    psd, freq = _compute_psd_welch(
+    freq, psd = _compute_psd_welch(
         data,
         fs=fs,
         nperseg=psd_kwargs.get('nperseg'),
