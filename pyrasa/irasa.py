@@ -312,7 +312,7 @@ def irasa_sprint(  # noqa PLR0915 C901
         fs=fs,
         irasa_fun=_compute_sgramm,
         hset=hset,
-        irasa_kwargs=dict(irasa_kwargs),
+        irasa_kwargs=irasa_kwargs,
         time=time,
     )
 
