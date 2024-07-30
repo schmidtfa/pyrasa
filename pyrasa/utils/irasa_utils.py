@@ -137,10 +137,7 @@ def _compute_psd_welch(
     scaling: str = 'density',
     axis: int = -1,
     average: str = 'mean',
-    up_down: str | None = None,
     spectrum_only: bool = False,
-    h: float | None = None,
-    time_orig: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Function to compute power spectral densities using welchs method"""
 

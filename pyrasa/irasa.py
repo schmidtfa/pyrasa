@@ -1,10 +1,9 @@
 import fractions
 from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import scipy.signal as dsp
-
-from pyrasa.utils.input_classes import IrasaKwargsTyped, IrasaSprintKwargsTyped
 
 # from scipy.stats.mstats import gmean
 from pyrasa.utils.irasa_utils import (
@@ -13,6 +12,10 @@ from pyrasa.utils.irasa_utils import (
     _compute_sgramm,
     _crop_data,  # _find_nearest, _gen_time_from_sft, _get_windows,
 )
+from pyrasa.utils.types import IrasaFun
+
+if TYPE_CHECKING:
+    from pyrasa.utils.input_classes import IrasaSprintKwargsTyped
 
 
 # TODO: Port to Cython
@@ -20,9 +23,8 @@ def _gen_irasa(
     data: np.ndarray,
     orig_spectrum: np.ndarray,
     fs: int,
-    irasa_fun: Callable,
+    irasa_fun: IrasaFun,
     hset: np.ndarray,
-    irasa_kwargs: dict | IrasaKwargsTyped | IrasaSprintKwargsTyped,
     time: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
@@ -45,12 +47,8 @@ def _gen_irasa(
         data_down = dsp.resample_poly(data, down, up, axis=-1)
 
         # Calculate an up/downsampled version of the PSD using same params as original
-        irasa_kwargs['h'] = h
-        irasa_kwargs['time_orig'] = time
-        irasa_kwargs['up_down'] = 'up'
-        spectrum_up = irasa_fun(data_up, int(fs * h), spectrum_only=True, **irasa_kwargs)
-        irasa_kwargs['up_down'] = 'down'
-        spectrum_dw = irasa_fun(data_down, int(fs / h), spectrum_only=True, **irasa_kwargs)
+        spectrum_up = irasa_fun(data=data_up, fs=int(fs * h), h=h, time_orig=time, up_down='up')[1]
+        spectrum_dw = irasa_fun(data=data_down, fs=int(fs / h), h=h, time_orig=time, up_down='down')[1]
 
         # geometric mean between up and downsampled
         # be aware of the input dimensions
@@ -153,26 +151,26 @@ def irasa(
         'eigenvalue_weighting': dpss_eigenvalue_weighting,
     }
 
-    irasa_kwargs: IrasaKwargsTyped = {
-        'nperseg': psd_kwargs.get('nperseg'),
-        'noverlap': psd_kwargs.get('noverlap'),
-        'nfft': psd_kwargs.get('nfft'),
-        'h': None,
-        'up_down': None,
-        'time_orig': None,
-        'dpss_settings': dpss_settings,
-        'win_kwargs': win_kwargs,
-    }
+    def _local_irasa_fun(
+        data: np.ndarray,
+        fs: int,
+        *args: Any,
+        **kwargs: Any,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        return _compute_psd_welch(
+            data,
+            fs=fs,
+            nperseg=psd_kwargs.get('nperseg'),
+            win_kwargs=win_kwargs,
+            dpss_settings=dpss_settings,
+            noverlap=psd_kwargs.get('noverlap'),
+            nfft=psd_kwargs.get('nfft'),
+        )
 
-    freq, psd = _compute_psd_welch(data, fs=fs, **irasa_kwargs)
+    psd, freq = _local_irasa_fun(data, fs)
 
     psd, psd_aperiodic, psd_periodic = _gen_irasa(
-        data=np.squeeze(data),
-        orig_spectrum=psd,
-        fs=fs,
-        irasa_fun=_compute_psd_welch,
-        hset=hset,
-        irasa_kwargs=irasa_kwargs,
+        data=np.squeeze(data), orig_spectrum=psd, fs=fs, irasa_fun=_local_irasa_fun, hset=hset
     )
 
     freq, psd_aperiodic, psd_periodic = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
