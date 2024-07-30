@@ -63,14 +63,9 @@ def ts4sprint():
 @pytest.fixture(scope='session')
 def gen_mne_data_raw():
     data_path = sample.data_path()
-    # subjects_dir = data_path / 'subjects'
-    # subject = 'sample'
 
     meg_path = data_path / 'MEG' / 'sample'
     raw_fname = meg_path / 'sample_audvis_raw.fif'
-    # fwd_fname = meg_path / 'sample_audvis-meg-eeg-oct-6-fwd.fif'
-    # fwd = mne.read_forward_solution(fwd_fname)
-    # src = fwd['src']
 
     raw = mne.io.read_raw_fif(raw_fname)
     picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')
@@ -82,14 +77,9 @@ def gen_mne_data_raw():
 @pytest.fixture(scope='session')
 def gen_mne_data_epoched():
     data_path = sample.data_path()
-    # subjects_dir = data_path / 'subjects'
-    # subject = 'sample'
 
     meg_path = data_path / 'MEG' / 'sample'
     raw_fname = meg_path / 'sample_audvis_raw.fif'
-    # fwd_fname = meg_path / 'sample_audvis-meg-eeg-oct-6-fwd.fif'
-    # fwd = mne.read_forward_solution(fwd_fname)
-    # src = fwd['src']
 
     raw = mne.io.read_raw_fif(raw_fname)
     picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')

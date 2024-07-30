@@ -37,8 +37,8 @@ plt.tight_layout()
 freq_irasa, psd_ap, psd_p = irasa(sig, 
                                   fs=fs, 
                                   band=(1, 100), 
-                                  irasa_kwargs={'nperseg': duration*fs, 
-                                                'noverlap': duration*fs*overlap
+                                  psd_kwargs={'nperseg': duration*fs, 
+                                              'noverlap': duration*fs*overlap
                                             },
                                   hset_info=(1, 2, 0.05))
 

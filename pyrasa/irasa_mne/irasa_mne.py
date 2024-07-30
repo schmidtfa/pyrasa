@@ -93,7 +93,7 @@ def irasa_raw(
         band=band,
         filter_settings=(data.info['highpass'], data.info['lowpass']),
         hset_info=hset_info,
-        irasa_kwargs=kwargs_psd,
+        psd_kwargs=kwargs_psd,
     )
 
     if as_array is True:
@@ -169,7 +169,7 @@ def irasa_epochs(
     # TODO: does zero padding make sense?
     kwargs_psd = {
         'window': 'hann',
-        #'nperseg': data_array.shape[2],
+        'nperseg': None,
         'nfft': nfft,
         'noverlap': 0,
     }
@@ -183,7 +183,7 @@ def irasa_epochs(
             band=band,
             filter_settings=(data.info['highpass'], data.info['lowpass']),
             hset_info=hset_info,
-            irasa_kwargs=kwargs_psd,
+            psd_kwargs=kwargs_psd,
         )
         psd_list_aperiodic.append(psd_aperiodic)
         psd_list_periodic.append(psd_periodic)
