@@ -24,7 +24,19 @@ def fixed_aperiodic_signal(exponent, fs):
 
 @pytest.fixture(scope='session')
 def knee_aperiodic_signal(exponent, fs, knee_freq):
-    yield sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq ** np.abs(exponent))
+    yield sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq ** np.abs(exponent))  # noqa: E501
+
+
+@pytest.fixture(scope='session')
+def load_knee_aperiodic_signal(exponent, fs, knee):
+    base_dir = 'tests/test_data/knee_data/'
+    yield np.load(base_dir + f'knee_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}_.npy')
+
+
+@pytest.fixture(scope='session')
+def load_knee_cmb_signal(exponent, fs, knee, osc_freq):
+    base_dir = 'tests/test_data/knee_osc_data/'
+    yield np.load(base_dir + f'cmb_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}__osc_freq_{osc_freq}_.npy')  # noqa: E501
 
 
 @pytest.fixture(scope='session')
