@@ -47,8 +47,8 @@ def _gen_irasa(
         data_down = dsp.resample_poly(data, down, up, axis=-1)
 
         # Calculate an up/downsampled version of the PSD using same params as original
-        spectrum_up = irasa_fun(data=data_up, fs=int(fs * h), h=h, time_orig=time, up_down='up')[1]
-        spectrum_dw = irasa_fun(data=data_down, fs=int(fs / h), h=h, time_orig=time, up_down='down')[1]
+        spectrum_up = irasa_fun(data=data_up, fs=int(fs * h), h=h, time_orig=time, up_down='up')
+        spectrum_dw = irasa_fun(data=data_down, fs=int(fs / h), h=h, time_orig=time, up_down='down')
 
         # geometric mean between up and downsampled
         # be aware of the input dimensions
@@ -156,7 +156,7 @@ def irasa(
         fs: int,
         *args: Any,
         **kwargs: Any,
-    ) -> tuple[np.ndarray, np.ndarray]:
+    ) -> np.ndarray:
         return _compute_psd_welch(
             data,
             fs=fs,
@@ -165,9 +165,17 @@ def irasa(
             dpss_settings=dpss_settings,
             noverlap=psd_kwargs.get('noverlap'),
             nfft=psd_kwargs.get('nfft'),
-        )
+        )[1]
 
-    psd, freq = _local_irasa_fun(data, fs)
+    psd, freq = _compute_psd_welch(
+        data,
+        fs=fs,
+        nperseg=psd_kwargs.get('nperseg'),
+        win_kwargs=win_kwargs,
+        dpss_settings=dpss_settings,
+        noverlap=psd_kwargs.get('noverlap'),
+        nfft=psd_kwargs.get('nfft'),
+    )
 
     psd, psd_aperiodic, psd_periodic = _gen_irasa(
         data=np.squeeze(data), orig_spectrum=psd, fs=fs, irasa_fun=_local_irasa_fun, hset=hset
@@ -294,12 +302,18 @@ def irasa_sprint(  # noqa PLR0915 C901
         'mfft': mfft,
         'hop': hop,
         'win_duration': win_duration,
-        'h': None,
-        'up_down': None,
         'dpss_settings': dpss_settings,
         'win_kwargs': win_kwargs,
-        'time_orig': None,
     }
+
+    def _local_irasa_fun(
+        data: np.ndarray,
+        fs: int,
+        h: int | None,
+        up_down: str | None,
+        time_orig: np.ndarray | None = None,
+    ) -> np.ndarray:
+        return _compute_sgramm(data, fs, h=h, up_down=up_down, time_orig=time_orig, **irasa_kwargs)[2]
 
     # get time and frequency info
     freq, time, sgramm = _compute_sgramm(data, fs, **irasa_kwargs)
@@ -308,9 +322,8 @@ def irasa_sprint(  # noqa PLR0915 C901
         data=data,
         orig_spectrum=sgramm,
         fs=fs,
-        irasa_fun=_compute_sgramm,
+        irasa_fun=_local_irasa_fun,
         hset=hset,
-        irasa_kwargs=dict(irasa_kwargs),
         time=time,
     )
 

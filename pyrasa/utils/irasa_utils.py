@@ -137,7 +137,6 @@ def _compute_psd_welch(
     scaling: str = 'density',
     axis: int = -1,
     average: str = 'mean',
-    spectrum_only: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Function to compute power spectral densities using welchs method"""
 
@@ -168,10 +167,7 @@ def _compute_psd_welch(
         weighted_psds = [ratios[ix] * cur_sgramm for ix, cur_sgramm in enumerate(psds)]
         psd = np.sum(weighted_psds, axis=0) / np.sum(ratios)
 
-    if spectrum_only:
-        return psd
-    else:
-        return freq, psd
+    return freq, psd
 
 
 def _compute_sgramm(  # noqa C901
@@ -185,8 +181,7 @@ def _compute_sgramm(  # noqa C901
     up_down: str | None = None,
     h: int | None = None,
     time_orig: np.ndarray | None = None,
-    spectrum_only: bool = False,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Function to compute spectrograms"""
 
     if h is None:
@@ -228,7 +223,4 @@ def _compute_sgramm(  # noqa C901
 
     sgramm = np.squeeze(sgramm)  # bring in proper format
 
-    if spectrum_only:
-        return sgramm
-    else:
-        return freq, time, sgramm
+    return freq, time, sgramm

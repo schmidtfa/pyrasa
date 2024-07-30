@@ -18,10 +18,7 @@ class IrasaSprintKwargsTyped(TypedDict):
     mfft: int
     hop: int
     win_duration: float
-    h: int | None
-    up_down: str | None
     dpss_settings: dict
     win_kwargs: dict
-    time_orig: None | np.ndarray
     # smooth: bool
     # n_avgs: list
