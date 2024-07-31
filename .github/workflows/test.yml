@@ -20,6 +20,8 @@ jobs:
         test_environment: [testpy311, testpy312]
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
       - uses: prefix-dev/setup-pixi@v0.8.1
         with:
           pixi-version: latest
