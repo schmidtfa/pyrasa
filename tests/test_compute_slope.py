@@ -4,7 +4,7 @@ import scipy.signal as dsp
 
 from pyrasa.utils.aperiodic_utils import compute_slope
 
-from .settings import EXPONENT, FS, MIN_R2, TOLERANCE
+from .settings import EXPONENT, FS, HIGH_TOLERANCE, MIN_R2, TOLERANCE
 
 
 # Test slope fitting functionality
@@ -66,23 +66,44 @@ def test_slope_fitting_settings(
         compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed')
 
 
-# Takes too long need to pregenerate
-# @pytest.mark.parametrize('exponent, fs, knee_freq', [(-1, 500, 15)], scope='session')
-# def test_slope_fitting_knee(knee_aperiodic_signal, fs, exponent):
-#     f_range = [1, 200]
-#     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
-#     freqs, psd = dsp.welch(knee_aperiodic_signal, fs, nperseg=int(4 * fs))
-#     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
-#     freqs, psd = freqs[freq_logical], psd[freq_logical]
-#     # test whether we can reconstruct the exponent correctly
-#     ap_params_k, gof_k = compute_slope(psd, freqs, fit_func='knee')
-#     ap_params_f, gof_f = compute_slope(psd, freqs, fit_func='fixed')
-#     # assert pytest.approx(ap_params_k['Exponent_1'][0], abs=TOLERANCE) == 0
-#     assert bool(np.isclose(ap_params_k['Exponent_2'][0], np.abs(exponent), atol=TOLERANCE))
-#     assert bool(np.isclose(ap_params_k['Knee Frequency (Hz)'][0], KNEE_FREQ, atol=KNEE_TOLERANCE))
-#     # test goodness of fit
-#     assert gof_k['r_squared'][0] > MIN_R2
-#     assert gof_k['r_squared'][0] > gof_f['r_squared'][0]  # r2 for knee model should be higher than knee if knee
-#     # bic and aic for knee model should be better if knee
-#     assert gof_k['AIC'][0] < gof_f['AIC'][0]
-#     assert gof_k['BIC'][0] < gof_f['BIC'][0]
+# test custom slope fitting functions
+@pytest.mark.parametrize('exponent, fs', [(-1, 500)], scope='session')
+def test_custom_slope_fitting(
+    fixed_aperiodic_signal,
+    exponent,
+    fs,
+):
+    f_range = [1, 300]
+    # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
+    freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
+    freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
+    psd, freqs = psd[freq_logical], freqs[freq_logical]
+
+    def lin_reg(x, a, b):
+        """
+        Linear fit w/o knee
+        NOTE: Data should be in loglog coordinates before running this
+        """
+
+        y_hat = a + b * x
+
+        return y_hat
+
+    psd_log = np.log10(psd)
+    freqs_log = np.log10(freqs)
+    off_guess = psd_log[0]
+
+    curv_kwargs = {
+        'maxfev': 10_000,
+        'ftol': 1e-5,
+        'xtol': 1e-5,
+        'gtol': 1e-5,
+    }
+    curv_kwargs['p0'] = np.array(off_guess)
+    curv_kwargs['bounds'] = ((-np.inf, -np.inf), (np.inf, np.inf))  # type: ignore
+
+    ap_params, gof = compute_slope(psd_log, freqs_log, fit_func=lin_reg, psd_log=False)
+
+    # add a high tolerance
+
+    assert pytest.approx(np.abs(ap_params['param_1'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)

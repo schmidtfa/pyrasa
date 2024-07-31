@@ -1,7 +1,7 @@
 """Utilities for slope fitting."""
 
 import warnings
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 
 import numpy as np
 import pandas as pd
@@ -30,22 +30,24 @@ def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.n
     return y_hat
 
 
-def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
+def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_func: str, psd_log: bool = True) -> pd.DataFrame:
     """
     get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
     https://machinelearningmastery.com/probabilistic-model-selection-measures/
     """
+    # k number of parameters in curve fitting function
 
-    residuals = np.log10(psd) - psd_pred
-    ss_res = np.sum(residuals**2)
-    ss_tot = np.sum((np.log10(psd) - np.mean(np.log10(psd))) ** 2)
-    mse = np.mean(residuals**2)
-
-    if fit_func == 'knee':
-        k = 3  # k -> number of params
-    elif fit_func == 'fixed':
-        k = 1  # k -> number of params
+    if psd_log:
+        residuals = np.log10(psd) - psd_pred
+        ss_res = np.sum(residuals**2)
+        ss_tot = np.sum((np.log10(psd) - np.mean(np.log10(psd))) ** 2)
+        mse = np.mean(residuals**2)
+    else:
+        residuals = psd - psd_pred
+        ss_res = np.sum(residuals**2)
+        ss_tot = np.sum((psd - np.mean(psd)) ** 2)
+        mse = np.mean(residuals**2)
 
     n = len(psd)
     bic = n * np.log(mse) + k * np.log(n)
@@ -58,74 +60,83 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFra
 def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
-    fit_func: str,
+    fit_func: str | Callable,
     fit_bounds: tuple | None = None,
     scale_factor: float | int = 1,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """get the slope of the aperiodic spectrum"""
-
-    curv_kwargs = {
+    curv_kwargs: dict = {
         'maxfev': 10_000,
         'ftol': 1e-5,
         'xtol': 1e-5,
         'gtol': 1e-5,
-    }
+    },
+    psd_log: bool = True,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """get the slope of the aperiodic spectrum"""
 
-    off_guess = [aperiodic_spectrum[0]] if fit_bounds is None else fit_bounds[0]
-    exp_guess = (
-        [np.abs(np.log10(aperiodic_spectrum[0] / aperiodic_spectrum[-1]) / np.log10(freq[-1] / freq[0]))]
-        if fit_bounds is None
-        else fit_bounds[1]
-    )
-
-    valid_slope_functions = ['fixed', 'knee']
-    assert fit_func in valid_slope_functions, f'The slope fitting function has to be in {valid_slope_functions}'
-
-    if fit_func == 'fixed':
-        fit_f = fixed_model
-
-        p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum))
-
-        params = pd.DataFrame(
-            {
-                'Offset': p[0],
-                'Exponent': p[1],
-                'fit_type': 'fixed',
-            },
-            index=[0],
+    if isinstance(fit_func, str):
+        off_guess = [aperiodic_spectrum[0]] if fit_bounds is None else fit_bounds[0]
+        exp_guess = (
+            [np.abs(np.log10(aperiodic_spectrum[0] / aperiodic_spectrum[-1]) / np.log10(freq[-1] / freq[0]))]
+            if fit_bounds is None
+            else fit_bounds[1]
         )
-        psd_pred = fit_f(freq, *p)
+        valid_slope_functions = ['fixed', 'knee']
+        assert fit_func in valid_slope_functions, f'The slope fitting function has to be in {valid_slope_functions}'
 
-    elif fit_func == 'knee':
-        fit_f = knee_model  # type: ignore
-        # curve_fit_specs
-        cumsum_psd = np.cumsum(aperiodic_spectrum)
-        half_pw_freq = freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
-        # make the knee guess the point where we have half the power in the spectrum seems plausible to me
-        knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])]
-        # convert knee freq to knee val which should be 2*exp_1 but this seems good enough
-        curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)  # type: ignore
-        # print(curv_kwargs['p0'])
-        # make this optional
-        curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf))  # type: ignore
-        # knee value should always be positive at least intuitively
-        p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
+        if fit_func == 'fixed':
+            fit_f = fixed_model
 
-        params = pd.DataFrame(
-            {
-                'Offset': p[0] / scale_factor,
-                'Knee': p[1],
-                'Exponent_1': p[2],
-                'Exponent_2': p[3],
-                'Knee Frequency (Hz)': p[1] ** (1.0 / (2 * p[2] + p[3])),
-                'fit_type': 'knee',
-            },
-            index=[0],
-        )
-        psd_pred = fit_f(freq, *p)
+            curv_kwargs['p0'] = np.array(off_guess + exp_guess)
+            curv_kwargs['bounds'] = ((0, -np.inf), (np.inf, np.inf))  # type: ignore
+            p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum))
 
-    gof = _get_gof(aperiodic_spectrum, psd_pred, fit_func)
-    gof['fit_type'] = fit_func
+            params = pd.DataFrame(
+                {
+                    'Offset': p[0],
+                    'Exponent': p[1],
+                    'fit_type': 'fixed',
+                },
+                index=[0],
+            )
+            psd_pred = fit_f(freq, *p)
+
+        elif fit_func == 'knee':
+            fit_f = knee_model  # type: ignore
+            # curve_fit_specs
+            cumsum_psd = np.cumsum(aperiodic_spectrum)
+            half_pw_freq = freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
+            # make the knee guess the point where we have half the power in the spectrum seems plausible to me
+            knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])]
+            # convert knee freq to knee val which should be 2*exp_1 but this seems good enough
+            curv_kwargs['p0'] = np.array(off_guess + knee_guess + exp_guess + exp_guess)  # type: ignore
+            # make this optional
+            curv_kwargs['bounds'] = ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf))  # type: ignore
+            # knee value should always be positive at least intuitively
+            p, _ = curve_fit(fit_f, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
+
+            params = pd.DataFrame(
+                {
+                    'Offset': p[0] / scale_factor,
+                    'Knee': p[1],
+                    'Exponent_1': p[2],
+                    'Exponent_2': p[3],
+                    'Knee Frequency (Hz)': p[1] ** (1.0 / (2 * p[2] + p[3])),
+                    'fit_type': 'knee',
+                },
+                index=[0],
+            )
+            psd_pred = fit_f(freq, *p)
+
+        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), fit_func)
+        gof['fit_type'] = fit_func
+
+    else:
+        p, _ = curve_fit(fit_func, freq, aperiodic_spectrum, **curv_kwargs)
+        psd_pred = fit_func(freq, *p)
+        p_keys = [f'param_{ix}' for ix, _ in enumerate(p)]
+        params = pd.DataFrame(dict(zip(p_keys, p)), index=[0])
+        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), 'custom', psd_log=psd_log)
+        gof['fit_type'] = 'custom'
 
     return params, gof
 
@@ -133,10 +144,17 @@ def _compute_slope(
 def compute_slope(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
-    fit_func: str,
+    fit_func: str | Callable,
     ch_names: Iterable = (),
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
+    curv_kwargs: dict = {
+        'maxfev': 10_000,
+        'ftol': 1e-5,
+        'xtol': 1e-5,
+        'gtol': 1e-5,
+    },
+    psd_log: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
@@ -185,7 +203,7 @@ def compute_slope(
         assert fit_bounds[0] > fmin, f'The selected lower bound is lower than the lowest frequency of {fmin}Hz'
         assert fit_bounds[1] < fmax, f'The selected upper bound is higher than the highest frequency of {fmax}Hz'
 
-    if freqs[0] == 0:
+    if np.logical_and(psd_log, freqs[0] == 0):
         warnings.warn(
             'The first frequency appears to be 0 this will result in slope fitting problems. '
             + 'Frequencies will be evaluated starting from the next highest in Hz'
@@ -215,6 +233,8 @@ def compute_slope(
             fit_func=fit_func,
             scale_factor=scale_factor,
             fit_bounds=fit_bounds,
+            curv_kwargs=curv_kwargs,
+            psd_log=psd_log,
         )
 
         params['ch_name'] = ch_name
