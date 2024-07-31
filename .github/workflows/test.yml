@@ -26,6 +26,7 @@ jobs:
           cache: true
           locked: false
           frozen: false
+          environment: ${{ matrix.test_environment }}
       - run: pixi run -e ${{ matrix.test_environment }} test
       - name: Coveralls
         uses: coverallsapp/github-action@v2
