@@ -1,3 +1,5 @@
+"""Test basic functionality of the IRASA workflow."""
+
 import numpy as np
 import pytest
 import scipy.signal as dsp
@@ -17,6 +19,7 @@ from .settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 @pytest.mark.parametrize('osc_freq', OSC_FREQ, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_irasa(combined_signal, fs, osc_freq, exponent):
+    """Test IRASA functionality in a combined signal."""
     f_range = [1, 100]
     freqs_rasa, psd_ap, psd_pe = irasa(combined_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
     # test the shape of the output

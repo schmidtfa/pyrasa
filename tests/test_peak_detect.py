@@ -1,3 +1,5 @@
+"""Test peak detection functionality."""
+
 import numpy as np
 import pytest
 import scipy.signal as dsp
@@ -11,6 +13,7 @@ from .settings import FS, MANY_OSC_FREQ
 @pytest.mark.parametrize('osc_freq', MANY_OSC_FREQ, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_peak_detection(oscillation, fs, osc_freq):
+    """Test peak detection functionality in a purely periodic signal."""
     f_range = [1, 250]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(oscillation, fs, nperseg=int(4 * fs))
@@ -26,6 +29,7 @@ def test_peak_detection(oscillation, fs, osc_freq):
 
 @pytest.mark.parametrize('fs, exponent', [(500, -1)], scope='session')
 def test_no_peak_detection(fixed_aperiodic_signal, fs):
+    """Test that no peaks are detected in a purely aperiodic signal."""
     f_range = [1, 250]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
@@ -37,7 +41,8 @@ def test_no_peak_detection(fixed_aperiodic_signal, fs):
 
 
 @pytest.mark.parametrize('osc_freq, fs', [(10, 500)], scope='session')
-def test_peak_detection_setings(oscillation, fs, osc_freq):
+def test_peak_detection_settings(oscillation, fs, osc_freq):
+    """Test various settings for peak detection."""
     f_range = [1, 250]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(oscillation, fs, nperseg=int(4 * fs))
