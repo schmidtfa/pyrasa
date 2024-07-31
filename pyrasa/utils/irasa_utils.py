@@ -109,17 +109,17 @@ def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
 
     assert np.logical_and(band_evaluated[0] >= filter_settings[0], band_evaluated[1] <= filter_settings[1]), (
         f'You run IRASA in a frequency range from'
-        f'{np.round(band_evaluated[0], irasa_params['hset_accuracy'])} -'
-        f'{np.round(band_evaluated[1], irasa_params['hset_accuracy'])}Hz. \n'
+        f'{np.round(band_evaluated[0], irasa_params["hset_accuracy"])} -'
+        f'{np.round(band_evaluated[1], irasa_params["hset_accuracy"])}Hz. \n'
         'Your settings specified in "filter_settings" indicate that you have '
         'a bandpass filter from '
-        f'{np.round(filter_settings[0], irasa_params['hset_accuracy'])} - '
-        f'{np.round(filter_settings[1], irasa_params['hset_accuracy'])}Hz. \n'
+        f'{np.round(filter_settings[0], irasa_params["hset_accuracy"])} - '
+        f'{np.round(filter_settings[1], irasa_params["hset_accuracy"])}Hz. \n'
         'This means that your evaluated range likely contains filter artifacts. \n'
         'Either change your filter settings, adjust hset or the parameter "band" accordingly. \n'
         f'You want to make sure that band[0] / hset.max() '
-        f'> {np.round(filter_settings[0], irasa_params['hset_accuracy'])} '
-        f'and that band[1] * hset.max() < {np.round(filter_settings[1], irasa_params['hset_accuracy'])}'
+        f'> {np.round(filter_settings[0], irasa_params["hset_accuracy"])} '
+        f'and that band[1] * hset.max() < {np.round(filter_settings[1], irasa_params["hset_accuracy"])}'
     )
 
 
