@@ -28539,7 +28539,7 @@ packages:
   name: pyrasa
   version: 0.1.0.dev0
   path: .
-  sha256: 4654050ff12a55c80a925ef9847396f3fc6b4ed766c259d48f724409bff7679f
+  sha256: be3bb8dc71703f61f5ebe96399791305ea95ca48b8f56dfdb4eb24655e185172
   requires_dist:
   - numpy
   - pandas

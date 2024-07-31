@@ -16,7 +16,7 @@ from .settings import EXP_KNEE_COMBO, FS, KNEE_TOLERANCE, MIN_CORR_PSD_CMB, OSC_
 @pytest.mark.parametrize('exponent, knee', EXP_KNEE_COMBO, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
-    f_range = [1, 100]
+    f_range = [0.1, 100]
     freqs_rasa, psd_ap, psd_pe = irasa(load_knee_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
     # test the shape of the output
     assert freqs_rasa.shape[0] == psd_ap.shape[1] == psd_pe.shape[1]
@@ -32,7 +32,7 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
     # test whether we can get the second exponent correctly
     assert bool(np.isclose(ap_params_k['Exponent_2'][0], np.abs(exponent), atol=TOLERANCE))
     # test whether we can get the knee correctly
-    knee_hat = ap_params_k['Knee'][0] ** (1 / ap_params_k['Exponent_2'][0])
+    knee_hat = ap_params_k['Knee'][0] ** (1 / (2 * ap_params_k['Exponent_1'][0] + ap_params_k['Exponent_2'][0]))
     knee_real = knee ** (1 / np.abs(exponent))
     assert bool(np.isclose(knee_hat, knee_real, atol=KNEE_TOLERANCE))
     # test bic/aic -> should be better for knee
@@ -45,7 +45,7 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
 @pytest.mark.parametrize('fs', FS, scope='session')
 @pytest.mark.parametrize('osc_freq', OSC_FREQ, scope='session')
 def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
-    f_range = [1, 100]
+    f_range = [0.1, 100]
     freqs_rasa, psd_ap, psd_pe = irasa(load_knee_cmb_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
     # test the shape of the output
     assert freqs_rasa.shape[0] == psd_ap.shape[1] == psd_pe.shape[1]
@@ -61,7 +61,7 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     # test whether we can get the second exponent correctly
     assert bool(np.isclose(ap_params_k['Exponent_2'][0], np.abs(exponent), atol=TOLERANCE))
     # test whether we can get the knee correctly
-    knee_hat = ap_params_k['Knee'][0] ** (1 / ap_params_k['Exponent_2'][0])
+    knee_hat = ap_params_k['Knee'][0] ** (1 / (2 * ap_params_k['Exponent_1'][0] + ap_params_k['Exponent_2'][0]))
     knee_real = knee ** (1 / np.abs(exponent))
     assert bool(np.isclose(knee_hat, knee_real, atol=KNEE_TOLERANCE))
     # test bic/aic -> should be better for knee
