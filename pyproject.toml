@@ -15,6 +15,7 @@ classifiers = [
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Typing :: Typed'
 ]
 keywords=['spectral parametrization', 'oscillations', 'power spectra', '1/f']
 requires-python = ">= 3.11"
@@ -62,10 +63,16 @@ mne = ">=1.7.0,<1.8"
 mypy = ">=1.10.1,<2"
 pandas-stubs = ">=2.2.2.240603,<3"
 
+[tool.pixi.feature]
+py311 = {dependencies = {python="3.11.*"}}
+py312 = {dependencies = {python="3.12.*"}}
+
 [tool.pixi.environments]
 default = {features = [], solve-group = "default"}
 mne = {features = ["mne"], solve-group = "default"}
 jupyter = {features = ["jupyter"], solve-group = "default"}
+testpy311 = ['py311']
+testpy312 = ['py312']
 
 [tool.hatch.version]
 source = "regex_commit"
