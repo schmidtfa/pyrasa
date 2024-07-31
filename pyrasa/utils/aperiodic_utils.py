@@ -9,27 +9,78 @@ from scipy.optimize import curve_fit
 
 
 def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
-    """Specparams fixed fitting function.
+    """
+    Specparams fixed fitting function.
+
     Use this to model aperiodic activity without a spectral knee.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Frequency values.
+    b0 : float
+        Offset parameter.
+    b : float
+        Exponent parameter.
+
+    Returns
+    -------
+    np.ndarray
+        Modeled aperiodic activity.
     """
     y_hat = b0 - np.log10(x**b)
-
     return y_hat
 
 
 def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.ndarray:
-    """Model aperiodic activity with a spectral knee and a pre-knee slope.
+    """
+    Model aperiodic activity with a spectral knee and a pre-knee slope.
+
     Use this to model aperiodic activity with a spectral knee.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Frequency values.
+    b0 : float
+        Offset parameter.
+    k : float
+        Knee parameter.
+    b1 : float
+        Pre-knee exponent parameter.
+    b2 : float
+        Post-knee exponent parameter.
+
+    Returns
+    -------
+    np.ndarray
+        Modeled aperiodic activity.
     """
     y_hat = b0 - np.log10(x**b1 * (k + x**b2))
-
     return y_hat
 
 
 def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
-    """Get goodness of fit (i.e. mean squared error and R2)
+    """
+    Get goodness of fit (i.e. mean squared error and R2).
+
+    Note:
     BIC and AIC currently assume OLS
     https://machinelearningmastery.com/probabilistic-model-selection-measures/.
+
+    Parameters
+    ----------
+    psd : np.ndarray
+        Power spectral density.
+    psd_pred : np.ndarray
+        Predicted power spectral density.
+    fit_func : str
+        Fitting function used ('fixed' or 'knee').
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing goodness of fit metrics.
     """
     residuals = np.log10(psd) - psd_pred
     ss_res = np.sum(residuals**2)
@@ -56,7 +107,27 @@ def _compute_slope(
     fit_bounds: tuple | None = None,
     scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Get the slope of the aperiodic spectrum."""
+    """
+    Get the slope of the aperiodic spectrum.
+
+    Parameters
+    ----------
+    aperiodic_spectrum : np.ndarray
+        Aperiodic power spectral density.
+    freq : np.ndarray
+        Frequency values.
+    fit_func : str
+        Fitting function to use ('fixed' or 'knee').
+    fit_bounds : tuple or None, optional
+        Bounds for the fitting function. Defaults to None.
+    scale_factor : float or int, optional
+        Scaling factor for the data. Defaults to 1.
+
+    Returns
+    -------
+    tuple of pd.DataFrame
+        DataFrames containing the aperiodic parameters and goodness of fit metrics.
+    """
     curv_kwargs = {
         'maxfev': 10_000,
         'ftol': 1e-5,
@@ -131,33 +202,36 @@ def compute_slope(
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+    """
+    Extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
     as well as the respective goodness of fit.
 
-    Parameters: aperiodic_spectrum : 2d array
-                    Power values for the aeriodic spectrum extracted using IRASA shape (channel x frequency)
-                freqs : 1d array
-                    Frequency values for the aperiodic spectrum
-                fit_func : string
-                    Can be either "fixed" or "knee".
-                ch_names : list, optional, default: []
-                    Channel names ordered according to the periodic spectrum.
-                    If empty channel names are given as numbers in ascending order.
-                scale : bool
-                    scale the data by a factor of x to improve fitting.
-                    This is helpful when fitting a knee and power values are very small eg. 1e-28,
-                    in which case curve fits struggles to find the proper MSE (seems to be a machine precision issue).
-                    Finally the data are rescaled to return the offset in the magnitude of the original data.
-                fit_bounds : None, tuple
-                    Lower and upper bound for the fit function, should be None if the whole frequency range is desired.
-                    Otherwise a tuple of (lower, upper)
+    Parameters
+    ----------
+    aperiodic_spectrum : np.ndarray
+        Power values for the aperiodic spectrum extracted using IRASA (shape: channel x frequency).
+    freqs : np.ndarray
+        Frequency values for the aperiodic spectrum.
+    fit_func : str
+        Fitting function to use ('fixed' or 'knee').
+    ch_names : Iterable, optional
+        Channel names ordered according to the periodic spectrum. Defaults to an empty iterable.
+    scale : bool, optional
+        Scale the data by a factor to improve fitting. Defaults to False.
+    fit_bounds : tuple of float or None, optional
+        Lower and upper bounds for the fit function. Defaults to None.
 
-    Returns:    df_aps: DataFrame
-                    DataFrame containing the aperiodic parameters for each channel depending on the fit func.
-                df_gof: DataFrame
-                    DataFrame containing the goodness of fit of the specific fit function for each channel.
+    Returns
+    -------
+    tuple of pd.DataFrame
+        DataFrames containing the aperiodic parameters and goodness of fit metrics.
 
+    Raises
+    ------
+    AssertionError
+        If the input parameters are invalid.
     """
     assert isinstance(aperiodic_spectrum, np.ndarray), 'aperiodic_spectrum should be a numpy array.'
     if aperiodic_spectrum.ndim == 1:
@@ -229,30 +303,36 @@ def compute_slope_sprint(
     ch_names: Iterable = (),
     fit_bounds: tuple[float, float] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
+    """
+    Extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
+
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
     as well as the respective goodness of fit.
 
-    Parameters: aperiodic_spectrum : 2d array
-                    Power values for the aeriodic spectrogram extracted using IRASA shape (channel x frequency)
-                freqs : 1d array
-                    Frequency values for the aperiodic spectrogram
-                times : 1d array
-                    time values for the aperiodic spectrogram
-                fit_func : string
-                    Can be either "fixed" or "knee".
-                ch_names : list, optional, default: []
-                    Channel names ordered according to the periodic spectrum.
-                    If empty channel names are given as numbers in ascending order.
-                fit_bounds : None, tuple
-                    Lower and upper bound for the fit function, should be None if the whole frequency range is desired.
-                    Otherwise a tuple of (lower, upper)
+    Parameters
+    ----------
+    aperiodic_spectrum : np.ndarray
+        Power values for the aperiodic spectrogram extracted using IRASA (shape: channel x frequency).
+    freqs : np.ndarray
+        Frequency values for the aperiodic spectrogram.
+    times : np.ndarray
+        Time values for the aperiodic spectrogram.
+    fit_func : str
+        Fitting function to use ('fixed' or 'knee').
+    ch_names : Iterable, optional
+        Channel names ordered according to the periodic spectrum. Defaults to an empty iterable.
+    fit_bounds : tuple of float or None, optional
+        Lower and upper bounds for the fit function. Defaults to None.
 
-    Returns:    df_aps: DataFrame
-                    DataFrame containing the center frequency, bandwidth and peak height for each channel
-                df_gof: DataFrame
-                    DataFrame containing the goodness of fit of the specific fit function for each channel.
+    Returns
+    -------
+    tuple of pd.DataFrame
+        DataFrames containing the aperiodic parameters and goodness of fit metrics.
 
+    Raises
+    ------
+    AssertionError
+        If the input parameters are invalid.
     """
     ap_t_list, gof_t_list = [], []
 
