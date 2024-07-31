@@ -24,12 +24,12 @@ for fs in fs_list:
                 cmb_sim = sim_combined(n_seconds=n_secs, fs=fs, components=components)
 
                 fname = f'cmb_sim__fs_{fs}__exp1_{np.abs(exp1)}__exp2_{np.abs(exp2)}_knee_{np.round(knee, 0)}__osc_freq_{osc_freq}_.npy'
-                np.save(join(base_folder + 'knee_osc_data', fname), cmb_sim)
+                np.save(join(base_folder + 'knee_osc_data', fname), cmb_sim, allow_pickle=False)
 
                 #% generate and save knee
                 knee_sim = sim_knee(n_seconds=n_secs, fs=fs, exponent1=exp1, exponent2=exp2, knee=knee)
 
                 fname = f'knee_sim__fs_{fs}__exp1_{np.abs(exp1)}__exp2_{np.abs(exp2)}_knee_{np.round(knee, 0)}_.npy'
-                np.save(join(base_folder + 'knee_data', fname), knee_sim)
+                np.save(join(base_folder + 'knee_data', fname), knee_sim, allow_pickle=False)
 
 # %%

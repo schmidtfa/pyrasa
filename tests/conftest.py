@@ -30,15 +30,18 @@ def knee_aperiodic_signal(exponent, fs, knee_freq):
 @pytest.fixture(scope='session')
 def load_knee_aperiodic_signal(exponent, fs, knee):
     base_dir = 'tests/test_data/knee_data/'
-    yield np.load(base_dir + f'knee_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}_.npy', allow_pickle=True)
+    yield np.load(
+        base_dir + f'knee_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}_.npy',
+    )  # allow_pickle=True)
 
 
 @pytest.fixture(scope='session')
 def load_knee_cmb_signal(exponent, fs, knee, osc_freq):
     base_dir = 'tests/test_data/knee_osc_data/'
     yield np.load(
-        base_dir + f'cmb_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}__osc_freq_{osc_freq}_.npy', allow_pickle=True
-    )  # noqa: E501
+        base_dir + f'cmb_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}__osc_freq_{osc_freq}_.npy',
+    )  # allow_pickle=True)
+    # noqa: E501
 
 
 @pytest.fixture(scope='session')
