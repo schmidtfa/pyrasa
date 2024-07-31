@@ -1,3 +1,5 @@
+"""Tests including MNE python."""
+
 import pytest
 from neurodsp.utils.sim import set_random_seed
 
@@ -9,6 +11,7 @@ set_random_seed(42)
 @pytest.mark.filterwarnings('ignore:RuntimeWarning')
 @pytest.mark.filterwarnings('ignore:UserWarning')
 def test_mne_raw(gen_mne_data_raw):
+    """Test IRASA decomposition on raw MNE data."""
     aperiodic_mne, periodic_mne = irasa_raw(
         gen_mne_data_raw, band=(0.25, 50), duration=2, hset_info=(1.0, 2.0, 0.05), as_array=False
     )
@@ -20,6 +23,7 @@ def test_mne_raw(gen_mne_data_raw):
 @pytest.mark.filterwarnings('ignore:RuntimeWarning')
 @pytest.mark.filterwarnings('ignore:UserWarning')
 def test_mne_epoched(gen_mne_data_epoched):
+    """Test IRASA decomposition on epoched MNE data."""
     aperiodic, periodic = irasa_epochs(gen_mne_data_epoched, band=(0.5, 50), hset_info=(1.0, 2.0, 0.05), as_array=False)
 
     # aperiodic.get_slopes(fit_func='knee', scale=True)

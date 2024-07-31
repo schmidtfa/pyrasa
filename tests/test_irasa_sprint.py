@@ -1,3 +1,5 @@
+"""Test IRASA sprint functionality."""
+
 import numpy as np
 import pytest
 from neurodsp.utils.sim import set_random_seed
@@ -12,6 +14,7 @@ set_random_seed(42)
 
 
 def test_irasa_sprint(ts4sprint):
+    """Test the IRASA sprint functionality."""
     sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
         ts4sprint[np.newaxis, :],
         fs=500,
@@ -71,8 +74,8 @@ def test_irasa_sprint(ts4sprint):
     assert np.isclose(n_peaks, 12, atol=1)
 
 
-# test settings
 def test_irasa_sprint_settings(ts4sprint):
+    """Test various settings for the IRASA sprint functionality."""
     # test smoothing
     # sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
     #     ts4sprint[np.newaxis, :], fs=500, band=(1, 100), freq_res=0.5, smooth=True, n_avgs=[3]
@@ -91,7 +94,7 @@ def test_irasa_sprint_settings(ts4sprint):
         # n_avgs=[3, 7, 11],
     )
 
-    # test too much bandwidht
+    # test too much bandwidth
     with pytest.raises(ValueError):
         irasa_sprint(
             ts4sprint[np.newaxis, :],
