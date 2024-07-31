@@ -195,12 +195,14 @@ def get_band_info(df_peaks: pd.DataFrame, freq_range: tuple[int, int], ch_names:
     freq_range : tuple of int
         Lower and upper limits for the to be extracted frequency range.
     ch_names : list
-        Channel names used in the computation of the periodic spectrum. This information is needed to fill channels without a peak in the specified range with nans.
+        Channel names used in the computation of the periodic spectrum.
+        This information is needed to fill channels without a peak in the specified range with nans.
 
     Returns
     -------
     pd.DataFrame
-        DataFrame containing the center frequency, bandwidth and peak height for each channel in a specified frequency range.
+        DataFrame containing the center frequency, bandwidth and peak height
+        for each channel in a specified frequency range.
     """
     df_range = df_peaks.query(f'cf > {freq_range[0]}').query(f'cf < {freq_range[1]}')
 

@@ -11,7 +11,27 @@ from scipy.signal import ShortTimeFFT
 def _crop_data(
     band: list | tuple, freqs: np.ndarray, psd_aperiodic: np.ndarray, psd_periodic: np.ndarray, axis: int
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Utility function to crop spectra to a defined frequency range."""
+    """
+    Crop spectra to a defined frequency range.
+
+    Parameters
+    ----------
+    band : list or tuple
+        Frequency range to crop to.
+    freqs : np.ndarray
+        Frequency values.
+    psd_aperiodic : np.ndarray
+        Aperiodic power spectral density.
+    psd_periodic : np.ndarray
+        Periodic power spectral density.
+    axis : int
+        Axis along which to crop.
+
+    Returns
+    -------
+    tuple of np.ndarray
+        Cropped frequency values, aperiodic PSD, and periodic PSD.
+    """
     mask_freqs = np.ma.masked_outside(freqs, *band).mask
     freqs = freqs[~mask_freqs]
     psd_aperiodic = np.compress(~mask_freqs, psd_aperiodic, axis=axis)
@@ -21,7 +41,21 @@ def _crop_data(
 
 
 def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.ndarray:  # noqa N803
-    """Generates time from SFT object."""
+    """
+    Generate time from SFT object.
+
+    Parameters
+    ----------
+    SFT : type[dsp.ShortTimeFFT]
+        Short-time Fourier transform object.
+    sgramm : np.ndarray
+        Spectrogram data.
+
+    Returns
+    -------
+    np.ndarray
+        Time values.
+    """
     tmin, tmax = SFT.extent(sgramm.shape[-1])[:2]
     delta_t = SFT.delta_t
 
@@ -30,7 +64,23 @@ def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.nd
 
 
 def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: float) -> np.ndarray:
-    """Find the nearest time point in an up/downsampled spectrogram."""
+    """
+    Find the nearest time point in an up/downsampled spectrogram.
+
+    Parameters
+    ----------
+    sgramm_ud : np.ndarray
+        Up/downsampled spectrogram.
+    time_array : np.ndarray
+        Array of time values.
+    time_value : float
+        Time value to find the nearest point to.
+
+    Returns
+    -------
+    np.ndarray
+        Spectrogram at the nearest time point.
+    """
     idx = (np.abs(time_array - time_value)).argmin()
 
     if idx < sgramm_ud.shape[2]:
@@ -45,7 +95,25 @@ def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: flo
 def _get_windows(
     nperseg: int, dpss_settings: dict, win_func: Callable, win_func_kwargs: dict
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Generate a window function used for tapering."""
+    """
+    Generate a window function used for tapering.
+
+    Parameters
+    ----------
+    nperseg : int
+        Length of each segment.
+    dpss_settings : dict
+        Settings for DPSS window.
+    win_func : Callable
+        Window function.
+    win_func_kwargs : dict
+        Additional arguments for the window function.
+
+    Returns
+    -------
+    tuple of np.ndarray
+        Window function and ratios.
+    """
     low_bias_ratio = 0.9
     min_time_bandwidth = 2.0
     win_func_kwargs = copy(win_func_kwargs)
@@ -77,7 +145,21 @@ def _get_windows(
 
 
 def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
-    """Check if the input parameters for irasa are specified correctly."""
+    """
+    Check if the input parameters for IRASA are specified correctly.
+
+    Parameters
+    ----------
+    irasa_params : dict
+        Parameters for IRASA.
+    hset_info : tuple
+        Information about the hset.
+
+    Raises
+    ------
+    AssertionError
+        If any of the input parameters are invalid.
+    """
     valid_hset_shape = 3
     assert isinstance(irasa_params['data'], np.ndarray), 'Data should be a numpy array.'
 
@@ -134,7 +216,42 @@ def _compute_psd_welch(
     axis: int = -1,
     average: str = 'mean',
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Function to compute power spectral densities using welchs method."""
+    """
+    Compute power spectral densities using Welch's method.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data.
+    fs : int
+        Sampling frequency.
+    nperseg : int or None
+        Length of each segment.
+    win_kwargs : dict
+        Additional arguments for the window function.
+    dpss_settings : dict
+        Settings for DPSS window.
+    noverlap : int or None, optional
+        Number of points to overlap between segments. Defaults to None.
+    nfft : int or None, optional
+        Length of the FFT used. Defaults to None.
+    detrend : str, optional
+        Specifies how to detrend each segment. Defaults to 'constant'.
+    return_onesided : bool, optional
+        If True, return a one-sided spectrum for real data. Defaults to True.
+    scaling : str, optional
+        Selects between computing the power spectral density ('density') and
+        the power spectrum ('spectrum'). Defaults to 'density'.
+    axis : int, optional
+        Axis along which the periodogram is computed. Defaults to -1.
+    average : str, optional
+        Method to use when averaging periodograms. Defaults to 'mean'.
+
+    Returns
+    -------
+    tuple of np.ndarray
+        Frequencies and power spectral densities.
+    """
     if nperseg is None:
         nperseg = data.shape[-1]
     win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
@@ -177,7 +294,37 @@ def _compute_sgramm(  # noqa C901
     h: int | None = None,
     time_orig: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Function to compute spectrograms."""
+    """
+    Compute spectrograms.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Input signal.
+    fs : int
+        Sampling frequency.
+    mfft : int
+        Number of FFT points.
+    hop : int
+        Hop size.
+    win_duration : float
+        Window duration in seconds.
+    dpss_settings : dict
+        Settings for DPSS window.
+    win_kwargs : dict
+        Additional arguments for the window function.
+    up_down : str or None, optional
+        Upsampling or downsampling direction. Defaults to None.
+    h : int or None, optional
+        Upsampling or downsampling factor. Defaults to None.
+    time_orig : np.ndarray or None, optional
+        Original time values. Defaults to None.
+
+    Returns
+    -------
+    tuple of np.ndarray
+        Frequencies, time values, and spectrogram.
+    """
     if h is None:
         nperseg = int(np.floor(fs * win_duration))
     elif np.logical_and(h is not None, up_down == 'up'):
