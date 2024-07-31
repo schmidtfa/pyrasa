@@ -30,7 +30,7 @@ def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.n
     return y_hat
 
 
-def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_func: str, psd_log: bool = True) -> pd.DataFrame:
+def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_func: str, semi_log: bool = True) -> pd.DataFrame:
     """
     get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
@@ -38,16 +38,16 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_func: str, psd_l
     """
     # k number of parameters in curve fitting function
 
-    if psd_log:
+    if semi_log:
         residuals = np.log10(psd) - psd_pred
         ss_res = np.sum(residuals**2)
         ss_tot = np.sum((np.log10(psd) - np.mean(np.log10(psd))) ** 2)
-        mse = np.mean(residuals**2)
     else:
         residuals = psd - psd_pred
         ss_res = np.sum(residuals**2)
         ss_tot = np.sum((psd - np.mean(psd)) ** 2)
-        mse = np.mean(residuals**2)
+
+    mse = np.mean(residuals**2)
 
     n = len(psd)
     bic = n * np.log(mse) + k * np.log(n)
@@ -69,7 +69,7 @@ def _compute_slope(
         'xtol': 1e-5,
         'gtol': 1e-5,
     },
-    psd_log: bool = True,
+    semi_log: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
@@ -131,11 +131,15 @@ def _compute_slope(
         gof['fit_type'] = fit_func
 
     else:
-        p, _ = curve_fit(fit_func, freq, aperiodic_spectrum, **curv_kwargs)
+        if semi_log:
+            p, _ = curve_fit(fit_func, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
+        else:
+            p, _ = curve_fit(fit_func, freq, aperiodic_spectrum, **curv_kwargs)
+
         psd_pred = fit_func(freq, *p)
         p_keys = [f'param_{ix}' for ix, _ in enumerate(p)]
         params = pd.DataFrame(dict(zip(p_keys, p)), index=[0])
-        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), 'custom', psd_log=psd_log)
+        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), 'custom', semi_log=semi_log)
         gof['fit_type'] = 'custom'
 
     return params, gof
@@ -154,7 +158,7 @@ def compute_slope(
         'xtol': 1e-5,
         'gtol': 1e-5,
     },
-    psd_log: bool = True,
+    semi_log: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
@@ -203,7 +207,7 @@ def compute_slope(
         assert fit_bounds[0] > fmin, f'The selected lower bound is lower than the lowest frequency of {fmin}Hz'
         assert fit_bounds[1] < fmax, f'The selected upper bound is higher than the highest frequency of {fmax}Hz'
 
-    if np.logical_and(psd_log, freqs[0] == 0):
+    if freqs[0] == 0:
         warnings.warn(
             'The first frequency appears to be 0 this will result in slope fitting problems. '
             + 'Frequencies will be evaluated starting from the next highest in Hz'
@@ -234,7 +238,7 @@ def compute_slope(
             scale_factor=scale_factor,
             fit_bounds=fit_bounds,
             curv_kwargs=curv_kwargs,
-            psd_log=psd_log,
+            semi_log=semi_log,
         )
 
         params['ch_name'] = ch_name

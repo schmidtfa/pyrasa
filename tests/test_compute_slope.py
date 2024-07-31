@@ -73,7 +73,7 @@ def test_custom_slope_fitting(
     exponent,
     fs,
 ):
-    f_range = [1, 300]
+    f_range = [1.5, 300]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
@@ -102,8 +102,7 @@ def test_custom_slope_fitting(
     curv_kwargs['p0'] = np.array(off_guess)
     curv_kwargs['bounds'] = ((-np.inf, -np.inf), (np.inf, np.inf))  # type: ignore
 
-    ap_params, gof = compute_slope(psd_log, freqs_log, fit_func=lin_reg, psd_log=False)
+    ap_params, gof = compute_slope(psd_log, freqs_log, fit_func=lin_reg, semi_log=False)
 
     # add a high tolerance
-
     assert pytest.approx(np.abs(ap_params['param_1'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
