@@ -1,3 +1,5 @@
+"""Interface to use the IRASA algorithm with MNE objects."""
+
 import mne
 import numpy as np
 
@@ -18,53 +20,49 @@ def irasa_raw(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     as_array: bool = False,
 ) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """This function can be used to seperate aperiodic from periodic power spectra using
-    the IRASA algorithm (Wen & Liu, 2016).
+    """
+    Separate aperiodic from periodic power spectra using the IRASA algorithm.
 
     Parameters
     ----------
-    data : :py:class:˚mne.io.BaseRaw˚
+    data : mne.io.Raw
         The timeseries data used to extract aperiodic and periodic power spectra.
-        Should be :py:class:˚mne.io.BaseRaw˚ in which case 'fs' and 'filter_settings'
-        will be automatically extracted.
-    band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract
-        (a-)periodic spectra.
-    duration : float
-        The time window of each segment in seconds used to calculate the psd.
-    overlap : float
-        The overlap between segments in percent
-    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
-        Contains information about the range of the up/downsampling factors.
-        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
-    as_array : bool
-        The function returns an :py:class:˚mne.time_frequency.SpectrumArray˚ if set to False (default)
-        if set to True the data is returned as :py:class:`numpy.ndarray`.
+    band : tuple of float, optional
+        The lower and upper band of the frequency range used to extract (a-)periodic spectra.
+        Defaults to (1.0, 100.0).
+    duration : float, optional
+        The time window of each segment in seconds used to calculate the PSD.
+        If None, the entire duration of the data is used.
+    overlap : float or int, optional
+        The overlap between segments in percent. Defaults to 50.
+    hset_info : tuple of float, optional
+        Information about the range of the up/downsampling factors. Should be a tuple of (min, max, step).
+        Defaults to (1.05, 2.0, 0.05).
+    as_array : bool, optional
+        If True, the data is returned as numpy.ndarray. If False, returns mne.time_frequency.SpectrumArray.
+        Defaults to False.
 
     Returns
     -------
-        aperiodic : :py:class:˚mne.time_frequency.SpectrumArray˚
-            The aperiodic component of the data as an mne.time_frequency.SpectrumArray object.
-        periodic : :py:class:˚mne.time_frequency.SpectrumArray˚
-            The periodic component of the data as mne.time_frequency.SpectrumArray object.
-
+    tuple of AperiodicSpectrumArray and PeriodicSpectrumArray or tuple of numpy.ndarray
+        The aperiodic and periodic components of the data.
 
     References
     ----------
-    [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
-        Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.
-        https://doi.org/10.1007/s10548-015-0448-0
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
+    Components in the Power Spectrum of Neurophysiological Signal.
+    Brain Topography, 29(1), 13–26.
+    https://doi.org/10.1007/s10548-015-0448-0
 
     """
-    # set parameters & safety checks
-    # ensure that input data is in the right format
-    assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.BaseRaw'
-    assert data.info['bads'] == [], (
-        'Data should not contain bad channels ' 'as this might mess up the creation of the returned data structure'
-    )
+    # Set parameters & safety checks
+    # Ensure that input data is in the right format
+    assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.io.BaseRaw'
+    assert (
+        data.info['bads'] == []
+    ), 'Data should not contain bad channels as this might mess up the creation of the returned data structure'
 
-    # extract relevant info from mne object
+    # Extract relevant info from mne object
     info = data.info.copy()
     fs = data.info['sfreq']
     data_array = data.get_data()
@@ -94,9 +92,8 @@ def irasa_raw(
         psd_kwargs=kwargs_psd,
     )
 
-    if as_array is True:
+    if as_array:
         return psd_aperiodic, psd_periodic, freq
-
     else:
         aperiodic = AperiodicSpectrumArray(psd_aperiodic, info, freqs=freq)
         periodic = PeriodicSpectrumArray(psd_periodic, info, freqs=freq)
@@ -110,43 +107,38 @@ def irasa_epochs(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     as_array: bool = False,
 ) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """This function can be used to seperate aperiodic from periodic power spectra
-    using the IRASA algorithm (Wen & Liu, 2016).
+    """
+    Separate aperiodic from periodic power spectra using the IRASA algorithm.
 
     Parameters
     ----------
-    data : :py:class:˚mne.io.BaseEpochs˚
+    data : mne.Epochs
         The timeseries data used to extract aperiodic and periodic power spectra.
-        Should be :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings',
-        'duration' and 'overlap' will be automatically extracted.
-    band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract
-        (a-)periodic spectra.
-    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
-        Contains information about the range of the up/downsampling factors.
-        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
-    as_array : bool
-        The function returns an :py:class:˚mne.time_frequency.EpochsSpectrumArray˚ if set to False (default)
-        if set to True the data is returned as :py:class:`numpy.ndarray`.
+    band : tuple of float, optional
+        The lower and upper band of the frequency range used to extract (a-)periodic spectra.
+        Defaults to (1.0, 100.0).
+    hset_info : tuple of float, optional
+        Information about the range of the up/downsampling factors. Should be a tuple of (min, max, step).
+        Defaults to (1.05, 2.0, 0.05).
+    as_array : bool, optional
+        If True, the data is returned as numpy.ndarray. If False, returns mne.time_frequency.EpochsSpectrumArray.
+        Defaults to False.
 
     Returns
     -------
-        aperiodic : :py:class:˚mne.time_frequency.EpochsSpectrumArray˚
-            The aperiodic component of the data as an mne.time_frequency.EpochsSpectrumArray object.
-        periodic : :py:class:˚mne.time_frequency.EpochsSpectrumArray˚
-            The periodic component of the data as mne.time_frequency.EpochsSpectrumArray object.
-
+    tuple of AperiodicSpectrumArray and PeriodicSpectrumArray or tuple of numpy.ndarray
+        The aperiodic and periodic components of the data.
 
     References
     ----------
-    [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
-        Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.
-        https://doi.org/10.1007/s10548-015-0448-0
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
+    Components in the Power Spectrum of Neurophysiological Signal.
+    Brain Topography, 29(1), 13–26.
+    https://doi.org/10.1007/s10548-015-0448-0
 
     """
-    # set parameters & safety checks
-    # ensure that input data is in the right format
+    # Set parameters & safety checks
+    # Ensure that input data is in the right format
     assert isinstance(data, mne.BaseEpochs), 'Data should be of type mne.BaseEpochs'
     assert (
         data.info['bads'] == []
@@ -187,7 +179,7 @@ def irasa_epochs(
     psd_aperiodic = np.array(psd_list_aperiodic)
     psd_periodic = np.array(psd_list_periodic)
 
-    if as_array is True:
+    if as_array:
         return psd_aperiodic, psd_periodic, freq
     else:
         aperiodic = AperiodicEpochsSpectrum(psd_aperiodic, info, freqs=freq, events=events, event_id=event_ids)
