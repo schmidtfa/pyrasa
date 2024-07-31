@@ -1,4 +1,5 @@
-# %% inherit from spectrum array
+"""Classes for the MNE Python interface."""
+
 import matplotlib
 import mne
 import numpy as np
@@ -20,8 +21,20 @@ class PeriodicSpectrumArray(SpectrumArray):
         *,
         verbose: bool | str | int | None = None,
     ) -> None:
-        # _check_data_shape(data, freqs, info, ndim=2)
+        """
+        Initialize the PeriodicSpectrumArray.
 
+        Parameters
+        ----------
+        data : np.ndarray
+            The data array.
+        info : mne.Info
+            The info object.
+        freqs : np.ndarray
+            The frequencies array.
+        verbose : bool | str | int | None, optional
+            The verbosity level.
+        """
         self.__setstate__(
             dict(
                 method='IRASA',
@@ -53,6 +66,40 @@ class PeriodicSpectrumArray(SpectrumArray):
         axes: matplotlib.axes.Axes | list | None = None,
         show: bool = True,
     ) -> None:
+        """
+        Plot the spectrum.
+
+        Parameters
+        ----------
+        picks : str | np.ndarray | slice | None, optional
+            Channels to include. If None, all available channels are used.
+        average : bool, optional
+            Whether to average the data. Defaults to False.
+        dB : bool, optional
+            If True, convert data to decibels (dB). Defaults to False.
+        amplitude : bool | str, optional
+            If True, plot amplitude spectrum. Defaults to False.
+        xscale : str, optional
+            Scale of the x-axis. Defaults to 'linear'.
+        ci : float | str | None, optional
+            Confidence interval. Defaults to 'sd'.
+        ci_alpha : float, optional
+            Alpha value for the confidence interval. Defaults to 0.3.
+        color : str | tuple, optional
+            Color of the plot. Defaults to 'black'.
+        alpha : float | None, optional
+            Alpha value for the plot. Defaults to None.
+        spatial_colors : bool, optional
+            Use spatial colors for the plot. Defaults to True.
+        sphere : float | np.ndarray | mne.bem.ConductorModel | None | str, optional
+            Sphere parameters. Defaults to None.
+        exclude : tuple | list | str, optional
+            Channels to exclude. Defaults to ().
+        axes : matplotlib.axes.Axes | list | None, optional
+            Axes to plot on. Defaults to None.
+        show : bool, optional
+            Whether to show the plot. Defaults to True.
+        """
         super().plot(
             picks=picks,
             average=average,
@@ -82,6 +129,28 @@ class PeriodicSpectrumArray(SpectrumArray):
         block: bool = False,
         show: bool = True,
     ) -> None:
+        """
+        Plot the topography.
+
+        Parameters
+        ----------
+        dB : bool, optional
+            If True, convert data to decibels (dB). Defaults to False.
+        layout : mne.channels.Layout | None, optional
+            Layout of the topography. Defaults to None.
+        color : str | tuple, optional
+            Color of the plot. Defaults to 'w'.
+        fig_facecolor : str | tuple, optional
+            Face color of the figure. Defaults to 'k'.
+        axis_facecolor : str | tuple, optional
+            Face color of the axis. Defaults to 'k'.
+        axes : matplotlib.axes.Axes | list | None, optional
+            Axes to plot on. Defaults to None.
+        block : bool, optional
+            Whether to block the plot. Defaults to False.
+        show : bool, optional
+            Whether to show the plot. Defaults to True.
+        """
         super().plot_topo(
             dB=dB,
             layout=layout,
@@ -102,27 +171,31 @@ class PeriodicSpectrumArray(SpectrumArray):
         polyorder: int = 1,
         peak_width_limits: tuple[float, float] = (0.5, 6),
     ) -> pd.DataFrame:
-        """This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
-        The algorithm works by smoothing the spectrum, zeroing out negative values and
-        extracting peaks based on user specified parameters.
+        """
+        Extract peak parameters from the periodic spectrum.
 
-        Parameters: smoothing window : int, optional, default: 2
-                        Smoothing window in Hz handed over to the savitzky-golay filter.
-                    cut_spectrum : tuple of (float, float), optional, default (1, 40)
-                        Cut the periodic spectrum to limit peak finding to a sensible range
-                    peak_threshold : float, optional, default: 1
-                        Relative threshold for detecting peaks. This threshold is defined in
-                        relative units of the periodic spectrum
-                    min_peak_height : float, optional, default: 0.01
-                        Absolute threshold for identifying peaks. The threhsold is defined in relative
-                        units of the power spectrum. Setting this is somewhat necessary when a
-                        "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
-                    peak_width_limits : tuple of (float, float), optional, default (.5, 12)
-                        Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+        The algorithm works by smoothing the spectrum, zeroing out negative values,
+        and extracting peaks based on user-specified parameters.
 
-        Returns:    df_peaks: DataFrame
-                        DataFrame containing the center frequency, bandwidth and peak height for each channel
+        Parameters
+        ----------
+        smoothing_window : float | int, optional
+            Smoothing window in Hz for the Savitzky-Golay filter. Defaults to 1.
+        cut_spectrum : tuple of float, optional
+            Frequency range for peak detection. Defaults to (1, 40).
+        peak_threshold : float, optional
+            Relative threshold for detecting peaks. Defaults to 2.5.
+        min_peak_height : float, optional
+            Absolute threshold for identifying peaks. Defaults to 0.0.
+        polyorder : int, optional
+            Polynomial order for the Savitzky-Golay filter. Defaults to 1.
+        peak_width_limits : tuple of float, optional
+            Limits on possible peak width in Hz. Defaults to (0.5, 6).
 
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing the center frequency, bandwidth, and peak height for each channel.
         """
         peak_df = get_peak_params(
             self.get_data(),
@@ -149,9 +222,21 @@ class AperiodicSpectrumArray(SpectrumArray):
         freqs: np.ndarray,
         *,
         verbose: bool | str | int | None = None,
-    ):
-        # _check_data_shape(data, freqs, info, ndim=2)
+    ) -> None:
+        """
+        Initialize the AperiodicSpectrumArray.
 
+        Parameters
+        ----------
+        data : np.ndarray
+            The data array.
+        info : mne.Info
+            The info object.
+        freqs : np.ndarray
+            The frequencies array.
+        verbose : bool | str | int | None, optional
+            The verbosity level.
+        """
         self.__setstate__(
             dict(
                 method='IRASA',
@@ -166,26 +251,31 @@ class AperiodicSpectrumArray(SpectrumArray):
         )
 
     def get_slopes(
-        self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+        self: SpectrumArray,
+        fit_func: str = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
-        The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
-        as well as the respective goodness of fit.
+        """
+        Extract aperiodic parameters from the aperiodic spectrum.
+
+        The algorithm applies one of two different curve fit functions
+        and returns the associated parameters and goodness of fit.
 
         Parameters
         ----------
-                    fit_func : string
-                        Can be either "fixed" or "knee".
-                    fit_bounds : None, tuple
-                        Lower and upper bound for the fit function,
-                        should be None if the whole frequency range is desired.
-                        Otherwise a tuple of (lower, upper)
+        fit_func : str, optional
+            Fit function to use ('fixed' or 'knee'). Defaults to 'fixed'.
+        scale : bool, optional
+            Whether to scale the data. Defaults to False.
+        fit_bounds : tuple of float | None, optional
+            Lower and upper bounds for the fit function. Defaults to None.
 
-        Returns:    df_aps: DataFrame
-                        DataFrame containing the center frequency, bandwidth and peak height for each channel
-                    df_gof: DataFrame
-                        DataFrame containing the goodness of fit of the specific fit function for each channel.
-
+        Returns
+        -------
+        tuple of pd.DataFrame
+            DataFrame containing the aperiodic parameters for each channel.
+            DataFrame containing the goodness of fit for each channel.
         """
         df_aps, df_gof = compute_slope(
             self.get_data(),
@@ -213,6 +303,24 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         *,
         verbose: bool | str | int | None = None,
     ) -> None:
+        """
+        Initialize the PeriodicEpochsSpectrum.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data array.
+        info : mne.Info
+            The info object.
+        freqs : np.ndarray
+            The frequencies array.
+        events : np.ndarray | None, optional
+            The events array. Defaults to None.
+        event_id : int | list | dict | str | None, optional
+            The event ID. Defaults to None.
+        verbose : bool | str | int | None, optional
+            The verbosity level.
+        """
         if events is not None and data.shape[0] != events.shape[0]:
             raise ValueError(
                 f'The first dimension of `data` ({data.shape[0]}) must match the '
@@ -255,6 +363,40 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         axes: matplotlib.axes.Axes | list | None = None,
         show: bool = True,
     ) -> None:
+        """
+        Plot the epochs spectrum.
+
+        Parameters
+        ----------
+        picks : str | np.ndarray | slice | None, optional
+            Channels to include. If None, all available channels are used.
+        average : bool, optional
+            Whether to average the data. Defaults to False.
+        dB : bool, optional
+            If True, convert data to decibels (dB). Defaults to False.
+        amplitude : bool, optional
+            If True, plot amplitude spectrum. Defaults to False.
+        xscale : str, optional
+            Scale of the x-axis. Defaults to 'linear'.
+        ci : float | str | None, optional
+            Confidence interval. Defaults to 'sd'.
+        ci_alpha : float, optional
+            Alpha value for the confidence interval. Defaults to 0.3.
+        color : str | tuple, optional
+            Color of the plot. Defaults to 'black'.
+        alpha : float | None, optional
+            Alpha value for the plot. Defaults to None.
+        spatial_colors : bool, optional
+            Use spatial colors for the plot. Defaults to True.
+        sphere : float | np.ndarray | mne.bem.ConductorModel | None | str, optional
+            Sphere parameters. Defaults to None.
+        exclude : list | tuple | str, optional
+            Channels to exclude. Defaults to ().
+        axes : matplotlib.axes.Axes | list | None, optional
+            Axes to plot on. Defaults to None.
+        show : bool, optional
+            Whether to show the plot. Defaults to True.
+        """
         super().plot(
             picks=picks,
             average=average,
@@ -284,6 +426,28 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         block: bool = False,
         show: bool = True,
     ) -> None:
+        """
+        Plot the topography of the epochs spectrum.
+
+        Parameters
+        ----------
+        dB : bool, optional
+            If True, convert data to decibels (dB). Defaults to False.
+        layout : mne.channels.Layout | None, optional
+            Layout of the topography. Defaults to None.
+        color : str | tuple, optional
+            Color of the plot. Defaults to 'w'.
+        fig_facecolor : str | tuple, optional
+            Face color of the figure. Defaults to 'k'.
+        axis_facecolor : str | tuple, optional
+            Face color of the axis. Defaults to 'k'.
+        axes : matplotlib.axes.Axes | list | None, optional
+            Axes to plot on. Defaults to None.
+        block : bool, optional
+            Whether to block the plot. Defaults to False.
+        show : bool, optional
+            Whether to show the plot. Defaults to True.
+        """
         super().plot_topo(
             dB=dB,
             layout=layout,
@@ -304,27 +468,31 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         polyorder: int = 1,
         peak_width_limits: tuple[float, float] = (0.5, 6.0),
     ) -> pd.DataFrame:
-        """This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
-        The algorithm works by smoothing the spectrum, zeroing out negative values and
-        extracting peaks based on user specified parameters.
+        """
+        Extract peak parameters from the periodic spectrum.
 
-        Parameters: smoothing window : int, optional, default: 2
-                        Smoothing window in Hz handed over to the savitzky-golay filter.
-                    cut_spectrum : tuple of (float, float), optional, default (1, 40)
-                        Cut the periodic spectrum to limit peak finding to a sensible range
-                    peak_threshold : float, optional, default: 1
-                        Relative threshold for detecting peaks. This threshold is defined in
-                        relative units of the periodic spectrum
-                    min_peak_height : float, optional, default: 0.01
-                        Absolute threshold for identifying peaks. The threhsold is defined in relative
-                        units of the power spectrum. Setting this is somewhat necessary when a
-                        "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
-                    peak_width_limits : tuple of (float, float), optional, default (.5, 12)
-                        Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+        The algorithm works by smoothing the spectrum, zeroing out negative values,
+        and extracting peaks based on user-specified parameters.
 
-        Returns:    df_peaks: DataFrame
-                        DataFrame containing the center frequency, bandwidth and peak height for each channel
+        Parameters
+        ----------
+        smoothing_window : float | int, optional
+            Smoothing window in Hz for the Savitzky-Golay filter. Defaults to 1.
+        cut_spectrum : tuple of float, optional
+            Frequency range for peak detection. Defaults to (1.0, 40.0).
+        peak_threshold : float, optional
+            Relative threshold for detecting peaks. Defaults to 2.5.
+        min_peak_height : float, optional
+            Absolute threshold for identifying peaks. Defaults to 0.0.
+        polyorder : int, optional
+            Polynomial order for the Savitzky-Golay filter. Defaults to 1.
+        peak_width_limits : tuple of float, optional
+            Limits on possible peak width in Hz. Defaults to (0.5, 6.0).
 
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing the center frequency, bandwidth, and peak height for each channel.
         """
         event_dict = {val: key for key, val in self.event_id.items()}
         events = self.events[:, 2]
@@ -362,7 +530,25 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
         event_id: int | list | dict | str | None = None,
         *,
         verbose: bool | str | int | None = None,
-    ):
+    ) -> None:
+        """
+        Initialize the AperiodicEpochsSpectrum.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data array.
+        info : mne.Info
+            The info object.
+        freqs : np.ndarray
+            The frequencies array.
+        events : np.ndarray | None, optional
+            The events array. Defaults to None.
+        event_id : int | list | dict | str | None, optional
+            The event ID. Defaults to None.
+        verbose : bool | str | int | None, optional
+            The verbosity level.
+        """
         if events is not None and data.shape[0] != events.shape[0]:
             raise ValueError(
                 f'The first dimension of `data` ({data.shape[0]}) must match the '
@@ -388,26 +574,31 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
         )
 
     def get_slopes(
-        self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+        self: SpectrumArray,
+        fit_func: str = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
-        The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
-        as well as the respective goodness of fit.
+        """
+        Extract aperiodic parameters from the aperiodic spectrum.
+
+        The algorithm applies one of two different curve fit functions
+        and returns the associated parameters and goodness of fit.
 
         Parameters
         ----------
-                    fit_func : string
-                        Can be either "fixed" or "knee".
-                    fit_bounds : None, tuple
-                        Lower and upper bound for the fit function,
-                        should be None if the whole frequency range is desired.
-                        Otherwise a tuple of (lower, upper)
+        fit_func : str, optional
+            Fit function to use ('fixed' or 'knee'). Defaults to 'fixed'.
+        scale : bool, optional
+            Whether to scale the data. Defaults to False.
+        fit_bounds : tuple of float | None, optional
+            Lower and upper bounds for the fit function. Defaults to None.
 
-        Returns:    df_aps: DataFrame
-                        DataFrame containing the center frequency, bandwidth and peak height for each channel
-                    df_gof: DataFrame
-                        DataFrame containing the goodness of fit of the specific fit function for each channel.
-
+        Returns
+        -------
+        tuple of pd.DataFrame
+            DataFrame containing the aperiodic parameters for each channel.
+            DataFrame containing the goodness of fit for each channel.
         """
         event_dict = {val: key for key, val in self.event_id.items()}
         events = self.events[:, 2]
