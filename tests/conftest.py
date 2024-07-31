@@ -83,20 +83,8 @@ def gen_mne_data_raw():
 
     meg_path = data_path / 'MEG' / 'sample'
     raw_fname = meg_path / 'sample_audvis_raw.fif'
-
-    raw = mne.io.read_raw_fif(raw_fname)
-    picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')
-    raw.pick(picks)
-
-    yield raw
-
-
-@pytest.fixture(scope='session')
-def gen_mne_data_epoched():
-    data_path = sample.data_path()
-
-    meg_path = data_path / 'MEG' / 'sample'
-    raw_fname = meg_path / 'sample_audvis_raw.fif'
+    event_fname = meg_path / 'sample_audvis_filt-0-40_raw-eve.fif'
+    events = mne.read_events(event_fname)
 
     raw = mne.io.read_raw_fif(raw_fname)
     picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')
@@ -113,19 +101,15 @@ def gen_mne_data_epoched():
     tmax = 0.5
 
     # Load real data as the template
-    event_fname = meg_path / 'sample_audvis_filt-0-40_raw-eve.fif'
-    events = mne.read_events(event_fname)
-
     epochs = mne.Epochs(
         raw,
         events,
         event_id,
         tmin,
         tmax,
-        # picks=picks,
         baseline=None,
         preload=True,
         verbose=False,
     )
 
-    yield epochs
+    yield raw, epochs
