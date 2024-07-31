@@ -10,7 +10,7 @@ from scipy.optimize import curve_fit
 
 def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
     """Specparams fixed fitting function.
-    Use this to model aperiodic activity without a spectral knee
+    Use this to model aperiodic activity without a spectral knee.
     """
     y_hat = b0 - np.log10(x**b)
 
@@ -19,7 +19,7 @@ def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
 
 def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.ndarray:
     """Model aperiodic activity with a spectral knee and a pre-knee slope.
-    Use this to model aperiodic activity with a spectral knee
+    Use this to model aperiodic activity with a spectral knee.
     """
     y_hat = b0 - np.log10(x**b1 * (k + x**b2))
 
@@ -29,7 +29,7 @@ def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.n
 def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
     """Get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
-    https://machinelearningmastery.com/probabilistic-model-selection-measures/
+    https://machinelearningmastery.com/probabilistic-model-selection-measures/.
     """
     residuals = np.log10(psd) - psd_pred
     ss_res = np.sum(residuals**2)
@@ -56,7 +56,7 @@ def _compute_slope(
     fit_bounds: tuple | None = None,
     scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Get the slope of the aperiodic spectrum"""
+    """Get the slope of the aperiodic spectrum."""
     curv_kwargs = {
         'maxfev': 10_000,
         'ftol': 1e-5,

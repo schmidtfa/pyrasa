@@ -1,4 +1,4 @@
-"""Utilities for signal decompositon using IRASA"""
+"""Utilities for signal decompositon using IRASA."""
 
 from collections.abc import Callable
 from copy import copy
@@ -11,7 +11,7 @@ from scipy.signal import ShortTimeFFT
 def _crop_data(
     band: list | tuple, freqs: np.ndarray, psd_aperiodic: np.ndarray, psd_periodic: np.ndarray, axis: int
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Utility function to crop spectra to a defined frequency range"""
+    """Utility function to crop spectra to a defined frequency range."""
     mask_freqs = np.ma.masked_outside(freqs, *band).mask
     freqs = freqs[~mask_freqs]
     psd_aperiodic = np.compress(~mask_freqs, psd_aperiodic, axis=axis)
@@ -21,7 +21,7 @@ def _crop_data(
 
 
 def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.ndarray:  # noqa N803
-    """Generates time from SFT object"""
+    """Generates time from SFT object."""
     tmin, tmax = SFT.extent(sgramm.shape[-1])[:2]
     delta_t = SFT.delta_t
 
@@ -30,7 +30,7 @@ def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.nd
 
 
 def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: float) -> np.ndarray:
-    """Find the nearest time point in an up/downsampled spectrogram"""
+    """Find the nearest time point in an up/downsampled spectrogram."""
     idx = (np.abs(time_array - time_value)).argmin()
 
     if idx < sgramm_ud.shape[2]:
@@ -45,7 +45,7 @@ def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: flo
 def _get_windows(
     nperseg: int, dpss_settings: dict, win_func: Callable, win_func_kwargs: dict
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Generate a window function used for tapering"""
+    """Generate a window function used for tapering."""
     low_bias_ratio = 0.9
     min_time_bandwidth = 2.0
     win_func_kwargs = copy(win_func_kwargs)
@@ -77,7 +77,7 @@ def _get_windows(
 
 
 def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
-    """Check if the input parameters for irasa are specified correctly"""
+    """Check if the input parameters for irasa are specified correctly."""
     valid_hset_shape = 3
     assert isinstance(irasa_params['data'], np.ndarray), 'Data should be a numpy array.'
 
@@ -134,7 +134,7 @@ def _compute_psd_welch(
     axis: int = -1,
     average: str = 'mean',
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Function to compute power spectral densities using welchs method"""
+    """Function to compute power spectral densities using welchs method."""
     if nperseg is None:
         nperseg = data.shape[-1]
     win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
@@ -177,7 +177,7 @@ def _compute_sgramm(  # noqa C901
     h: int | None = None,
     time_orig: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Function to compute spectrograms"""
+    """Function to compute spectrograms."""
     if h is None:
         nperseg = int(np.floor(fs * win_duration))
     elif np.logical_and(h is not None, up_down == 'up'):

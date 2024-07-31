@@ -10,7 +10,7 @@ from pyrasa.utils.peak_utils import get_peak_params
 
 
 class PeriodicSpectrumArray(SpectrumArray):
-    """Subclass of SpectrumArray"""
+    """Subclass of SpectrumArray."""
 
     def __init__(
         self: SpectrumArray,
@@ -140,7 +140,7 @@ class PeriodicSpectrumArray(SpectrumArray):
 
 
 class AperiodicSpectrumArray(SpectrumArray):
-    """Subclass of SpectrumArray"""
+    """Subclass of SpectrumArray."""
 
     def __init__(
         self: SpectrumArray,
@@ -201,7 +201,7 @@ class AperiodicSpectrumArray(SpectrumArray):
 
 # %%
 class PeriodicEpochsSpectrum(EpochsSpectrumArray):
-    """Subclass of EpochsSpectrumArray"""
+    """Subclass of EpochsSpectrumArray."""
 
     def __init__(
         self: EpochsSpectrumArray,
@@ -351,7 +351,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
 
 
 class AperiodicEpochsSpectrum(EpochsSpectrumArray):
-    """Subclass of EpochsSpectrumArray"""
+    """Subclass of EpochsSpectrumArray."""
 
     def __init__(
         self: EpochsSpectrumArray,
