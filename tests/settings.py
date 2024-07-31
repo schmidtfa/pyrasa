@@ -1,4 +1,4 @@
-# %%
+"""Common settings for tests."""
 
 import numpy as np
 

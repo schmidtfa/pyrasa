@@ -102,6 +102,9 @@ ignore = ['PLR0913']
 [tool.ruff.format]
 quote-style = 'single'
 
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--ignore=pyrasa/__version__.py"

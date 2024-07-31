@@ -1,3 +1,5 @@
+"""Test the slope fittings functions."""
+
 import numpy as np
 import pytest
 import scipy.signal as dsp
@@ -12,6 +14,7 @@ from .settings import EXPONENT, FS, KNEE_FREQ, KNEE_TOLERANCE, MIN_R2, TOLERANCE
 @pytest.mark.parametrize('fs', FS, scope='session')
 # @pytest.mark.xfail
 def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
+    """Test slope fitting functionality in a purely aperiodic signal."""
     f_range = [1, 100]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
@@ -44,6 +47,7 @@ def test_slope_fitting_settings(
     exponent,
     fs,
 ):
+    """Test various settings for slope fitting."""
     f_range = [0, 100]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
@@ -69,6 +73,7 @@ def test_slope_fitting_settings(
 # Takes too long need to pregenerate
 @pytest.mark.parametrize('exponent, fs, knee_freq', [(-1, 500, 15)], scope='session')
 def test_slope_fitting_knee(knee_aperiodic_signal, fs, exponent):
+    """Test slope fitting functionality with knee model."""
     f_range = [1, 200]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(knee_aperiodic_signal, fs, nperseg=int(4 * fs))
