@@ -9,34 +9,28 @@ from scipy.optimize import curve_fit
 
 
 def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
-    """
-    Specparams fixed fitting function.
+    """Specparams fixed fitting function.
     Use this to model aperiodic activity without a spectral knee
     """
-
     y_hat = b0 - np.log10(x**b)
 
     return y_hat
 
 
 def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.ndarray:
-    """
-    Model aperiodic activity with a spectral knee and a pre-knee slope.
+    """Model aperiodic activity with a spectral knee and a pre-knee slope.
     Use this to model aperiodic activity with a spectral knee
     """
-
     y_hat = b0 - np.log10(x**b1 * (k + x**b2))
 
     return y_hat
 
 
 def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, fit_func: str) -> pd.DataFrame:
-    """
-    get goodness of fit (i.e. mean squared error and R2)
+    """Get goodness of fit (i.e. mean squared error and R2)
     BIC and AIC currently assume OLS
     https://machinelearningmastery.com/probabilistic-model-selection-measures/
     """
-
     residuals = np.log10(psd) - psd_pred
     ss_res = np.sum(residuals**2)
     ss_tot = np.sum((np.log10(psd) - np.mean(np.log10(psd))) ** 2)
@@ -62,8 +56,7 @@ def _compute_slope(
     fit_bounds: tuple | None = None,
     scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """get the slope of the aperiodic spectrum"""
-
+    """Get the slope of the aperiodic spectrum"""
     curv_kwargs = {
         'maxfev': 10_000,
         'ftol': 1e-5,
@@ -138,8 +131,7 @@ def compute_slope(
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+    """This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
     as well as the respective goodness of fit.
 
@@ -167,7 +159,6 @@ def compute_slope(
                     DataFrame containing the goodness of fit of the specific fit function for each channel.
 
     """
-
     assert isinstance(aperiodic_spectrum, np.ndarray), 'aperiodic_spectrum should be a numpy array.'
     if aperiodic_spectrum.ndim == 1:
         aperiodic_spectrum = aperiodic_spectrum[np.newaxis, :]
@@ -238,8 +229,7 @@ def compute_slope_sprint(
     ch_names: Iterable = (),
     fit_bounds: tuple[float, float] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
+    """This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
     as well as the respective goodness of fit.
 
@@ -264,7 +254,6 @@ def compute_slope_sprint(
                     DataFrame containing the goodness of fit of the specific fit function for each channel.
 
     """
-
     ap_t_list, gof_t_list = [], []
 
     for ix, t in enumerate(times):

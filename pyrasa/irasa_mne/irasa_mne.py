@@ -18,8 +18,7 @@ def irasa_raw(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     as_array: bool = False,
 ) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    This function can be used to seperate aperiodic from periodic power spectra using
+    """This function can be used to seperate aperiodic from periodic power spectra using
     the IRASA algorithm (Wen & Liu, 2016).
 
     Parameters
@@ -58,7 +57,6 @@ def irasa_raw(
         https://doi.org/10.1007/s10548-015-0448-0
 
     """
-
     # set parameters & safety checks
     # ensure that input data is in the right format
     assert isinstance(data, mne.io.BaseRaw), 'Data should be of type mne.BaseRaw'
@@ -112,8 +110,7 @@ def irasa_epochs(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     as_array: bool = False,
 ) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    This function can be used to seperate aperiodic from periodic power spectra
+    """This function can be used to seperate aperiodic from periodic power spectra
     using the IRASA algorithm (Wen & Liu, 2016).
 
     Parameters
@@ -148,7 +145,6 @@ def irasa_epochs(
         https://doi.org/10.1007/s10548-015-0448-0
 
     """
-
     # set parameters & safety checks
     # ensure that input data is in the right format
     assert isinstance(data, mne.BaseEpochs), 'Data should be of type mne.BaseEpochs'

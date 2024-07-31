@@ -20,8 +20,7 @@ def get_peak_params(
     min_peak_height: float = 0.01,
     peak_width_limits: tuple[float, float] = (0.5, 6.0),
 ) -> pd.DataFrame:
-    """
-    This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
+    """This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
     The algorithm works by smoothing the spectrum, zeroing out negative values and
     extracting peaks based on user specified parameters.
 
@@ -50,7 +49,6 @@ def get_peak_params(
                     DataFrame containing the center frequency, bandwidth and peak height for each channel
 
     """
-
     if np.isnan(periodic_spectrum).sum() > 0:
         raise ValueError('peak width detection does not work properly with nans')
 
@@ -131,8 +129,7 @@ def get_peak_params_sprint(
     min_peak_height: float = 0.01,
     peak_width_limits: tuple[float, float] = (0.5, 12),
 ) -> pd.DataFrame:
-    """
-    This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
+    """This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
     The algorithm works by smoothing the spectrum, zeroing out negative values and
     extracting peaks based on user specified parameters.
 
@@ -164,7 +161,6 @@ def get_peak_params_sprint(
                     bandwidth and peak height for each channel and time point.
 
     """
-
     time_list = []
 
     for ix, t in enumerate(times):
@@ -190,8 +186,7 @@ def get_peak_params_sprint(
 
 # %% find peaks irasa style
 def get_band_info(df_peaks: pd.DataFrame, freq_range: tuple[int, int], ch_names: list) -> pd.DataFrame:
-    """
-    This function can be used to extract peaks in a specified frequency range
+    """This function can be used to extract peaks in a specified frequency range
     from the Peak DataFrame obtained via "get_peak_params".
 
     Parameters : df_peaks : DataFrame
@@ -207,7 +202,6 @@ def get_band_info(df_peaks: pd.DataFrame, freq_range: tuple[int, int], ch_names:
                     in a specified frequency range
 
     """
-
     df_range = df_peaks.query(f'cf > {freq_range[0]}').query(f'cf < {freq_range[1]}')
 
     # we dont always get a peak in a queried range lets give those channels a nan

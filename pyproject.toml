@@ -94,7 +94,8 @@ extend-select = [
     'PTH',
     'SIM',
     'TCH',
-    'PL'
+    'PL',
+    'D'
 ]
 ignore = ['PLR0913']
 

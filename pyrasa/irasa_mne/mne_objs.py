@@ -102,8 +102,7 @@ class PeriodicSpectrumArray(SpectrumArray):
         polyorder: int = 1,
         peak_width_limits: tuple[float, float] = (0.5, 6),
     ) -> pd.DataFrame:
-        """
-        This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
+        """This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
         The algorithm works by smoothing the spectrum, zeroing out negative values and
         extracting peaks based on user specified parameters.
 
@@ -125,7 +124,6 @@ class PeriodicSpectrumArray(SpectrumArray):
                         DataFrame containing the center frequency, bandwidth and peak height for each channel
 
         """
-
         peak_df = get_peak_params(
             self.get_data(),
             self.freqs,
@@ -170,12 +168,12 @@ class AperiodicSpectrumArray(SpectrumArray):
     def get_slopes(
         self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """
-        This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+        """This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
         as well as the respective goodness of fit.
 
-        Parameters:
+        Parameters
+        ----------
                     fit_func : string
                         Can be either "fixed" or "knee".
                     fit_bounds : None, tuple
@@ -189,7 +187,6 @@ class AperiodicSpectrumArray(SpectrumArray):
                         DataFrame containing the goodness of fit of the specific fit function for each channel.
 
         """
-
         df_aps, df_gof = compute_slope(
             self.get_data(),
             self.freqs,
@@ -307,8 +304,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         polyorder: int = 1,
         peak_width_limits: tuple[float, float] = (0.5, 6.0),
     ) -> pd.DataFrame:
-        """
-        This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
+        """This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
         The algorithm works by smoothing the spectrum, zeroing out negative values and
         extracting peaks based on user specified parameters.
 
@@ -330,7 +326,6 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
                         DataFrame containing the center frequency, bandwidth and peak height for each channel
 
         """
-
         event_dict = {val: key for key, val in self.event_id.items()}
         events = self.events[:, 2]
 
@@ -395,12 +390,12 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
     def get_slopes(
         self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """
-        This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
+        """This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
         as well as the respective goodness of fit.
 
-        Parameters:
+        Parameters
+        ----------
                     fit_func : string
                         Can be either "fixed" or "knee".
                     fit_bounds : None, tuple
@@ -414,7 +409,6 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
                         DataFrame containing the goodness of fit of the specific fit function for each channel.
 
         """
-
         event_dict = {val: key for key, val in self.event_id.items()}
         events = self.events[:, 2]
 

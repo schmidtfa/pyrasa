@@ -27,8 +27,7 @@ def _gen_irasa(
     hset: np.ndarray,
     time: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    This function is implementing the IRASA algorithm using a custom function to
+    """This function is implementing the IRASA algorithm using a custom function to
     compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
     This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
 
@@ -36,7 +35,6 @@ def _gen_irasa(
     high-performance tool for automated sleep staging.”
     Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
     """
-
     spectra = np.zeros((len(hset), *orig_spectrum.shape))
     for i, h in enumerate(hset):
         rat = fractions.Fraction(str(h))
@@ -77,8 +75,7 @@ def irasa(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     hset_accuracy: int = 4,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    This function can be used to generate aperiodic and periodic power spectra from a time series
+    """This function can be used to generate aperiodic and periodic power spectra from a time series
     using the IRASA algorithm (Wen & Liu, 2016).
 
     This function gives you maximal control over all parameters so its up to you set things up properly.
@@ -203,9 +200,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     hset_accuracy: int = 4,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """
-
-    This function can be used to seperate aperiodic from periodic power spectra
+    """This function can be used to seperate aperiodic from periodic power spectra
     using the IRASA algorithm (Wen & Liu, 2016) in a time resolved manner.
 
     Parameters
@@ -270,7 +265,6 @@ def irasa_sprint(  # noqa PLR0915 C901
         Brain Topography, 29(1), 13–26.https://doi.org/10.1007/s10548-015-0448-0
 
     """
-
     # set parameters
     if win_func_kwargs is None:
         win_func_kwargs = {}
