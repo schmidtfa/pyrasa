@@ -3,6 +3,7 @@ import matplotlib
 import mne
 import numpy as np
 import pandas as pd
+from attrs import define
 from mne.time_frequency import EpochsSpectrumArray, SpectrumArray
 
 from pyrasa.utils.aperiodic_utils import compute_slope
@@ -435,3 +436,15 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             gof_list.append(df_gof)
 
         return pd.concat(aps_list), pd.concat(gof_list)
+
+
+@define
+class IrasaRaw:
+    periodic: PeriodicSpectrumArray
+    aperiodic: AperiodicSpectrumArray
+
+
+@define
+class IrasaEpoched:
+    periodic: PeriodicEpochsSpectrum
+    aperiodic: AperiodicEpochsSpectrum
