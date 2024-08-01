@@ -1,5 +1,6 @@
 """Utilities for signal decompositon using IRASA"""
 
+import fractions
 from collections.abc import Callable
 from copy import copy
 
@@ -7,18 +8,70 @@ import numpy as np
 import scipy.signal as dsp
 from scipy.signal import ShortTimeFFT
 
+from pyrasa.utils.types import IrasaFun
+
+
+# TODO: Port to Cython
+def _gen_irasa(
+    data: np.ndarray,
+    orig_spectrum: np.ndarray,
+    fs: int,
+    irasa_fun: IrasaFun,
+    hset: np.ndarray,
+    time: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    This function is implementing the IRASA algorithm using a custom function to
+    compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
+    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
+
+    [1] Vallat, Raphael, and Matthew P. Walker. “An open-source,
+    high-performance tool for automated sleep staging.”
+    Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
+    """
+
+    spectra = np.zeros((len(hset), *orig_spectrum.shape))
+    for i, h in enumerate(hset):
+        rat = fractions.Fraction(str(h))
+        up, down = rat.numerator, rat.denominator
+
+        # Much faster than FFT-based resampling
+        data_up = dsp.resample_poly(data, up, down, axis=-1)
+        data_down = dsp.resample_poly(data, down, up, axis=-1)
+
+        # Calculate an up/downsampled version of the PSD using same params as original
+        spectrum_up = irasa_fun(data=data_up, fs=int(fs * h), h=h, time_orig=time, up_down='up')
+        spectrum_dw = irasa_fun(data=data_down, fs=int(fs / h), h=h, time_orig=time, up_down='down')
+
+        # geometric mean between up and downsampled
+        # be aware of the input dimensions
+        if spectra.ndim == 2:  # noqa PLR2004
+            spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
+        if spectra.ndim == 3:  # noqa PLR2004
+            spectra[i, :, :] = np.sqrt(spectrum_up * spectrum_dw)
+
+    aperiodic_spectrum = np.median(spectra, axis=0)
+    periodic_spectrum = orig_spectrum - aperiodic_spectrum
+    return orig_spectrum, aperiodic_spectrum, periodic_spectrum
+
 
 def _crop_data(
-    band: list | tuple, freqs: np.ndarray, psd_aperiodic: np.ndarray, psd_periodic: np.ndarray, axis: int
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    band: list | tuple,
+    freqs: np.ndarray,
+    psd_aperiodic: np.ndarray,
+    psd_periodic: np.ndarray,
+    psd: np.ndarray,
+    axis: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Utility function to crop spectra to a defined frequency range"""
 
     mask_freqs = np.ma.masked_outside(freqs, *band).mask
     freqs = freqs[~mask_freqs]
     psd_aperiodic = np.compress(~mask_freqs, psd_aperiodic, axis=axis)
     psd_periodic = np.compress(~mask_freqs, psd_periodic, axis=axis)
+    psd = np.compress(~mask_freqs, psd, axis=axis)
 
-    return freqs, psd_aperiodic, psd_periodic
+    return freqs, psd_aperiodic, psd_periodic, psd
 
 
 def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.ndarray:  # noqa N803

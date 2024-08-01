@@ -5,6 +5,8 @@ from pyrasa.irasa import irasa
 from pyrasa.irasa_mne.mne_objs import (
     AperiodicEpochsSpectrum,
     AperiodicSpectrumArray,
+    IrasaEpoched,
+    IrasaRaw,
     PeriodicEpochsSpectrum,
     PeriodicSpectrumArray,
 )
@@ -16,8 +18,7 @@ def irasa_raw(
     duration: float | None = None,
     overlap: float | int = 50,
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
-    as_array: bool = False,
-) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> IrasaRaw:
     """
     This function can be used to seperate aperiodic from periodic power spectra using
     the IRASA algorithm (Wen & Liu, 2016).
@@ -87,7 +88,7 @@ def irasa_raw(
         'noverlap': int(fs * duration * overlap),
     }
 
-    freq, psd_aperiodic, psd_periodic = irasa(
+    irasa_spectrum = irasa(
         data_array,
         fs=fs,
         band=band,
@@ -96,22 +97,17 @@ def irasa_raw(
         psd_kwargs=kwargs_psd,
     )
 
-    if as_array is True:
-        return psd_aperiodic, psd_periodic, freq
-
-    else:
-        aperiodic = AperiodicSpectrumArray(psd_aperiodic, info, freqs=freq)
-        periodic = PeriodicSpectrumArray(psd_periodic, info, freqs=freq)
-
-        return aperiodic, periodic
+    return IrasaRaw(
+        periodic=PeriodicSpectrumArray(irasa_spectrum.periodic, info, freqs=irasa_spectrum.freqs),
+        aperiodic=AperiodicSpectrumArray(irasa_spectrum.aperiodic, info, freqs=irasa_spectrum.freqs),
+    )
 
 
 def irasa_epochs(
     data: mne.Epochs,
     band: tuple[float, float] = (1.0, 100.0),
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
-    as_array: bool = False,
-) -> tuple[AperiodicSpectrumArray, PeriodicSpectrumArray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> IrasaEpoched:
     """
     This function can be used to seperate aperiodic from periodic power spectra
     using the IRASA algorithm (Wen & Liu, 2016).
@@ -177,7 +173,7 @@ def irasa_epochs(
     # Do the actual IRASA stuff..
     psd_list_aperiodic, psd_list_periodic = [], []
     for epoch in data_array:
-        freq, psd_aperiodic, psd_periodic = irasa(
+        irasa_spectrum = irasa(
             epoch,
             fs=fs,
             band=band,
@@ -185,16 +181,17 @@ def irasa_epochs(
             hset_info=hset_info,
             psd_kwargs=kwargs_psd,
         )
-        psd_list_aperiodic.append(psd_aperiodic)
-        psd_list_periodic.append(psd_periodic)
+        psd_list_aperiodic.append(irasa_spectrum.aperiodic.copy())
+        psd_list_periodic.append(irasa_spectrum.periodic.copy())
 
-    psd_aperiodic = np.array(psd_list_aperiodic)
-    psd_periodic = np.array(psd_list_periodic)
+    psds_aperiodic = np.array(psd_list_aperiodic)
+    psds_periodic = np.array(psd_list_periodic)
 
-    if as_array is True:
-        return psd_aperiodic, psd_periodic, freq
-    else:
-        aperiodic = AperiodicEpochsSpectrum(psd_aperiodic, info, freqs=freq, events=events, event_id=event_ids)
-        periodic = PeriodicEpochsSpectrum(psd_periodic, info, freqs=freq, events=events, event_id=event_ids)
-
-        return aperiodic, periodic
+    return IrasaEpoched(
+        periodic=PeriodicEpochsSpectrum(
+            psds_periodic, info, freqs=irasa_spectrum.freqs, events=events, event_id=event_ids
+        ),
+        aperiodic=AperiodicEpochsSpectrum(
+            psds_aperiodic, info, freqs=irasa_spectrum.freqs, events=events, event_id=event_ids
+        ),
+    )
