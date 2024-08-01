@@ -19,7 +19,7 @@ classifiers = [
 ]
 keywords=['spectral parametrization', 'oscillations', 'power spectra', '1/f']
 requires-python = ">= 3.11"
-dependencies = ["numpy", "pandas", "scipy>=1.12"]
+dependencies = ["numpy", "pandas", "scipy>=1.12", "attrs"]
 
 [project.optional-dependencies]
 mne = ['mne']

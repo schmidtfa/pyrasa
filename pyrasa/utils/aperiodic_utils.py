@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
+from pyrasa.utils.types import SlopeFit
+
 
 def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
     """
@@ -63,12 +65,7 @@ def _compute_slope(
     fit_func: str | Callable,
     fit_bounds: tuple | None = None,
     scale_factor: float | int = 1,
-    curv_kwargs: dict = {
-        'maxfev': 10_000,
-        'ftol': 1e-5,
-        'xtol': 1e-5,
-        'gtol': 1e-5,
-    },
+    curv_kwargs: dict = {},
     semi_log: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
@@ -149,17 +146,17 @@ def compute_slope(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     fit_func: str | Callable,
-    ch_names: Iterable = (),
+    ch_names: Iterable | None = None,
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
+    semi_log: bool = True,
     curv_kwargs: dict = {
         'maxfev': 10_000,
         'ftol': 1e-5,
         'xtol': 1e-5,
         'gtol': 1e-5,
     },
-    semi_log: bool = True,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> SlopeFit:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -199,8 +196,8 @@ def compute_slope(
     assert freqs.ndim == 1, 'freqs needs to be of shape (freqs,).'
 
     assert isinstance(
-        ch_names, list | tuple | np.ndarray
-    ), 'Channel names should be of type list, tuple or numpy.ndarray'
+        ch_names, list | tuple | np.ndarray | None
+    ), 'Channel names should be of type list, tuple or numpy.ndarray or None'
 
     if fit_bounds is not None:
         fmin, fmax = freqs.min(), freqs.max()
@@ -216,7 +213,7 @@ def compute_slope(
         aperiodic_spectrum = aperiodic_spectrum[:, 1:]
 
     # generate channel names if not given
-    if len(ch_names) == 0:
+    if ch_names is None:
         ch_names = np.arange(aperiodic_spectrum.shape[0])
 
     if scale:
@@ -248,10 +245,7 @@ def compute_slope(
         gof_list.append(gof)
 
     # combine & return
-    df_aps = pd.concat(ap_list)
-    df_gof = pd.concat(gof_list)
-
-    return df_aps, df_gof
+    return SlopeFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list))
 
 
 def compute_slope_sprint(
@@ -259,9 +253,10 @@ def compute_slope_sprint(
     freqs: np.ndarray,
     times: np.ndarray,
     fit_func: str,
-    ch_names: Iterable = (),
+    scale: bool = False,
+    ch_names: Iterable | None = None,
     fit_bounds: tuple[float, float] | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> SlopeFit:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -292,16 +287,18 @@ def compute_slope_sprint(
     ap_t_list, gof_t_list = [], []
 
     for ix, t in enumerate(times):
-        cur_aps, cur_gof = compute_slope(
-            aperiodic_spectrum[:, :, ix], freqs=freqs, fit_func=fit_func, ch_names=ch_names, fit_bounds=fit_bounds
+        slope_fit = compute_slope(
+            aperiodic_spectrum[:, :, ix],
+            freqs=freqs,
+            fit_func=fit_func,
+            ch_names=ch_names,
+            fit_bounds=fit_bounds,
+            scale=scale,
         )
-        cur_aps['time'] = t
-        cur_gof['time'] = t
+        slope_fit.aperiodic_params['time'] = t
+        slope_fit.gof['time'] = t
 
-        ap_t_list.append(cur_aps)
-        gof_t_list.append(cur_gof)
+        ap_t_list.append(slope_fit.aperiodic_params)
+        gof_t_list.append(slope_fit.gof)
 
-    df_ap_time = pd.concat(ap_t_list)
-    df_gof_time = pd.concat(gof_t_list)
-
-    return df_ap_time, df_gof_time
+    return SlopeFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list))

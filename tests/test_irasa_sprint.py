@@ -3,8 +3,7 @@ import pytest
 from neurodsp.utils.sim import set_random_seed
 
 from pyrasa.irasa import irasa_sprint
-from pyrasa.utils.aperiodic_utils import compute_slope_sprint
-from pyrasa.utils.peak_utils import get_band_info, get_peak_params_sprint
+from pyrasa.utils.peak_utils import get_band_info
 
 from .settings import MIN_R2_SPRINT, TOLERANCE
 
@@ -12,25 +11,24 @@ set_random_seed(42)
 
 
 def test_irasa_sprint(ts4sprint):
-    sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
+    irasa_tf = irasa_sprint(
         ts4sprint[np.newaxis, :],
         fs=500,
         band=(1, 100),
-        freq_res=0.5,  # smooth=False, n_avgs=[3, 7, 11]
+        freq_res=0.5,
     )
 
     # check basic aperiodic detection
-    df_aps, df_gof = compute_slope_sprint(sgramm_ap[np.newaxis, :, :], freqs=freqs_ir, times=times_ir, fit_func='fixed')
+    slope_fit = irasa_tf.get_slopes(fit_func='fixed')
+    #       irasa_tf.aperiodic[np.newaxis, :, :], freqs=irasa_tf.freqs, times=irasa_tf.time,
+    #  )
 
-    assert df_gof['r_squared'].mean() > MIN_R2_SPRINT
-    assert np.isclose(df_aps.query('time < 7')['Exponent'].mean(), 1, atol=TOLERANCE)
-    assert np.isclose(df_aps.query('time > 7')['Exponent'].mean(), 2, atol=TOLERANCE)
+    assert slope_fit.gof['r_squared'].mean() > MIN_R2_SPRINT
+    assert np.isclose(slope_fit.aperiodic_params.query('time < 7')['Exponent'].mean(), 1, atol=TOLERANCE)
+    assert np.isclose(slope_fit.aperiodic_params.query('time > 7')['Exponent'].mean(), 2, atol=TOLERANCE)
 
     # check basic peak detection
-    df_peaks = get_peak_params_sprint(
-        sgramm_p[np.newaxis, :, :],
-        freqs=freqs_ir,
-        times=times_ir,
+    df_peaks = irasa_tf.get_peaks(
         smooth=True,
         smoothing_window=1,
         min_peak_height=0.01,
@@ -73,11 +71,6 @@ def test_irasa_sprint(ts4sprint):
 
 # test settings
 def test_irasa_sprint_settings(ts4sprint):
-    # test smoothing
-    # sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
-    #     ts4sprint[np.newaxis, :], fs=500, band=(1, 100), freq_res=0.5, smooth=True, n_avgs=[3]
-    # )
-
     # test dpss
     import scipy.signal as dsp
 
@@ -87,8 +80,6 @@ def test_irasa_sprint_settings(ts4sprint):
         band=(1, 100),
         win_func=dsp.windows.dpss,
         freq_res=0.5,
-        # smooth=False,
-        # n_avgs=[3, 7, 11],
     )
 
     # test too much bandwidht
@@ -100,6 +91,4 @@ def test_irasa_sprint_settings(ts4sprint):
             win_func=dsp.windows.dpss,
             dpss_settings_time_bandwidth=1,
             freq_res=0.5,
-            # smooth=False,
-            # n_avgs=[3, 7, 11],
         )

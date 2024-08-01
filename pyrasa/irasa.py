@@ -1,65 +1,23 @@
-import fractions
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import scipy.signal as dsp
 
+from pyrasa.utils.irasa_spectrum import IrasaSpectrum
+from pyrasa.utils.irasa_tf_spectrum import IrasaTfSpectrum
+
 # from scipy.stats.mstats import gmean
 from pyrasa.utils.irasa_utils import (
     _check_irasa_settings,
     _compute_psd_welch,
     _compute_sgramm,
-    _crop_data,  # _find_nearest, _gen_time_from_sft, _get_windows,
+    _crop_data,
+    _gen_irasa,
 )
-from pyrasa.utils.types import IrasaFun
 
 if TYPE_CHECKING:
-    from pyrasa.utils.input_classes import IrasaSprintKwargsTyped
-
-
-# TODO: Port to Cython
-def _gen_irasa(
-    data: np.ndarray,
-    orig_spectrum: np.ndarray,
-    fs: int,
-    irasa_fun: IrasaFun,
-    hset: np.ndarray,
-    time: np.ndarray | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    This function is implementing the IRASA algorithm using a custom function to
-    compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
-    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
-
-    [1] Vallat, Raphael, and Matthew P. Walker. “An open-source,
-    high-performance tool for automated sleep staging.”
-    Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
-    """
-
-    spectra = np.zeros((len(hset), *orig_spectrum.shape))
-    for i, h in enumerate(hset):
-        rat = fractions.Fraction(str(h))
-        up, down = rat.numerator, rat.denominator
-
-        # Much faster than FFT-based resampling
-        data_up = dsp.resample_poly(data, up, down, axis=-1)
-        data_down = dsp.resample_poly(data, down, up, axis=-1)
-
-        # Calculate an up/downsampled version of the PSD using same params as original
-        spectrum_up = irasa_fun(data=data_up, fs=int(fs * h), h=h, time_orig=time, up_down='up')
-        spectrum_dw = irasa_fun(data=data_down, fs=int(fs / h), h=h, time_orig=time, up_down='down')
-
-        # geometric mean between up and downsampled
-        # be aware of the input dimensions
-        if spectra.ndim == 2:  # noqa PLR2004
-            spectra[i, :] = np.sqrt(spectrum_up * spectrum_dw)
-        if spectra.ndim == 3:  # noqa PLR2004
-            spectra[i, :, :] = np.sqrt(spectrum_up * spectrum_dw)
-
-    aperiodic_spectrum = np.median(spectra, axis=0)
-    periodic_spectrum = orig_spectrum - aperiodic_spectrum
-    return orig_spectrum, aperiodic_spectrum, periodic_spectrum
+    from pyrasa.utils.types import IrasaSprintKwargsTyped
 
 
 # %% irasa
@@ -68,6 +26,7 @@ def irasa(
     fs: int,
     band: tuple[float, float],
     psd_kwargs: dict,
+    ch_names: np.ndarray | None = None,
     win_func: Callable = dsp.windows.hann,
     win_func_kwargs: dict | None = None,
     dpss_settings_time_bandwidth: float = 2.0,
@@ -76,7 +35,7 @@ def irasa(
     filter_settings: tuple[float | None, float | None] = (None, None),
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     hset_accuracy: int = 4,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> IrasaSpectrum:
     """
     This function can be used to generate aperiodic and periodic power spectra from a time series
     using the IRASA algorithm (Wen & Liu, 2016).
@@ -181,15 +140,18 @@ def irasa(
         data=np.squeeze(data), orig_spectrum=psd, fs=fs, irasa_fun=_local_irasa_fun, hset=hset
     )
 
-    freq, psd_aperiodic, psd_periodic = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
+    freq, psd_aperiodic, psd_periodic, psd = _crop_data(band, freq, psd_aperiodic, psd_periodic, psd, axis=-1)
 
-    return freq, psd_aperiodic, psd_periodic
+    return IrasaSpectrum(
+        freqs=freq, raw_spectrum=psd, aperiodic=psd_aperiodic, periodic=psd_periodic, ch_names=ch_names
+    )
 
 
 # irasa sprint
 def irasa_sprint(  # noqa PLR0915 C901
     data: np.ndarray,
     fs: int,
+    ch_names: np.ndarray | None = None,
     band: tuple[float, float] = (1.0, 100.0),
     freq_res: float = 0.5,
     win_duration: float = 0.4,
@@ -202,7 +164,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     filter_settings: tuple[float | None, float | None] = (None, None),
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     hset_accuracy: int = 4,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> IrasaTfSpectrum:
     """
 
     This function can be used to seperate aperiodic from periodic power spectra
@@ -328,10 +290,19 @@ def irasa_sprint(  # noqa PLR0915 C901
     )
 
     # NOTE: we need to transpose the data as crop_data extracts stuff from the last axis
-    freq, sgramm_aperiodic, sgramm_periodic = _crop_data(band, freq, sgramm_aperiodic, sgramm_periodic, axis=0)
+    freq, sgramm_aperiodic, sgramm_periodic, sgramm = _crop_data(
+        band, freq, sgramm_aperiodic, sgramm_periodic, sgramm, axis=0
+    )
 
     # adjust time info (i.e. cut the padded stuff)
     tmax = data.shape[1] / fs
     t_mask = np.logical_and(time >= 0, time < tmax)
 
-    return sgramm_aperiodic[:, t_mask], sgramm_periodic[:, t_mask], freq, time[t_mask]
+    return IrasaTfSpectrum(
+        freqs=freq,
+        time=time[t_mask],
+        raw_spectrum=sgramm,
+        periodic=sgramm_periodic[:, t_mask],
+        aperiodic=sgramm_aperiodic[:, t_mask],
+        ch_names=ch_names,
+    )

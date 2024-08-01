@@ -19,23 +19,23 @@ def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
     freqs, psd = freqs[freq_logical], psd[freq_logical]
 
     # test whether we can reconstruct the exponent correctly
-    ap_params_f, gof_f = compute_slope(psd, freqs, fit_func='fixed')
-    assert pytest.approx(ap_params_f['Exponent'][0], abs=TOLERANCE) == np.abs(exponent)
+    slope_fit_f = compute_slope(psd, freqs, fit_func='fixed')
+    assert pytest.approx(slope_fit_f.aperiodic_params['Exponent'][0], abs=TOLERANCE) == np.abs(exponent)
     # test goodness of fit should be close to r_squared == 1 for linear model
-    assert gof_f['r_squared'][0] > MIN_R2
+    assert slope_fit_f.gof['r_squared'][0] > MIN_R2
 
     # test if we can set fit bounds w/o error
     # _, _ = compute_slope(psd, freqs, fit_func='fixed', fit_bounds=[2, 50])
 
     # bic and aic for fixed model should be better if linear
-    ap_params_k, gof_k = compute_slope(psd, freqs, fit_func='knee')
+    slope_fit_k = compute_slope(psd, freqs, fit_func='knee')
     # assert gof_k['AIC'][0] > gof['AIC'][0]
-    assert gof_k['BIC'][0] > gof_f['BIC'][0]
+    assert slope_fit_k.gof['BIC'][0] > slope_fit_f.gof['BIC'][0]
 
     # test the effect of scaling
-    ap_params_fs, gof_fs = compute_slope(psd, freqs, fit_func='fixed', scale=True)
-    assert np.isclose(ap_params_fs['Exponent'], ap_params_f['Exponent'])
-    assert np.isclose(gof_fs['r_squared'], gof_f['r_squared'])
+    slope_fit_fs = compute_slope(psd, freqs, fit_func='fixed', scale=True)
+    assert np.isclose(slope_fit_fs.aperiodic_params['Exponent'], slope_fit_f.aperiodic_params['Exponent'])
+    assert np.isclose(slope_fit_fs.gof['r_squared'], slope_fit_f.gof['r_squared'])
 
 
 @pytest.mark.parametrize('exponent, fs', [(-1, 500)], scope='session')
@@ -102,7 +102,7 @@ def test_custom_slope_fitting(
     curv_kwargs['p0'] = np.array(off_guess)
     curv_kwargs['bounds'] = ((-np.inf, -np.inf), (np.inf, np.inf))  # type: ignore
 
-    ap_params, gof = compute_slope(psd_log, freqs_log, fit_func=lin_reg, semi_log=False)
+    slope_fit = compute_slope(psd_log, freqs_log, fit_func=lin_reg, semi_log=False)
 
     # add a high tolerance
-    assert pytest.approx(np.abs(ap_params['param_1'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
+    assert pytest.approx(np.abs(slope_fit.aperiodic_params['param_1'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
