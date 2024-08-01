@@ -11,6 +11,10 @@ class IrasaFun(Protocol):
     ) -> np.ndarray: ...
 
 
+class FitFun(Protocol):
+    def __call__(self, x: np.ndarray, *args: float, **kwargs: float) -> np.ndarray: ...
+
+
 class IrasaSprintKwargsTyped(TypedDict):
     mfft: int
     hop: int
