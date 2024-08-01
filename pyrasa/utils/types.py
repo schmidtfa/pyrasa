@@ -1,6 +1,8 @@
 from typing import Protocol, TypedDict
 
 import numpy as np
+import pandas as pd
+from attrs import define
 
 
 class IrasaFun(Protocol):
@@ -15,3 +17,9 @@ class IrasaSprintKwargsTyped(TypedDict):
     win_duration: float
     dpss_settings: dict
     win_kwargs: dict
+
+
+@define
+class SlopeFit:
+    aperiodic_params: pd.DataFrame
+    gof: pd.DataFrame

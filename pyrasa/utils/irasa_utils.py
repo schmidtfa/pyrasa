@@ -56,7 +56,12 @@ def _gen_irasa(
 
 
 def _crop_data(
-    band: list | tuple, freqs: np.ndarray, psd_aperiodic: np.ndarray, psd_periodic: np.ndarray, axis: int
+    band: list | tuple,
+    freqs: np.ndarray,
+    psd_aperiodic: np.ndarray,
+    psd_periodic: np.ndarray,
+    psd: np.ndarray,
+    axis: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Utility function to crop spectra to a defined frequency range"""
 
@@ -64,8 +69,9 @@ def _crop_data(
     freqs = freqs[~mask_freqs]
     psd_aperiodic = np.compress(~mask_freqs, psd_aperiodic, axis=axis)
     psd_periodic = np.compress(~mask_freqs, psd_periodic, axis=axis)
+    psd = np.compress(~mask_freqs, psd, axis=axis)
 
-    return freqs, psd_aperiodic, psd_periodic
+    return freqs, psd_aperiodic, psd_periodic, psd
 
 
 def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.ndarray:  # noqa N803

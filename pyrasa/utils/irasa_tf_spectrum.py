@@ -6,5 +6,6 @@ from attrs import define
 class IrasaTfSpectrum:
     freqs: np.ndarray
     time: np.ndarray
+    raw_spectrum: np.ndarray
     aperiodic: np.ndarray
     periodic: np.ndarray

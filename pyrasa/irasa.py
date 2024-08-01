@@ -139,9 +139,9 @@ def irasa(
         data=np.squeeze(data), orig_spectrum=psd, fs=fs, irasa_fun=_local_irasa_fun, hset=hset
     )
 
-    freq, psd_aperiodic, psd_periodic = _crop_data(band, freq, psd_aperiodic, psd_periodic, axis=-1)
+    freq, psd_aperiodic, psd_periodic, psd = _crop_data(band, freq, psd_aperiodic, psd_periodic, psd, axis=-1)
 
-    return IrasaSpectrum(freqs=freq, aperiodic=psd_aperiodic, periodic=psd_periodic)
+    return IrasaSpectrum(freqs=freq, raw_spectrum=psd, aperiodic=psd_aperiodic, periodic=psd_periodic)
 
 
 # irasa sprint
@@ -286,12 +286,18 @@ def irasa_sprint(  # noqa PLR0915 C901
     )
 
     # NOTE: we need to transpose the data as crop_data extracts stuff from the last axis
-    freq, sgramm_aperiodic, sgramm_periodic = _crop_data(band, freq, sgramm_aperiodic, sgramm_periodic, axis=0)
+    freq, sgramm_aperiodic, sgramm_periodic, sgramm = _crop_data(
+        band, freq, sgramm_aperiodic, sgramm_periodic, sgramm, axis=0
+    )
 
     # adjust time info (i.e. cut the padded stuff)
     tmax = data.shape[1] / fs
     t_mask = np.logical_and(time >= 0, time < tmax)
 
     return IrasaTfSpectrum(
-        freqs=freq, time=time[t_mask], periodic=sgramm_periodic[:, t_mask], aperiodic=sgramm_aperiodic[:, t_mask]
+        freqs=freq,
+        time=time[t_mask],
+        raw_spectrum=sgramm,
+        periodic=sgramm_periodic[:, t_mask],
+        aperiodic=sgramm_aperiodic[:, t_mask],
     )

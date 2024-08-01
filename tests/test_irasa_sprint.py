@@ -16,17 +16,17 @@ def test_irasa_sprint(ts4sprint):
         ts4sprint[np.newaxis, :],
         fs=500,
         band=(1, 100),
-        freq_res=0.5,  # smooth=False, n_avgs=[3, 7, 11]
+        freq_res=0.5,
     )
 
     # check basic aperiodic detection
-    df_aps, df_gof = compute_slope_sprint(
+    slope_fit = compute_slope_sprint(
         irasa_tf.aperiodic[np.newaxis, :, :], freqs=irasa_tf.freqs, times=irasa_tf.time, fit_func='fixed'
     )
 
-    assert df_gof['r_squared'].mean() > MIN_R2_SPRINT
-    assert np.isclose(df_aps.query('time < 7')['Exponent'].mean(), 1, atol=TOLERANCE)
-    assert np.isclose(df_aps.query('time > 7')['Exponent'].mean(), 2, atol=TOLERANCE)
+    assert slope_fit.gof['r_squared'].mean() > MIN_R2_SPRINT
+    assert np.isclose(slope_fit.aperiodic_params.query('time < 7')['Exponent'].mean(), 1, atol=TOLERANCE)
+    assert np.isclose(slope_fit.aperiodic_params.query('time > 7')['Exponent'].mean(), 2, atol=TOLERANCE)
 
     # check basic peak detection
     df_peaks = get_peak_params_sprint(

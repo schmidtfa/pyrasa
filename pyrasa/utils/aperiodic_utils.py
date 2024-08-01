@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
+from pyrasa.utils.types import SlopeFit
+
 
 def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
     """
@@ -137,7 +139,7 @@ def compute_slope(
     ch_names: Iterable = (),
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> SlopeFit:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -224,10 +226,7 @@ def compute_slope(
         gof_list.append(gof)
 
     # combine & return
-    df_aps = pd.concat(ap_list)
-    df_gof = pd.concat(gof_list)
-
-    return df_aps, df_gof
+    return SlopeFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list))
 
 
 def compute_slope_sprint(
@@ -237,7 +236,7 @@ def compute_slope_sprint(
     fit_func: str,
     ch_names: Iterable = (),
     fit_bounds: tuple[float, float] | None = None,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> SlopeFit:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -268,16 +267,13 @@ def compute_slope_sprint(
     ap_t_list, gof_t_list = [], []
 
     for ix, t in enumerate(times):
-        cur_aps, cur_gof = compute_slope(
+        slope_fit = compute_slope(
             aperiodic_spectrum[:, :, ix], freqs=freqs, fit_func=fit_func, ch_names=ch_names, fit_bounds=fit_bounds
         )
-        cur_aps['time'] = t
-        cur_gof['time'] = t
+        slope_fit.aperiodic_params['time'] = t
+        slope_fit.gof['time'] = t
 
-        ap_t_list.append(cur_aps)
-        gof_t_list.append(cur_gof)
+        ap_t_list.append(slope_fit.aperiodic_params)
+        gof_t_list.append(slope_fit.gof)
 
-    df_ap_time = pd.concat(ap_t_list)
-    df_gof_time = pd.concat(gof_t_list)
-
-    return df_ap_time, df_gof_time
+    return SlopeFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list))
