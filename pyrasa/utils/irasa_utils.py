@@ -62,7 +62,7 @@ def _crop_data(
     psd_periodic: np.ndarray,
     psd: np.ndarray,
     axis: int,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Utility function to crop spectra to a defined frequency range"""
 
     mask_freqs = np.ma.masked_outside(freqs, *band).mask
