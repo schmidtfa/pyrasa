@@ -234,6 +234,7 @@ def compute_slope_sprint(
     freqs: np.ndarray,
     times: np.ndarray,
     fit_func: str,
+    scale: bool = False,
     ch_names: Iterable = (),
     fit_bounds: tuple[float, float] | None = None,
 ) -> SlopeFit:
@@ -268,7 +269,12 @@ def compute_slope_sprint(
 
     for ix, t in enumerate(times):
         slope_fit = compute_slope(
-            aperiodic_spectrum[:, :, ix], freqs=freqs, fit_func=fit_func, ch_names=ch_names, fit_bounds=fit_bounds
+            aperiodic_spectrum[:, :, ix],
+            freqs=freqs,
+            fit_func=fit_func,
+            ch_names=ch_names,
+            fit_bounds=fit_bounds,
+            scale=scale,
         )
         slope_fit.aperiodic_params['time'] = t
         slope_fit.gof['time'] = t
