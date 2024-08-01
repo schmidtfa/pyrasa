@@ -26,6 +26,7 @@ def irasa(
     fs: int,
     band: tuple[float, float],
     psd_kwargs: dict,
+    ch_names: np.ndarray | None = None,
     win_func: Callable = dsp.windows.hann,
     win_func_kwargs: dict | None = None,
     dpss_settings_time_bandwidth: float = 2.0,
@@ -141,13 +142,16 @@ def irasa(
 
     freq, psd_aperiodic, psd_periodic, psd = _crop_data(band, freq, psd_aperiodic, psd_periodic, psd, axis=-1)
 
-    return IrasaSpectrum(freqs=freq, raw_spectrum=psd, aperiodic=psd_aperiodic, periodic=psd_periodic)
+    return IrasaSpectrum(
+        freqs=freq, raw_spectrum=psd, aperiodic=psd_aperiodic, periodic=psd_periodic, ch_names=ch_names
+    )
 
 
 # irasa sprint
 def irasa_sprint(  # noqa PLR0915 C901
     data: np.ndarray,
     fs: int,
+    ch_names: np.ndarray | None = None,
     band: tuple[float, float] = (1.0, 100.0),
     freq_res: float = 0.5,
     win_duration: float = 0.4,
@@ -300,4 +304,5 @@ def irasa_sprint(  # noqa PLR0915 C901
         raw_spectrum=sgramm,
         periodic=sgramm_periodic[:, t_mask],
         aperiodic=sgramm_aperiodic[:, t_mask],
+        ch_names=ch_names,
     )

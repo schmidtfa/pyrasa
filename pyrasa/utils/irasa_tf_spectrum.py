@@ -16,6 +16,7 @@ class IrasaTfSpectrum:
     raw_spectrum: np.ndarray
     aperiodic: np.ndarray
     periodic: np.ndarray
+    ch_names: np.ndarray | None
 
     def get_slopes(
         self, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
@@ -44,7 +45,7 @@ class IrasaTfSpectrum:
             aperiodic_spectrum=self.aperiodic[np.newaxis, :, :] if self.aperiodic.ndim == min_ndim else self.aperiodic,
             freqs=self.freqs,
             times=self.time,
-            # ch_names=self.ch_names,
+            ch_names=self.ch_names,
             scale=scale,
             fit_func=fit_func,
             fit_bounds=fit_bounds,
@@ -88,7 +89,7 @@ class IrasaTfSpectrum:
             periodic_spectrum=self.periodic[np.newaxis, :, :] if self.periodic.ndim == min_ndim else self.periodic,
             freqs=self.freqs,
             times=self.time,
-            # self.ch_names,
+            ch_names=self.ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,
             cut_spectrum=cut_spectrum,

@@ -136,7 +136,7 @@ def compute_slope(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     fit_func: str,
-    ch_names: Iterable = (),
+    ch_names: Iterable | None = None,
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
 ) -> SlopeFit:
@@ -179,8 +179,8 @@ def compute_slope(
     assert freqs.ndim == 1, 'freqs needs to be of shape (freqs,).'
 
     assert isinstance(
-        ch_names, list | tuple | np.ndarray
-    ), 'Channel names should be of type list, tuple or numpy.ndarray'
+        ch_names, list | tuple | np.ndarray | None
+    ), 'Channel names should be of type list, tuple or numpy.ndarray or None'
 
     if fit_bounds is not None:
         fmin, fmax = freqs.min(), freqs.max()
@@ -196,7 +196,7 @@ def compute_slope(
         aperiodic_spectrum = aperiodic_spectrum[:, 1:]
 
     # generate channel names if not given
-    if len(ch_names) == 0:
+    if ch_names is None:
         ch_names = np.arange(aperiodic_spectrum.shape[0])
 
     if scale:
@@ -235,7 +235,7 @@ def compute_slope_sprint(
     times: np.ndarray,
     fit_func: str,
     scale: bool = False,
-    ch_names: Iterable = (),
+    ch_names: Iterable | None = None,
     fit_bounds: tuple[float, float] | None = None,
 ) -> SlopeFit:
     """

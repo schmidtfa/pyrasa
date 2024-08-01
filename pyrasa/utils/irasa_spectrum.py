@@ -13,7 +13,7 @@ class IrasaSpectrum:
     raw_spectrum: np.ndarray
     aperiodic: np.ndarray
     periodic: np.ndarray
-    # ch_names: np.ndarray | None
+    ch_names: np.ndarray | None
 
     def get_slopes(
         self, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
@@ -39,9 +39,9 @@ class IrasaSpectrum:
 
         """
         return compute_slope(
-            self.aperiodic,
-            self.freqs,
-            # ch_names=self.ch_names,
+            aperiodic_spectrum=self.aperiodic,
+            freqs=self.freqs,
+            ch_names=self.ch_names,
             scale=scale,
             fit_func=fit_func,
             fit_bounds=fit_bounds,
@@ -83,7 +83,7 @@ class IrasaSpectrum:
         return get_peak_params(
             self.periodic,
             self.freqs,
-            # self.ch_names,
+            self.ch_names,
             smoothing_window=smoothing_window,
             cut_spectrum=cut_spectrum,
             peak_threshold=peak_threshold,
