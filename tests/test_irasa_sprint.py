@@ -12,7 +12,7 @@ set_random_seed(42)
 
 
 def test_irasa_sprint(ts4sprint):
-    sgramm_ap, sgramm_p, freqs_ir, times_ir = irasa_sprint(
+    irasa_tf = irasa_sprint(
         ts4sprint[np.newaxis, :],
         fs=500,
         band=(1, 100),
@@ -20,7 +20,9 @@ def test_irasa_sprint(ts4sprint):
     )
 
     # check basic aperiodic detection
-    df_aps, df_gof = compute_slope_sprint(sgramm_ap[np.newaxis, :, :], freqs=freqs_ir, times=times_ir, fit_func='fixed')
+    df_aps, df_gof = compute_slope_sprint(
+        irasa_tf.aperiodic[np.newaxis, :, :], freqs=irasa_tf.freqs, times=irasa_tf.time, fit_func='fixed'
+    )
 
     assert df_gof['r_squared'].mean() > MIN_R2_SPRINT
     assert np.isclose(df_aps.query('time < 7')['Exponent'].mean(), 1, atol=TOLERANCE)
@@ -28,9 +30,9 @@ def test_irasa_sprint(ts4sprint):
 
     # check basic peak detection
     df_peaks = get_peak_params_sprint(
-        sgramm_p[np.newaxis, :, :],
-        freqs=freqs_ir,
-        times=times_ir,
+        irasa_tf.periodic[np.newaxis, :, :],
+        freqs=irasa_tf.freqs,
+        times=irasa_tf.time,
         smooth=True,
         smoothing_window=1,
         min_peak_height=0.01,

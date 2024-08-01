@@ -5,6 +5,7 @@ import numpy as np
 import scipy.signal as dsp
 
 from pyrasa.utils.irasa_spectrum import IrasaSpectrum
+from pyrasa.utils.irasa_tf_spectrum import IrasaTfSpectrum
 
 # from scipy.stats.mstats import gmean
 from pyrasa.utils.irasa_utils import (
@@ -159,7 +160,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     filter_settings: tuple[float | None, float | None] = (None, None),
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     hset_accuracy: int = 4,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> IrasaTfSpectrum:
     """
 
     This function can be used to seperate aperiodic from periodic power spectra
@@ -291,4 +292,6 @@ def irasa_sprint(  # noqa PLR0915 C901
     tmax = data.shape[1] / fs
     t_mask = np.logical_and(time >= 0, time < tmax)
 
-    return sgramm_aperiodic[:, t_mask], sgramm_periodic[:, t_mask], freq, time[t_mask]
+    return IrasaTfSpectrum(
+        freqs=freq, time=time[t_mask], periodic=sgramm_periodic[:, t_mask], aperiodic=sgramm_aperiodic[:, t_mask]
+    )
