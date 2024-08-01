@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
-from pyrasa.utils.types import SlopeFit
+from pyrasa.utils.types import SlopeFit, FitFun
 
 
 def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
@@ -62,13 +62,15 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_func: str, semi_
 def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
-    fit_func: str | Callable,
+    fit_func: AbstractFitFun,
     fit_bounds: tuple | None = None,
     scale_factor: float | int = 1,
-    curv_kwargs: dict = {},
     semi_log: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
+
+    if curv_kwargs is None:
+        curv_kwargs = {}
 
     if isinstance(fit_func, str):
         off_guess = [aperiodic_spectrum[0]] if fit_bounds is None else fit_bounds[0]
@@ -81,6 +83,7 @@ def _compute_slope(
         assert fit_func in valid_slope_functions, f'The slope fitting function has to be in {valid_slope_functions}'
 
         if fit_func == 'fixed':
+            fit_func_object = FixedFitFun(data)
             fit_f = fixed_model
 
             curv_kwargs['p0'] = np.array(off_guess + exp_guess)
@@ -129,7 +132,7 @@ def _compute_slope(
 
     else:
         if semi_log:
-            p, _ = curve_fit(fit_func, freq, np.log10(aperiodic_spectrum), **curv_kwargs)
+            p, _ = curve_fit(fit_func_object, freq, np.log10(aperiodic_spectrum), **fit_func_object.curve_kwargs)
         else:
             p, _ = curve_fit(fit_func, freq, aperiodic_spectrum, **curv_kwargs)
 
