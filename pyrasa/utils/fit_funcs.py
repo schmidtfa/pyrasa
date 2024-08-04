@@ -5,8 +5,8 @@ from scipy.optimize import curve_fit
 
 @define
 class AbstractFitFun:
-    x: np.ndarray
-    y: np.ndarray
+    freq: np.ndarray
+    aperiodic: np.ndarray
 
     def func(self, *args: float, **kwargs: float) -> np.ndarray:
         pass
@@ -16,7 +16,7 @@ class AbstractFitFun:
 
     def fit_func(self, *args: float, **kwargs: float) -> np.ndarray:
         curve_kwargs = self.curve_kwargs
-        p, _ = curve_fit(self.func, self.x, self.y, **curve_kwargs)
+        p, _ = curve_fit(self.func, self.freq, self.aperiodic, **curve_kwargs)
         return p
 
 
@@ -39,19 +39,19 @@ class AbstractFitFun:
 
 
 class FixedFitFun(AbstractFitFun):
-    def func(self, x: np.ndarray, b0: float, b: float) -> np.ndarray:
+    def func(self, b0: float, b: float) -> np.ndarray:
         """
         Specparams fixed fitting function.
         Use this to model aperiodic activity without a spectral knee
         """
-        y_hat = b0 - np.log10(x**b)
+        y_hat = b0 - np.log10(self.freq**b)
 
         return y_hat
 
     @property
     def curve_kwargs(self) -> dict[str, any]:
-        off_guess = self.x[0]
-        exp_guess = [np.abs(np.log10(self.x[0] / self.x[-1]) / np.log10(self.y[-1] / self.y[0]))]
+        off_guess = self.aperiodic[0]
+        exp_guess = [np.abs(np.log10(self.aperiodic[0] / self.aperiodic[-1]) / np.log10(self.freq[-1] / self.freq[0]))]
         return {
             'maxfev': 10_000,
             'ftol': 1e-5,
@@ -65,7 +65,6 @@ class FixedFitFun(AbstractFitFun):
 class KneeFitFun(AbstractFitFun):
     def func(
         self,
-        x: np.ndarray,
         b0: float,
         k: float,
         b1: float,
@@ -75,7 +74,7 @@ class KneeFitFun(AbstractFitFun):
         Model aperiodic activity with a spectral knee and a pre-knee slope.
         Use this to model aperiodic activity with a spectral knee
         """
-        y_hat = b0 - np.log10(x**b1 * (k + x**b2))
+        y_hat = b0 - np.log10(self.x**b1 * (k + self.x**b2))
 
         return y_hat
 

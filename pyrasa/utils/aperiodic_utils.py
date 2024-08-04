@@ -65,7 +65,7 @@ def _compute_slope(
     """get the slope of the aperiodic spectrum"""
 
     if fit_func == 'fixed':
-        fit_f = FixedFitFun(np.log10(aperiodic_spectrum), freq)
+        fit_f = FixedFitFun(freq, np.log10(aperiodic_spectrum))
         p = fit_f.fit_func()
         params = pd.DataFrame(
             {
@@ -81,7 +81,7 @@ def _compute_slope(
         gof['fit_type'] = fit_func
 
     elif fit_func == 'knee':
-        fit_f = KneeFitFun(np.log10(aperiodic_spectrum), freq)
+        fit_f = KneeFitFun(freq, np.log10(aperiodic_spectrum))
         p = fit_f.fit_func()
         params = pd.DataFrame(
             {
@@ -100,7 +100,7 @@ def _compute_slope(
         gof['fit_type'] = fit_func
 
     else:
-        p = fit_func(np.log10(aperiodic_spectrum), freq)
+        p = fit_func(freq, np.log10(aperiodic_spectrum))
         psd_pred = fit_func.fit_func(freq, *p)
         p_keys = [f'param_{ix}' for ix, _ in enumerate(p)]
         params = pd.DataFrame(dict(zip(p_keys, p)), index=[0])
