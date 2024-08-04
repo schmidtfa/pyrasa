@@ -50,12 +50,10 @@ class FixedFitFun(AbstractFitFun):
 
     @property
     def curve_kwargs(self) -> dict[str, any]:
-        off_guess = self.aperiodic_spectrum[0]
+        aperiodic_nolog = 10**self.aperiodic_spectrum
+        off_guess = [aperiodic_nolog[0]]
         exp_guess = [
-            np.abs(
-                np.log10(self.aperiodic_spectrum[0] / self.aperiodic_spectrum[-1])
-                / np.log10(self.freq[-1] / self.freq[0])
-            )
+            np.abs(np.log10(aperiodic_nolog[0] / aperiodic_nolog[-1]) / np.log10(self.freq[-1] / self.freq[0]))
         ]
         return {
             'maxfev': 10_000,
@@ -86,14 +84,12 @@ class KneeFitFun(AbstractFitFun):
 
     @property
     def curve_kwargs(self) -> dict[str, any]:
-        off_guess = self.aperiodic_spectrum[0]
+        aperiodic_nolog = 10**self.aperiodic_spectrum
+        off_guess = [aperiodic_nolog[0]]
         exp_guess = [
-            np.abs(
-                np.log10(self.aperiodic_spectrum[0] / self.aperiodic_spectrum[-1])
-                / np.log10(self.freq[-1] / self.freq[0])
-            )
+            np.abs(np.log10(aperiodic_nolog[0] / aperiodic_nolog[-1]) / np.log10(self.freq[-1] / self.freq[0]))
         ]
-        cumsum_psd = np.cumsum(self.aperiodic_spectrum)
+        cumsum_psd = np.cumsum(aperiodic_nolog)
         half_pw_freq = self.freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
         # make the knee guess the point where we have half the power in the spectrum seems plausible to me
         knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])]
