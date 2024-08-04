@@ -60,5 +60,5 @@ pe_params = irasa_result.get_peaks()
 pe_params
 #%% get aperiodics
 ap_params = irasa_result.get_slopes(fit_func='fixed')
-ap_params
+ap_params.gof
 # %%

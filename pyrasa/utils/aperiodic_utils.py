@@ -77,7 +77,7 @@ def _compute_slope(
         )
         psd_pred = fit_f.func(freq, *p)
 
-        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), fit_func)
+        gof = _get_gof(np.log10(aperiodic_spectrum), psd_pred, len(p), fit_func)
         gof['fit_type'] = fit_func
 
     elif fit_func == 'knee':
@@ -96,7 +96,7 @@ def _compute_slope(
         )
         psd_pred = fit_f.func(freq, *p)
 
-        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), fit_func)
+        gof = _get_gof(np.log10(aperiodic_spectrum), psd_pred, len(p), fit_func)
         gof['fit_type'] = fit_func
 
     else:
