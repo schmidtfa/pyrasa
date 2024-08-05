@@ -34,7 +34,7 @@ plt.tight_layout()
 
 #from pyrasa.irasa import irasa
 #%%
-freq_irasa, psd_ap, psd_p = irasa(sig, 
+irasa_result = irasa(sig, 
                                   fs=fs, 
                                   band=(1, 100), 
                                   psd_kwargs={'nperseg': duration*fs, 
@@ -44,26 +44,21 @@ freq_irasa, psd_ap, psd_p = irasa(sig,
 
 f, axes = plt.subplots(ncols=2, figsize=(8, 4))
 axes[0].set_title('Periodic')
-axes[0].plot(freq_irasa, psd_p[0,:])
+axes[0].plot(irasa_result.freqs, irasa_result.periodic[0,:])
 axes[0].set_ylabel('Power (a.u.)')
 axes[0].set_xlabel('Frequency (Hz)')
 axes[1].set_title('Aperiodic')
-axes[1].loglog(freq_irasa, psd_ap[0,:])
+axes[1].loglog(irasa_result.freqs, irasa_result.aperiodic[0,:])
 axes[1].set_ylabel('Power (a.u.)')
 axes[1].set_xlabel('Frequency (Hz)')
 
 f.tight_layout()
 
 # %% get periodic stuff
-from pyrasa.utils.peak_utils import get_peak_params
-get_peak_params(psd_p, freqs=freq_irasa)
-# %%
-from pyrasa.utils.aperiodic_utils import compute_slope
 
-ap_params, gof_params = compute_slope(aperiodic_spectrum=psd_ap,
-                                       freqs=freq_irasa-1, 
-                                       fit_func='fixed',
-                                       #fit_bounds=[0, 40]
-                                       )
-ap_params
+pe_params = irasa_result.get_peaks()
+pe_params
+#%% get aperiodics
+ap_params = irasa_result.get_slopes(fit_func='knee')
+ap_params.gof
 # %%

@@ -37,7 +37,7 @@ def test_no_peak_detection(fixed_aperiodic_signal, fs):
 
 
 @pytest.mark.parametrize('osc_freq, fs', [(10, 500)], scope='session')
-def test_peak_detection_setings(oscillation, fs, osc_freq):
+def test_peak_detection_settings(oscillation, fs, osc_freq):
     f_range = [1, 250]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(oscillation, fs, nperseg=int(4 * fs))
