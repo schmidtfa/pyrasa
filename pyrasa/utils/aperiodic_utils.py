@@ -35,20 +35,20 @@ def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.n
 def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
-    fit_func: str | AbstractFitFun,
+    fit_func: str | type[AbstractFitFun],
     scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
-    if isinstance(fit_func, str) and fit_func == 'fixed':
-        fit_f = FixedFitFun(freq, np.log10(aperiodic_spectrum), scale_factor=scale_factor)
-    elif isinstance(fit_func, str) and fit_func == 'knee':
-        fit_f = KneeFitFun(freq, np.log10(aperiodic_spectrum), scale_factor=scale_factor)
-    elif issubclass(fit_func, AbstractFitFun):
-        fit_f = fit_func(freq, aperiodic_spectrum, scale_factor=scale_factor)
-    else:
-        raise ValueError('fit_func must be either "fixed" or "knee" or a subclass of "AbstractFitFun".')
+    if isinstance(fit_func, str):
+        if fit_func == 'fixed':
+            fit_func = FixedFitFun
+        elif fit_func == 'knee':
+            fit_func = KneeFitFun
+        else:
+            raise ValueError('fit_func should be either "fixed" or "knee"')
 
+    fit_f = fit_func(freq, aperiodic_spectrum, scale_factor=scale_factor)
     params, gof = fit_f.fit_func()
 
     return params, gof
@@ -57,7 +57,7 @@ def _compute_slope(
 def compute_slope(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
-    fit_func: str | AbstractFitFun = 'fixed',
+    fit_func: str | type[AbstractFitFun] = 'fixed',
     ch_names: Iterable | None = None,
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,

@@ -1,7 +1,7 @@
 import abc
 import inspect
 from collections.abc import Callable
-from typing import Any
+from typing import Any, ClassVar, no_type_check
 
 import numpy as np
 import pandas as pd
@@ -42,13 +42,23 @@ class AbstractFitFun(abc.ABC):
     freq: np.ndarray
     aperiodic_spectrum: np.ndarray
     scale_factor: int | float
-    label: str = 'custom'
+    label: ClassVar[str] = 'custom'
+    log10_aperiodic: ClassVar[bool] = False
+    log10_freq: ClassVar[bool] = False
+
+    def __attrs_post_init__(self) -> None:
+        if self.log10_aperiodic:
+            self.aperiodic_spectrum = np.log10(self.aperiodic_spectrum)
+        if self.log10_freq:
+            self.freq = np.log10(self.freq)
 
     @abc.abstractmethod
-    def func(self, *args: float, **kwargs: float) -> np.ndarray:
+    @no_type_check
+    def func(self, x: np.ndarray, *args: float) -> np.ndarray:
         pass
 
-    def curve_kwargs(self, *args: float, **kwargs: float) -> dict[str, Any]:
+    @property
+    def curve_kwargs(self) -> dict[str, Any]:
         return {}
 
     def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
@@ -61,7 +71,7 @@ class AbstractFitFun(abc.ABC):
             raise ValueError('Scale Factor not handled. You need to overwrite the handle_scaling method.')
         return df_params
 
-    def fit_func(self, *args: float, **kwargs: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def fit_func(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         curve_kwargs = self.curve_kwargs
         p, _ = curve_fit(self.func, self.freq, self.aperiodic_spectrum, **curve_kwargs)
 
@@ -79,7 +89,8 @@ class AbstractFitFun(abc.ABC):
 
 
 class FixedFitFun(AbstractFitFun):
-    label: str = 'fixed'
+    label = 'fixed'
+    log10_aperiodic = True
 
     def func(self, x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray:  # noqa N803
         """
@@ -108,7 +119,8 @@ class FixedFitFun(AbstractFitFun):
 
 
 class KneeFitFun(AbstractFitFun):
-    label: str = 'knee'
+    label = 'knee'
+    log10_aperiodic = True
 
     def func(
         self,
