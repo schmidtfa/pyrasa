@@ -10,28 +10,6 @@ from pyrasa.utils.fit_funcs import AbstractFitFun, FixedFitFun, KneeFitFun
 from pyrasa.utils.types import SlopeFit
 
 
-def fixed_model(x: np.ndarray, b0: float, b: float) -> np.ndarray:
-    """
-    Specparams fixed fitting function.
-    Use this to model aperiodic activity without a spectral knee
-    """
-
-    y_hat = b0 - np.log10(x**b)
-
-    return y_hat
-
-
-def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.ndarray:
-    """
-    Model aperiodic activity with a spectral knee and a pre-knee slope.
-    Use this to model aperiodic activity with a spectral knee
-    """
-
-    y_hat = b0 - np.log10(x**b1 * (k + x**b2))
-
-    return y_hat
-
-
 def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
