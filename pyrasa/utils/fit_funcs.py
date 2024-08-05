@@ -46,7 +46,7 @@ class AbstractFitFun(abc.ABC):
     log10_aperiodic: ClassVar[bool] = False
     log10_freq: ClassVar[bool] = False
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         if self.log10_aperiodic:
             self.aperiodic_spectrum = np.log10(self.aperiodic_spectrum)
         if self.log10_freq:
@@ -57,7 +57,7 @@ class AbstractFitFun(abc.ABC):
         pass
 
     @property
-    def curve_kwargs(self, *args: float, **kwargs: float) -> dict[str, Any]:
+    def curve_kwargs(self) -> dict[str, Any]:
         return {}
 
     def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
@@ -88,7 +88,7 @@ class AbstractFitFun(abc.ABC):
 
 
 class FixedFitFun(AbstractFitFun):
-    label: str = 'fixed'
+    label = 'fixed'
     log10_aperiodic = True
 
     def func(self, x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray:  # noqa N803
@@ -118,7 +118,7 @@ class FixedFitFun(AbstractFitFun):
 
 
 class KneeFitFun(AbstractFitFun):
-    label: str = 'knee'
+    label = 'knee'
     log10_aperiodic = True
 
     def func(

@@ -2,7 +2,6 @@
 
 import warnings
 from collections.abc import Iterable
-from typing import Type
 
 import numpy as np
 import pandas as pd
@@ -36,7 +35,7 @@ def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.n
 def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
-    fit_func: str | Type[AbstractFitFun],
+    fit_func: str | type[AbstractFitFun],
     scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
