@@ -53,7 +53,7 @@ class AbstractFitFun(abc.ABC):
             self.freq = np.log10(self.freq)
 
     @abc.abstractmethod
-    def func(self, *args: np.ndarray, **kwargs: np.ndarray) -> np.ndarray:
+    def func(self, x: np.ndarray, *args: float, **kwargs: float) -> np.ndarray:
         pass
 
     @property
@@ -70,7 +70,7 @@ class AbstractFitFun(abc.ABC):
             raise ValueError('Scale Factor not handled. You need to overwrite the handle_scaling method.')
         return df_params
 
-    def fit_func(self, *args: float, **kwargs: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def fit_func(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         curve_kwargs = self.curve_kwargs
         p, _ = curve_fit(self.func, self.freq, self.aperiodic_spectrum, **curve_kwargs)
 
@@ -91,7 +91,7 @@ class FixedFitFun(AbstractFitFun):
     label = 'fixed'
     log10_aperiodic = True
 
-    def func(self, x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray:  # noqa N803
+    def func(self, x: np.ndarray, Offset: float, Exponent: float, *args: float, **kwargs: float) -> np.ndarray:  # noqa N803
         """
         Specparams fixed fitting function.
         Use this to model aperiodic activity without a spectral knee
