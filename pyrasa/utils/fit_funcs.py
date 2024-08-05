@@ -1,7 +1,7 @@
 import abc
 import inspect
 from collections.abc import Callable
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 import pandas as pd
@@ -42,12 +42,21 @@ class AbstractFitFun(abc.ABC):
     freq: np.ndarray
     aperiodic_spectrum: np.ndarray
     scale_factor: int | float
-    label: str = 'custom'
+    label: ClassVar[str] = 'custom'
+    log10_aperiodic: ClassVar[bool] = False
+    log10_freq: ClassVar[bool] = False
+
+    def __attrs_post_init__(self):
+        if self.log10_aperiodic:
+            self.aperiodic_spectrum = np.log10(self.aperiodic_spectrum)
+        if self.log10_freq:
+            self.freq = np.log10(self.freq)
 
     @abc.abstractmethod
     def func(self, *args: float, **kwargs: float) -> np.ndarray:
         pass
 
+    @property
     def curve_kwargs(self, *args: float, **kwargs: float) -> dict[str, Any]:
         return {}
 
@@ -80,6 +89,7 @@ class AbstractFitFun(abc.ABC):
 
 class FixedFitFun(AbstractFitFun):
     label: str = 'fixed'
+    log10_aperiodic = True
 
     def func(self, x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray:  # noqa N803
         """
@@ -109,6 +119,7 @@ class FixedFitFun(AbstractFitFun):
 
 class KneeFitFun(AbstractFitFun):
     label: str = 'knee'
+    log10_aperiodic = True
 
     def func(
         self,
