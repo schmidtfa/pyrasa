@@ -9,7 +9,7 @@ from attrs import define
 from scipy.optimize import curve_fit
 
 
-def get_args(f: Callable) -> list:
+def _get_args(f: Callable) -> list:
     return inspect.getfullargspec(f)[0][2:]
 
 
@@ -59,7 +59,12 @@ class AbstractFitFun(abc.ABC):
 
     @property
     def curve_kwargs(self) -> dict[str, Any]:
-        return {}
+        return {
+            'maxfev': 10_000,
+            'ftol': 1e-5,
+            'xtol': 1e-5,
+            'gtol': 1e-5,
+        }
 
     def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
         return df_params
@@ -75,7 +80,7 @@ class AbstractFitFun(abc.ABC):
         curve_kwargs = self.curve_kwargs
         p, _ = curve_fit(self.func, self.freq, self.aperiodic_spectrum, **curve_kwargs)
 
-        my_args = get_args(self.func)
+        my_args = _get_args(self.func)
         df_params = pd.DataFrame(dict(zip(my_args, p)), index=[0])
         df_params['fit_type'] = self.label
 

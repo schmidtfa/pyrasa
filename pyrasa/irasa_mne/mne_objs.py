@@ -1,4 +1,5 @@
 # %% inherit from spectrum array
+
 import matplotlib
 import mne
 import numpy as np
@@ -9,6 +10,8 @@ from mne.time_frequency import EpochsSpectrumArray, SpectrumArray
 from pyrasa.utils.aperiodic_utils import compute_slope
 from pyrasa.utils.peak_utils import get_peak_params
 from pyrasa.utils.types import SlopeFit
+
+# FutureWarning:
 
 
 class PeriodicSpectrumArray(SpectrumArray):
@@ -170,7 +173,10 @@ class AperiodicSpectrumArray(SpectrumArray):
         )
 
     def get_slopes(
-        self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+        self: SpectrumArray,
+        fit_func: str = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
     ) -> SlopeFit:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
@@ -393,7 +399,10 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
         )
 
     def get_slopes(
-        self: SpectrumArray, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+        self: SpectrumArray,
+        fit_func: str = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
     ) -> SlopeFit:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
