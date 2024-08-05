@@ -2,7 +2,6 @@
 
 import warnings
 from collections.abc import Iterable
-from typing import Type
 
 import numpy as np
 import pandas as pd
@@ -58,7 +57,7 @@ def _compute_slope(
 def compute_slope(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
-    fit_func: str | Type[AbstractFitFun] = 'fixed',
+    fit_func: str | type[AbstractFitFun] = 'fixed',
     ch_names: Iterable | None = None,
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,

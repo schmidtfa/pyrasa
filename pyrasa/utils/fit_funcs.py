@@ -1,7 +1,7 @@
 import abc
 import inspect
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any, ClassVar, no_type_check
 
 import numpy as np
 import pandas as pd
@@ -53,7 +53,8 @@ class AbstractFitFun(abc.ABC):
             self.freq = np.log10(self.freq)
 
     @abc.abstractmethod
-    def func(self, x: np.ndarray, *args: float, **kwargs: float) -> np.ndarray:
+    @no_type_check
+    def func(self, x: np.ndarray, *args: float) -> np.ndarray:
         pass
 
     @property
@@ -91,7 +92,7 @@ class FixedFitFun(AbstractFitFun):
     label = 'fixed'
     log10_aperiodic = True
 
-    def func(self, x: np.ndarray, Offset: float, Exponent: float, *args: float, **kwargs: float) -> np.ndarray:  # noqa N803
+    def func(self, x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray:  # noqa N803
         """
         Specparams fixed fitting function.
         Use this to model aperiodic activity without a spectral knee
