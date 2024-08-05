@@ -3,6 +3,7 @@ import pytest
 import scipy.signal as dsp
 
 from pyrasa.utils.aperiodic_utils import compute_slope
+from pyrasa.utils.fit_funcs import AbstractFitFun
 
 from .settings import EXPONENT, FS, HIGH_TOLERANCE, MIN_R2, TOLERANCE
 
@@ -79,30 +80,33 @@ def test_custom_slope_fitting(
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
     psd, freqs = psd[freq_logical], freqs[freq_logical]
 
-    def lin_reg(x, a, b):
-        """
-        Linear fit w/o knee
-        NOTE: Data should be in loglog coordinates before running this
-        """
+    class CustomFitFun(AbstractFitFun):
+        def func(self, x: np.ndarray, a: float, b: float) -> np.ndarray:
+            """
+            Specparams fixed fitting function.
+            Use this to model aperiodic activity without a spectral knee
+            """
+            y_hat = a + b * x
 
-        y_hat = a + b * x
+            return y_hat
 
-        return y_hat
+        @property
+        def curve_kwargs(self) -> dict[str, any]:
+            aperiodic_nolog = self.aperiodic_spectrum
+            off_guess = [aperiodic_nolog[0]]
+            exp_guess = [
+                np.abs(np.log10(aperiodic_nolog[0] / aperiodic_nolog[-1]) / np.log10(self.freq[-1] / self.freq[0]))
+            ]
+            return {
+                'maxfev': 10_000,
+                'ftol': 1e-5,
+                'xtol': 1e-5,
+                'gtol': 1e-5,
+                'p0': np.array(off_guess + exp_guess),
+                'bounds': ((-np.inf, -np.inf), (np.inf, np.inf)),
+            }
 
-    psd_log = np.log10(psd)
-    freqs_log = np.log10(freqs)
-    off_guess = psd_log[0]
-
-    curv_kwargs = {
-        'maxfev': 10_000,
-        'ftol': 1e-5,
-        'xtol': 1e-5,
-        'gtol': 1e-5,
-    }
-    curv_kwargs['p0'] = np.array(off_guess)
-    curv_kwargs['bounds'] = ((-np.inf, -np.inf), (np.inf, np.inf))  # type: ignore
-
-    slope_fit = compute_slope(psd_log, freqs_log, fit_func=lin_reg, semi_log=False)
+    slope_fit = compute_slope(np.log10(psd), np.log10(freqs), fit_func=CustomFitFun)
 
     # add a high tolerance
-    assert pytest.approx(np.abs(slope_fit.aperiodic_params['param_1'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
+    assert pytest.approx(np.abs(slope_fit.aperiodic_params['b'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)

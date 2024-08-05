@@ -32,80 +32,24 @@ def knee_model(x: np.ndarray, b0: float, k: float, b1: float, b2: float) -> np.n
     return y_hat
 
 
-def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_func: str, semi_log: bool = True) -> pd.DataFrame:
-    """
-    get goodness of fit (i.e. mean squared error and R2)
-    BIC and AIC currently assume OLS
-    https://machinelearningmastery.com/probabilistic-model-selection-measures/
-    """
-    # k number of parameters in curve fitting function
-
-    # add np.log10 to psd
-    residuals = psd - psd_pred
-    ss_res = np.sum(residuals**2)
-    ss_tot = np.sum((psd - np.mean(psd)) ** 2)
-
-    mse = np.mean(residuals**2)
-
-    n = len(psd)
-    bic = n * np.log(mse) + k * np.log(n)
-    aic = n * np.log(mse) + 2 * k
-
-    gof = pd.DataFrame({'mse': mse, 'r_squared': 1 - (ss_res / ss_tot), 'BIC': bic, 'AIC': aic}, index=[0])
-    return gof
-
-
 def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
-    fit_func: AbstractFitFun,
+    fit_func: str | AbstractFitFun,
     scale_factor: float | int = 1,
-    semi_log: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
-    if fit_func == 'fixed':
-        fit_f = FixedFitFun(freq, np.log10(aperiodic_spectrum))
-        p = fit_f.fit_func()
-        params = pd.DataFrame(
-            {
-                'Offset': p[0],
-                'Exponent': p[1],
-                'fit_type': 'fixed',
-            },
-            index=[0],
-        )
-        psd_pred = fit_f.func(freq, *p)
-
-        gof = _get_gof(np.log10(aperiodic_spectrum), psd_pred, len(p), fit_func)
-        gof['fit_type'] = fit_func
-
-    elif fit_func == 'knee':
-        fit_f = KneeFitFun(freq, np.log10(aperiodic_spectrum))
-        p = fit_f.fit_func()
-        params = pd.DataFrame(
-            {
-                'Offset': p[0] / scale_factor,
-                'Knee': p[1],
-                'Exponent_1': p[2],
-                'Exponent_2': p[3],
-                'Knee Frequency (Hz)': p[1] ** (1.0 / (2 * p[2] + p[3])),
-                'fit_type': 'knee',
-            },
-            index=[0],
-        )
-        psd_pred = fit_f.func(freq, *p)
-
-        gof = _get_gof(np.log10(aperiodic_spectrum), psd_pred, len(p), fit_func)
-        gof['fit_type'] = fit_func
-
+    if isinstance(fit_func, str) and fit_func == 'fixed':
+        fit_f = FixedFitFun(freq, np.log10(aperiodic_spectrum), scale_factor=scale_factor)
+    elif isinstance(fit_func, str) and fit_func == 'knee':
+        fit_f = KneeFitFun(freq, np.log10(aperiodic_spectrum), scale_factor=scale_factor)
+    elif issubclass(fit_func, AbstractFitFun):
+        fit_f = fit_func(freq, aperiodic_spectrum, scale_factor=scale_factor)
     else:
-        p = fit_func(freq, np.log10(aperiodic_spectrum))
-        psd_pred = fit_func.fit_func(freq, *p)
-        p_keys = [f'param_{ix}' for ix, _ in enumerate(p)]
-        params = pd.DataFrame(dict(zip(p_keys, p)), index=[0])
-        gof = _get_gof(aperiodic_spectrum, psd_pred, len(p), 'custom', semi_log=semi_log)
-        gof['fit_type'] = 'custom'
+        raise ValueError('fit_func must be either "fixed" or "knee" or a subclass of "AbstractFitFun".')
+
+    params, gof = fit_f.fit_func()
 
     return params, gof
 
