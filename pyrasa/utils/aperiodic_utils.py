@@ -40,10 +40,13 @@ def _compute_slope(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
-    if isinstance(fit_func, str) and fit_func == 'fixed':
-        fit_func = FixedFitFun
-    elif isinstance(fit_func, str) and fit_func == 'knee':
-        fit_func = KneeFitFun
+    if isinstance(fit_func, str):
+        if fit_func == 'fixed':
+            fit_func = FixedFitFun
+        elif fit_func == 'knee':
+            fit_func = KneeFitFun
+        else:
+            raise ValueError('fit_func should be either "fixed" or "knee"')
 
     fit_f = fit_func(freq, aperiodic_spectrum, scale_factor=scale_factor)
     params, gof = fit_f.fit_func()
