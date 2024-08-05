@@ -53,7 +53,7 @@ class AbstractFitFun(abc.ABC):
             self.freq = np.log10(self.freq)
 
     @abc.abstractmethod
-    def func(self, *args: float, **kwargs: float) -> np.ndarray:
+    def func(self, *args: np.ndarray, **kwargs: np.ndarray) -> np.ndarray:
         pass
 
     @property
