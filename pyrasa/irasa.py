@@ -137,7 +137,7 @@ def irasa(
     )
 
     psd, psd_aperiodic, psd_periodic = _gen_irasa(
-        data=np.squeeze(data), orig_spectrum=psd, fs=fs, irasa_fun=_local_irasa_fun, hset=hset
+        data=data, orig_spectrum=psd, fs=fs, irasa_fun=_local_irasa_fun, hset=hset
     )
 
     freq, psd_aperiodic, psd_periodic, psd = _crop_data(band, freq, psd_aperiodic, psd_periodic, psd, axis=-1)

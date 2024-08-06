@@ -69,11 +69,11 @@ def irasa_raw(
 
     # extract relevant info from mne object
     info = data.info.copy()
-    fs = data.info['sfreq']
+    fs = int(data.info['sfreq'])
     data_array = data.get_data()
 
     overlap /= 100
-    assert isinstance(duration, int | float), 'You need to set the duration of your time window in seconds'
+    # assert isinstance(duration, int | float), 'You need to set the duration of your time window in seconds'
     assert data_array.shape[1] > int(fs * duration), 'The duration for each segment cant be longer than the actual data'
     assert np.logical_and(
         overlap < 1, overlap > 0
@@ -153,7 +153,7 @@ def irasa_epochs(
     ), 'Data should not contain bad channels as this might mess up the creation of the returned data structure'
 
     info = data.info.copy()
-    fs = data.info['sfreq']
+    fs = int(data.info['sfreq'])
     events = data.events
     event_ids = data.event_id
 

@@ -8,7 +8,6 @@ authors = [
     {name = "Fabian Schmidt", email = "schmidtfa91@gmail.com"},
     {name = "Thomas Hartmann", email = "thomas.hartmann@th-ht.de"}
 ]
-homepage = "https://github.com/schmidtfa/pyrasa"
 classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
@@ -19,15 +18,28 @@ classifiers = [
 ]
 keywords=['spectral parametrization', 'oscillations', 'power spectra', '1/f']
 requires-python = ">= 3.11"
-dependencies = ["numpy", "pandas", "scipy>=1.12", "attrs"]
+dependencies = ["numpy >= 1.14.5, < 2.0", "pandas", "scipy>=1.12", "attrs"]
+
+[project.urls]
+repository = "https://github.com/schmidtfa/pyrasa"
 
 [project.optional-dependencies]
 mne = ['mne']
 
+[tool.setuptools]
+py-modules = []
 
+[tool.hatch.build.targets.wheel.hooks.cython]
+dependencies = ["hatch-cython"]
+
+[tool.hatch.build.targets.wheel.hooks.cython.options]
+include_numpy = true
+compile_py = false
+ 
 [build-system]
-requires = ["hatchling", "hatch-regex-commit"]
+requires = ["hatchling", "hatch-regex-commit", "hatch-cython == 0.5", "cython >= 3.0"]
 build-backend = "hatchling.build"
+ 
 
 [tool.pixi.project]
 channels = ["conda-forge"]
@@ -62,6 +74,7 @@ neurodsp = ">=2.2.0,<2.3"
 mne = ">=1.7.0,<1.8"
 mypy = ">=1.10.1,<2"
 pandas-stubs = ">=2.2.2.240603,<3"
+numpy = ">=1.26.4,<2"
 
 [tool.pixi.feature]
 py311 = {dependencies = {python="3.11.*"}}

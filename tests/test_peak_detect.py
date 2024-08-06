@@ -11,7 +11,7 @@ from .settings import FS, MANY_OSC_FREQ
 @pytest.mark.parametrize('osc_freq', MANY_OSC_FREQ, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_peak_detection(oscillation, fs, osc_freq):
-    f_range = [1, 250]
+    f_range = (1, 250)
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(oscillation, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
@@ -20,13 +20,13 @@ def test_peak_detection(oscillation, fs, osc_freq):
     pe_params = get_peak_params(psd[np.newaxis, :], freqs, min_peak_height=0.1)
     assert bool(np.isclose(pe_params['cf'][0], osc_freq, atol=2))
 
-    pe_filt = get_band_info(pe_params, freq_range=[osc_freq - 2, osc_freq + 2], ch_names=[])
+    pe_filt = get_band_info(pe_params, freq_range=(osc_freq - 2, osc_freq + 2), ch_names=[])
     assert bool(np.isclose(pe_filt['cf'][0], osc_freq, atol=2))
 
 
 @pytest.mark.parametrize('fs, exponent', [(500, -1)], scope='session')
 def test_no_peak_detection(fixed_aperiodic_signal, fs):
-    f_range = [1, 250]
+    f_range = (1, 250)
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
@@ -38,7 +38,7 @@ def test_no_peak_detection(fixed_aperiodic_signal, fs):
 
 @pytest.mark.parametrize('osc_freq, fs', [(10, 500)], scope='session')
 def test_peak_detection_settings(oscillation, fs, osc_freq):
-    f_range = [1, 250]
+    f_range = (1, 250)
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(oscillation, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])

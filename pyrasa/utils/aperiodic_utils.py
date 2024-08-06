@@ -14,7 +14,7 @@ def _compute_slope(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
     fit_func: str | type[AbstractFitFun],
-    scale_factor: float | int = 1,
+    scale_factor: float = 1.0,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """get the slope of the aperiodic spectrum"""
 
@@ -103,10 +103,10 @@ def compute_slope(
 
     if scale:
 
-        def num_zeros(decimal: int) -> float:
+        def num_zeros(decimal: float) -> float:
             return np.inf if decimal == 0 else -np.floor(np.log10(abs(decimal))) - 1
 
-        scale_factor = 10 ** num_zeros(aperiodic_spectrum.min())
+        scale_factor: float = 10 ** num_zeros(aperiodic_spectrum.min())
         aperiodic_spectrum = aperiodic_spectrum * scale_factor
     else:
         scale_factor = 1
@@ -120,8 +120,8 @@ def compute_slope(
             scale_factor=scale_factor,
         )
 
-        params['ch_name'] = ch_name
-        gof['ch_name'] = ch_name
+        params.loc[:, 'ch_name'] = np.tile(ch_name, reps=params.shape[0])
+        gof.loc[:, 'ch_name'] = np.tile(ch_name, reps=gof.shape[0])
 
         ap_list.append(params)
         gof_list.append(gof)
@@ -177,8 +177,8 @@ def compute_slope_sprint(
             fit_bounds=fit_bounds,
             scale=scale,
         )
-        slope_fit.aperiodic_params['time'] = t
-        slope_fit.gof['time'] = t
+        slope_fit.aperiodic_params.loc[:, 'time'] = t
+        slope_fit.gof.loc[:, 'time'] = t
 
         ap_t_list.append(slope_fit.aperiodic_params)
         gof_t_list.append(slope_fit.gof)

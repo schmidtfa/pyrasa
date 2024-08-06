@@ -18,6 +18,8 @@ __pycache__
 
 # Ignore compiled files
 *.pyc
+*.so
+*.c
 
 # Ignore notebook checkpoints
 *.ipynb_checkpoints*
