@@ -252,7 +252,7 @@ def irasa_sprint(  # noqa PLR0915 C901
 
     hset = np.round(np.arange(*hset_info), hset_accuracy)
 
-    mfft = int(fs / freq_res)
+    nfft = int(fs / freq_res)
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
         'time_bandwidth': dpss_settings_time_bandwidth,
@@ -261,7 +261,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     }
 
     irasa_kwargs: IrasaSprintKwargsTyped = {
-        'mfft': mfft,
+        'nfft': nfft,
         'hop': hop,
         'win_duration': win_duration,
         'dpss_settings': dpss_settings,

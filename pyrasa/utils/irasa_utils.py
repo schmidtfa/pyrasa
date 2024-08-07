@@ -6,7 +6,6 @@ from copy import copy
 
 import numpy as np
 import scipy.signal as dsp
-from scipy.signal import ShortTimeFFT
 
 from pyrasa.utils.types import IrasaFun
 
@@ -226,9 +225,9 @@ def _compute_psd_welch(
 def _compute_sgramm(  # noqa C901
     x: np.ndarray,
     fs: int,
-    mfft: int,
-    hop: int,
+    nfft: int,
     win_duration: float,
+    hop: int,
     dpss_settings: dict,
     win_kwargs: dict,
     up_down: str | None = None,
@@ -237,22 +236,22 @@ def _compute_sgramm(  # noqa C901
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Function to compute spectrograms"""
 
-    if h is None:
-        nperseg = int(np.floor(fs * win_duration))
-    elif np.logical_and(h is not None, up_down == 'up'):
-        nperseg = int(np.floor(fs * win_duration * h))
+    nperseg = int(np.floor(fs * win_duration))
+
+    if np.logical_and(h is not None, up_down == 'up'):
         hop = int(hop * h)
     elif np.logical_and(h is not None, up_down == 'down'):
-        nperseg = int(np.floor(fs * win_duration / h))
         hop = int(hop / h)
 
     win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
 
     sgramms = []
     for cur_win in win:
-        SFT = ShortTimeFFT(cur_win, hop=hop, mfft=mfft, fs=fs, scale_to='psd')  # noqa N806
-        cur_sgramm = SFT.spectrogram(x, detr='constant')
-        sgramms.append(cur_sgramm)
+        freq, time, sgramm = dsp.stft(
+            x, nfft=nfft, nperseg=nperseg, noverlap=nperseg - hop, fs=fs, window=cur_win, scaling='psd'
+        )
+        sgramm = np.abs(sgramm) ** 2
+        sgramms.append(sgramm)
 
     if ratios is None:
         sgramm = np.mean(sgramms, axis=0)
@@ -260,19 +259,8 @@ def _compute_sgramm(  # noqa C901
         weighted_sgramms = [ratios[ix] * cur_sgramm for ix, cur_sgramm in enumerate(sgramms)]
         sgramm = np.sum(weighted_sgramms, axis=0) / np.sum(ratios)
 
-    time = _gen_time_from_sft(SFT, x)
-    freq = SFT.f[SFT.f > 0]
-
-    # subsample the upsampled data in the time domain to allow averaging
-    # This is necessary as division by h can cause slight rounding differences that
-    # result in actual unintended temporal differences in up/dw for very long segments.
     if time_orig is not None:
-        sgramm = np.array([_find_nearest(sgramm, time, t) for t in time_orig])
-        max_t_ix = time_orig.shape[0]
-        # swapping axes is necessitated by _find_nearest
-        sgramm = np.swapaxes(
-            np.swapaxes(sgramm[:max_t_ix, :, :], 1, 2), 0, 2
-        )  # cut time axis for up/downsampled data to allow averaging
+        sgramm = sgramm[:, :, : time_orig.shape[-1]]
 
     sgramm = np.squeeze(sgramm)  # bring in proper format
 
