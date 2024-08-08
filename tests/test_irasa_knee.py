@@ -11,9 +11,9 @@ from .settings import EXP_KNEE_COMBO, FS, KNEE_TOLERANCE, MIN_CORR_PSD_CMB, OSC_
 
 
 # knee model
-@pytest.mark.parametrize('exponent, knee', EXP_KNEE_COMBO, scope='session')
+@pytest.mark.parametrize('exponent, knee_freq', EXP_KNEE_COMBO, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
-def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
+def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee_freq):
     f_range = [0.1, 100]
     irasa_out = irasa(load_knee_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
     # test the shape of the output
@@ -33,7 +33,7 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
     knee_hat = slope_fit_k.aperiodic_params['Knee'][0] ** (
         1 / (2 * slope_fit_k.aperiodic_params['Exponent_1'][0] + slope_fit_k.aperiodic_params['Exponent_2'][0])
     )
-    knee_real = knee ** (1 / np.abs(exponent))
+    knee_real = knee_freq ** (1 / np.abs(exponent))
     assert bool(np.isclose(knee_hat, knee_real, atol=KNEE_TOLERANCE))
     # test bic/aic -> should be better for knee
     assert slope_fit_k.gof['AIC'][0] < slope_fit_f.gof['AIC'][0]
@@ -41,10 +41,10 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
 
 
 # knee model
-@pytest.mark.parametrize('exponent, knee', EXP_KNEE_COMBO, scope='session')
+@pytest.mark.parametrize('exponent, knee_freq', EXP_KNEE_COMBO, scope='session')
 @pytest.mark.parametrize('fs', FS, scope='session')
 @pytest.mark.parametrize('osc_freq', OSC_FREQ, scope='session')
-def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
+def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee_freq, osc_freq):
     f_range = [0.1, 100]
     irasa_out = irasa(load_knee_cmb_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
     # test the shape of the output
@@ -64,7 +64,7 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     knee_hat = slope_fit_k.aperiodic_params['Knee'][0] ** (
         1 / (2 * slope_fit_k.aperiodic_params['Exponent_1'][0] + slope_fit_k.aperiodic_params['Exponent_2'][0])
     )
-    knee_real = knee ** (1 / np.abs(exponent))
+    knee_real = knee_freq ** (1 / np.abs(exponent))
     assert bool(np.isclose(knee_hat, knee_real, atol=KNEE_TOLERANCE))
     # test bic/aic -> should be better for knee
     assert slope_fit_k.gof['AIC'][0] < slope_fit_f.gof['AIC'][0]

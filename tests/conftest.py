@@ -28,19 +28,29 @@ def knee_aperiodic_signal(exponent, fs, knee_freq):
 
 
 @pytest.fixture(scope='session')
-def load_knee_aperiodic_signal(exponent, fs, knee):
-    base_dir = 'tests/test_data/knee_data/'
-    yield np.load(
-        base_dir + f'knee_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}_.npy',
-    )  # allow_pickle=True)
+def load_knee_aperiodic_signal(exponent, fs, knee_freq):
+    # % generate and save knee
+    knee_sim = sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq)
+    yield knee_sim
+    # base_dir = 'tests/test_data/knee_data/'
+    # yield np.load(
+    #     base_dir + f'knee_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}_.npy',
+    # )  # allow_pickle=True)
 
 
 @pytest.fixture(scope='session')
-def load_knee_cmb_signal(exponent, fs, knee, osc_freq):
-    base_dir = 'tests/test_data/knee_osc_data/'
-    yield np.load(
-        base_dir + f'cmb_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}__osc_freq_{osc_freq}_.npy',
-    )  # allow_pickle=True)
+def load_knee_cmb_signal(exponent, fs, knee_freq, osc_freq):
+    knee = knee_freq ** np.abs(exponent)
+    components = {
+        'sim_knee': {'exponent1': 0, 'exponent2': exponent, 'knee': knee},
+        'sim_oscillation': {'freq': osc_freq},
+    }
+    cmb_sim = sim_combined(n_seconds=N_SECONDS, fs=fs, components=components)
+    yield cmb_sim
+    # base_dir = 'tests/test_data/knee_osc_data/'
+    # yield np.load(
+    #     base_dir + f'cmb_sim__fs_{fs}__exp1_0__exp2_{exponent}_knee_{knee}__osc_freq_{osc_freq}_.npy',
+    # )  # allow_pickle=True)
     # noqa: E501
 
 

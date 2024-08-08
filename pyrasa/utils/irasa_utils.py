@@ -10,7 +10,6 @@ import scipy.signal as dsp
 from pyrasa.utils.types import IrasaFun
 
 
-# TODO: Port to Cython
 def _gen_irasa(
     data: np.ndarray,
     orig_spectrum: np.ndarray,
@@ -71,30 +70,6 @@ def _crop_data(
     psd = np.compress(~mask_freqs, psd, axis=axis)
 
     return freqs, psd_aperiodic, psd_periodic, psd
-
-
-def _gen_time_from_sft(SFT: type[dsp.ShortTimeFFT], sgramm: np.ndarray) -> np.ndarray:  # noqa N803
-    """Generates time from SFT object"""
-
-    tmin, tmax = SFT.extent(sgramm.shape[-1])[:2]
-    delta_t = SFT.delta_t
-
-    time = np.arange(tmin, tmax, delta_t)
-    return time
-
-
-def _find_nearest(sgramm_ud: np.ndarray, time_array: np.ndarray, time_value: float) -> np.ndarray:
-    """Find the nearest time point in an up/downsampled spectrogram"""
-
-    idx = (np.abs(time_array - time_value)).argmin()
-
-    if idx < sgramm_ud.shape[2]:
-        sgramm_sel = sgramm_ud[:, :, idx]
-
-    elif idx == sgramm_ud.shape[2]:
-        sgramm_sel = sgramm_ud[:, :, idx - 1]
-
-    return sgramm_sel
 
 
 def _get_windows(
