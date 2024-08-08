@@ -28,9 +28,10 @@ def knee_aperiodic_signal(exponent, fs, knee_freq):
 
 
 @pytest.fixture(scope='session')
-def load_knee_aperiodic_signal(exponent, fs, knee_freq):
+def load_knee_aperiodic_signal(exponent, fs, knee):
     # % generate and save knee
-    knee_sim = sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee_freq)
+    # knee = knee ** np.abs(exponent)
+    knee_sim = sim_knee(n_seconds=N_SECONDS, fs=fs, exponent1=0, exponent2=exponent, knee=knee)
     yield knee_sim
     # base_dir = 'tests/test_data/knee_data/'
     # yield np.load(
@@ -39,8 +40,8 @@ def load_knee_aperiodic_signal(exponent, fs, knee_freq):
 
 
 @pytest.fixture(scope='session')
-def load_knee_cmb_signal(exponent, fs, knee_freq, osc_freq):
-    knee = knee_freq ** np.abs(exponent)
+def load_knee_cmb_signal(exponent, fs, knee, osc_freq):
+    # knee = knee ** np.abs(exponent)
     components = {
         'sim_knee': {'exponent1': 0, 'exponent2': exponent, 'knee': knee},
         'sim_oscillation': {'freq': osc_freq},
@@ -60,15 +61,14 @@ def oscillation(osc_freq, fs):
 
 
 @pytest.fixture(scope='session')
-def ts4sprint():
-    fs = 500
+def ts4sprint(fs, exponent_1, exponent_2):
     alpha = sim_oscillation(n_seconds=0.5, fs=fs, freq=10)
     no_alpha = np.zeros(len(alpha))
     beta = sim_oscillation(n_seconds=0.5, fs=fs, freq=25)
     no_beta = np.zeros(len(beta))
 
-    exp_1 = sim_powerlaw(n_seconds=2.5, fs=fs, exponent=-1)
-    exp_2 = sim_powerlaw(n_seconds=2.5, fs=fs, exponent=-2)
+    exp_1 = sim_powerlaw(n_seconds=2.5, fs=fs, exponent=exponent_1)
+    exp_2 = sim_powerlaw(n_seconds=2.5, fs=fs, exponent=exponent_2)
 
     # %%
     alphas = np.concatenate([no_alpha, alpha, no_alpha, alpha, no_alpha])
