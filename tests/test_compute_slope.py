@@ -2,8 +2,10 @@ import numpy as np
 import pytest
 import scipy.signal as dsp
 
+from pyrasa import irasa
 from pyrasa.utils.aperiodic_utils import compute_slope
 from pyrasa.utils.fit_funcs import AbstractFitFun
+from pyrasa.utils.peak_utils import get_peak_params
 
 from .settings import EXPONENT, FS, HIGH_TOLERANCE, MIN_R2, TOLERANCE
 
@@ -62,9 +64,20 @@ def test_slope_fitting_settings(
     with pytest.raises(AssertionError):
         compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(1, 1000))
 
+    # test bounds correct
+    with pytest.raises(AssertionError):
+        compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(5, 40))
+
     # test for warning
     with pytest.warns(UserWarning, match=match_txt):
         compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed')
+
+    # test misspecify string in fit_func
+    with pytest.raises(AssertionError):
+        compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='incredible', fit_bounds=(5, 40))
+
+    # test absence of peaks
+    get_peak_params(psd[freq_logical], freqs[freq_logical], min_peak_height=10)
 
 
 # test custom slope fitting functions
@@ -110,3 +123,20 @@ def test_custom_slope_fitting(
 
     # add a high tolerance
     assert pytest.approx(np.abs(slope_fit.aperiodic_params['b'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
+
+    irasa_spectrum = irasa(fixed_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+
+    class CustomFitFun(AbstractFitFun):
+        log10_aperiodic = True
+        log10_freq = True
+
+        def func(self, x: np.ndarray, a: float, b: float) -> np.ndarray:
+            """
+            Specparams fixed fitting function.
+            Use this to model aperiodic activity without a spectral knee
+            """
+            y_hat = a + b * x
+
+            return y_hat
+
+    irasa_spectrum.get_slopes(fit_func=CustomFitFun)
