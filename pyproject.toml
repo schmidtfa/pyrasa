@@ -8,7 +8,7 @@ authors = [
     {name = "Fabian Schmidt", email = "schmidtfa91@gmail.com"},
     {name = "Thomas Hartmann", email = "thomas.hartmann@th-ht.de"}
 ]
-homepage = "https://github.com/schmidtfa/pyrasa"
+
 classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
@@ -24,6 +24,8 @@ dependencies = ["numpy", "pandas", "scipy>=1.12", "attrs"]
 [project.optional-dependencies]
 mne = ['mne']
 
+[project.urls]
+repository = "https://github.com/schmidtfa/pyrasa"
 
 [build-system]
 requires = ["hatchling", "hatch-regex-commit"]
