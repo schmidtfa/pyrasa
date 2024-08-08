@@ -271,7 +271,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     def _local_irasa_fun(
         data: np.ndarray,
         fs: int,
-        h: int | None,
+        h: float,
         up_down: str | None,
         time_orig: np.ndarray | None = None,
     ) -> np.ndarray:

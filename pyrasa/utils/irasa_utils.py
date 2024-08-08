@@ -230,17 +230,18 @@ def _compute_sgramm(  # noqa C901
     hop: int,
     dpss_settings: dict,
     win_kwargs: dict,
+    h: float = 1.0,
     up_down: str | None = None,
-    h: int | None = None,
     time_orig: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Function to compute spectrograms"""
 
     nperseg = int(np.floor(fs * win_duration))
 
-    if np.logical_and(h is not None, up_down == 'up'):
+    if up_down == 'up':
         hop = int(hop * h)
-    elif np.logical_and(h is not None, up_down == 'down'):
+
+    if up_down == 'down':
         hop = int(hop / h)
 
     win, ratios = _get_windows(nperseg, dpss_settings, **win_kwargs)
