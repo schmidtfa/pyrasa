@@ -61,6 +61,8 @@ irasa_out = irasa(sig,
 
 ```
 
+![image info](./simulations/example_knee.png)
+
 Extract periodic parameters
 
 ```python
@@ -68,14 +70,33 @@ Extract periodic parameters
 irasa_out.get_peaks()
 
 ```
+|   ch_name |   cf |      bw |     pw |
+|----------:|-----:|--------:|-------:|
+|         0 |  9.5 | 1.44337 | 0.4146 |
 
 Extract aperiodic parameters
 
 ```python
 
-irasa_out.fit_aperiodic_model(fit_func='knee')
+irasa_out.fit_aperiodic_model(fit_func='knee').aperiodic_params
 
 ```
+
+|   Offset |   Knee |   Exponent_1 |   Exponent_2 | fit_type   |   Knee Frequency (Hz) |   ch_name |
+|---------:|-------:|-------------:|-------------:|:-----------|----------------------:|----------:|
+|  1.38098 | 532.91 |     0.511999 |      1.89448 | knee       |               8.59554 |         0 |
+
+And the goodness of fit
+
+```python
+
+irasa_out.fit_aperiodic_model(fit_func='knee').gof
+
+```
+
+|         mse |   r_squared |      BIC |      AIC | fit_type   |   ch_name |
+|------------:|------------:|---------:|---------:|:-----------|----------:|
+| 3.02402e-05 |    0.999894 | -2049.69 | -2062.86 | knee       |         0 |
 
 
 ### How to Contribute

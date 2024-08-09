@@ -398,6 +398,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/statsmodels-0.14.2-py312h085067d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/svt-av1-2.1.0-hac33072_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-2021.12.0-h434a139_3.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-devel-2021.12.0-hfcbfbdb_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh0d859eb_0.conda
@@ -846,6 +847,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/statsmodels-0.14.2-py312h5dc8b90_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/svt-av1-2.1.2-hf036a51_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-2021.12.0-h3c5361c_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-devel-2021.12.0-hb2f57f9_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -1272,6 +1274,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/statsmodels-0.14.2-py312hbebd99a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/svt-av1-2.1.2-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-2021.12.0-h420ef59_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-devel-2021.12.0-h5309751_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -1656,6 +1659,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/statsmodels-0.14.2-py312h1a27103_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/svt-av1-2.1.2-he0c23c2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-2021.12.0-hc790b64_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-devel-2021.12.0-h053bfa6_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh5737063_0.conda
@@ -2123,6 +2127,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/statsmodels-0.14.2-py312h085067d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/svt-av1-2.1.0-hac33072_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-2021.12.0-h434a139_3.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-devel-2021.12.0-hfcbfbdb_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh0d859eb_0.conda
@@ -2572,6 +2577,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/statsmodels-0.14.2-py312h5dc8b90_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/svt-av1-2.1.2-hf036a51_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-2021.12.0-h3c5361c_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-devel-2021.12.0-hb2f57f9_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -2999,6 +3005,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/statsmodels-0.14.2-py312hbebd99a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/svt-av1-2.1.2-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-2021.12.0-h420ef59_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-devel-2021.12.0-h5309751_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -3384,6 +3391,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/statsmodels-0.14.2-py312h1a27103_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/svt-av1-2.1.2-he0c23c2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-2021.12.0-hc790b64_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-devel-2021.12.0-h053bfa6_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh5737063_0.conda
@@ -3850,6 +3858,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/statsmodels-0.14.2-py312h085067d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/svt-av1-2.1.0-hac33072_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-2021.12.0-h434a139_3.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-devel-2021.12.0-hfcbfbdb_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh0d859eb_0.conda
@@ -4298,6 +4307,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/statsmodels-0.14.2-py312h5dc8b90_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/svt-av1-2.1.2-hf036a51_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-2021.12.0-h3c5361c_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-devel-2021.12.0-hb2f57f9_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -4724,6 +4734,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/statsmodels-0.14.2-py312hbebd99a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/svt-av1-2.1.2-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-2021.12.0-h420ef59_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-devel-2021.12.0-h5309751_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -5108,6 +5119,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/statsmodels-0.14.2-py312h1a27103_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/svt-av1-2.1.2-he0c23c2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-2021.12.0-hc790b64_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-devel-2021.12.0-h053bfa6_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh5737063_0.conda
@@ -5574,6 +5586,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/statsmodels-0.14.2-py311h18e1886_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/svt-av1-2.1.2-hac33072_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-2021.12.0-h434a139_3.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-devel-2021.12.0-hfcbfbdb_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh0d859eb_0.conda
@@ -6028,6 +6041,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/statsmodels-0.14.2-py311hce3442d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/svt-av1-2.1.2-hf036a51_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-2021.12.0-h3c5361c_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-devel-2021.12.0-hb2f57f9_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -6454,6 +6468,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/statsmodels-0.14.2-py311h5d790af_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/svt-av1-2.1.2-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-2021.12.0-h420ef59_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-devel-2021.12.0-h5309751_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -6838,6 +6853,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/statsmodels-0.14.2-py311h0a17f05_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/svt-av1-2.1.2-he0c23c2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-2021.12.0-hc790b64_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-devel-2021.12.0-h053bfa6_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh5737063_0.conda
@@ -7304,6 +7320,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/statsmodels-0.14.2-py312h085067d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/svt-av1-2.1.2-hac33072_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-2021.12.0-h434a139_3.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tbb-devel-2021.12.0-hfcbfbdb_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh0d859eb_0.conda
@@ -7758,6 +7775,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/statsmodels-0.14.2-py312h5dc8b90_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/svt-av1-2.1.2-hf036a51_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-2021.12.0-h3c5361c_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tbb-devel-2021.12.0-hb2f57f9_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -8184,6 +8202,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/statsmodels-0.14.2-py312hbebd99a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/svt-av1-2.1.2-h7bae524_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-2021.12.0-h420ef59_3.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tbb-devel-2021.12.0-h5309751_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh31c8845_0.conda
@@ -8568,6 +8587,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/statsmodels-0.14.2-py312h1a27103_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/svt-av1-2.1.2-he0c23c2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-2021.12.0-hc790b64_3.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tbb-devel-2021.12.0-h053bfa6_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/terminado-0.18.1-pyh5737063_0.conda
@@ -28539,7 +28559,7 @@ packages:
   name: pyrasa
   version: 0.1.0.dev0
   path: .
-  sha256: c5f6392cb2cf7ae255bb2526468a889d68bfaeaefabc20f2ec6cec4722953de5
+  sha256: fb7358f4c790842addab7cada866a8a03808d947493ab4f4c000d56caf9df893
   requires_dist:
   - attrs
   - numpy
@@ -32829,6 +32849,24 @@ packages:
   purls: []
   size: 2156817
   timestamp: 1719854565230
+- kind: conda
+  name: tabulate
+  version: 0.9.0
+  build: pyhd8ed1ab_1
+  build_number: 1
+  subdir: noarch
+  noarch: python
+  url: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_1.tar.bz2
+  sha256: f6e4a0dd24ba060a4af69ca79d32361a6678e61d78c73eb5e357909b025b4620
+  md5: 4759805cce2d914c38472f70bf4d8bcb
+  depends:
+  - python >=3.7
+  license: MIT
+  license_family: MIT
+  purls:
+  - pkg:pypi/tabulate?source=conda-forge-mapping
+  size: 35912
+  timestamp: 1665138565317
 - kind: conda
   name: tbb
   version: 2021.12.0
