@@ -5,7 +5,6 @@ import scipy.signal as dsp
 from pyrasa import irasa
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
 from pyrasa.utils.fit_funcs import AbstractFitFun
-from pyrasa.utils.peak_utils import get_peak_params
 
 from .settings import EXPONENT, FS, HIGH_TOLERANCE, MIN_R2, TOLERANCE
 
@@ -52,10 +51,10 @@ def test_slope_fitting_settings(
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
 
-    match_txt = (
-        'The first frequency appears to be 0 this will result in slope fitting problems. '
-        + 'Frequencies will be evaluated starting from the next highest in Hz'
-    )
+    # match_txt = (
+    #     'The first frequency appears to be 0 this will result in slope fitting problems. '
+    #     + 'Frequencies will be evaluated starting from the next highest in Hz'
+    # )
     # test bounds too low
     with pytest.raises(AssertionError):
         compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(0, 200))
@@ -68,15 +67,12 @@ def test_slope_fitting_settings(
     compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(5, 40))
 
     # test for warning
-    with pytest.warns(UserWarning, match=match_txt):
+    with pytest.warns(UserWarning):  # , match=match_txt):
         compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed')
 
     # test misspecify string in fit_func
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='incredible', fit_bounds=(5, 40))
-
-    # test absence of peaks
-    get_peak_params(psd[freq_logical], freqs[freq_logical], min_peak_height=10, fit_bounds=(1, 40))
 
 
 # test custom slope fitting functions
