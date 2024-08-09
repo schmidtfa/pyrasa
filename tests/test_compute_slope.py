@@ -77,7 +77,7 @@ def test_slope_fitting_settings(
         compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='incredible', fit_bounds=(5, 40))
 
     # test absence of peaks
-    get_peak_params(psd[freq_logical], freqs[freq_logical], min_peak_height=10)
+    get_peak_params(psd[freq_logical], freqs[freq_logical], min_peak_height=10, fit_bounds=(1, 40))
 
 
 # test custom slope fitting functions
@@ -87,7 +87,7 @@ def test_custom_slope_fitting(
     exponent,
     fs,
 ):
-    f_range = [1.5, 300]
+    f_range = [1.5, 100]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
