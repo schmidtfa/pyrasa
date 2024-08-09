@@ -7,9 +7,9 @@ import pandas as pd
 from attrs import define
 from mne.time_frequency import EpochsSpectrumArray, SpectrumArray
 
-from pyrasa.utils.aperiodic_utils import compute_slope
+from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
 from pyrasa.utils.peak_utils import get_peak_params
-from pyrasa.utils.types import SlopeFit
+from pyrasa.utils.types import AperiodicFit
 
 # FutureWarning:
 
@@ -172,12 +172,12 @@ class AperiodicSpectrumArray(SpectrumArray):
             )
         )
 
-    def get_slopes(
+    def fit_aperiodic_model(
         self: SpectrumArray,
         fit_func: str = 'fixed',
         scale: bool = False,
         fit_bounds: tuple[float, float] | None = None,
-    ) -> SlopeFit:
+    ) -> AperiodicFit:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -198,7 +198,7 @@ class AperiodicSpectrumArray(SpectrumArray):
 
         """
 
-        return compute_slope(
+        return compute_aperiodic_model(
             self.get_data(),
             self.freqs,
             ch_names=self.ch_names,
@@ -398,12 +398,12 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             )
         )
 
-    def get_slopes(
+    def fit_aperiodic_model(
         self: SpectrumArray,
         fit_func: str = 'fixed',
         scale: bool = False,
         fit_bounds: tuple[float, float] | None = None,
-    ) -> SlopeFit:
+    ) -> AperiodicFit:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -429,7 +429,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
 
         aps_list, gof_list = [], []
         for ix, cur_epoch in enumerate(self.get_data()):
-            slope_fit = compute_slope(
+            slope_fit = compute_aperiodic_model(
                 cur_epoch,
                 self.freqs,
                 ch_names=self.ch_names,
@@ -443,7 +443,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             aps_list.append(slope_fit.aperiodic_params.copy())
             gof_list.append(slope_fit.gof.copy())
 
-        return SlopeFit(aperiodic_params=pd.concat(aps_list), gof=pd.concat(gof_list))
+        return AperiodicFit(aperiodic_params=pd.concat(aps_list), gof=pd.concat(gof_list))
 
 
 @define

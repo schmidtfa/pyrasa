@@ -20,6 +20,6 @@ class IrasaSprintKwargsTyped(TypedDict):
 
 
 @define
-class SlopeFit:
+class AperiodicFit:
     aperiodic_params: pd.DataFrame
     gof: pd.DataFrame

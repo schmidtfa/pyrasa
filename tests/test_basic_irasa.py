@@ -27,8 +27,8 @@ def test_irasa(combined_signal, fs, osc_freq, exponent):
     r = np.corrcoef(irasa_spectrum.raw_spectrum, psd_cmb)[0, 1]
     assert r > MIN_CORR_PSD_CMB
     # test whether we can reconstruct the exponent correctly
-    slope_fit = irasa_spectrum.get_slopes(fit_func='fixed')
-    assert bool(np.isclose(slope_fit.aperiodic_params['Exponent'][0], np.abs(exponent), atol=TOLERANCE))
+    aperiodic_fit = irasa_spectrum.fit_aperiodic_model(fit_func='fixed')
+    assert bool(np.isclose(aperiodic_fit.aperiodic_params['Exponent'][0], np.abs(exponent), atol=TOLERANCE))
     # test whether we can reconstruct the peak frequency correctly
     pe_params = irasa_spectrum.get_peaks()
     assert bool(np.isclose(np.round(pe_params['cf'], 0), osc_freq))

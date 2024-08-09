@@ -24,7 +24,7 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
     )
 
     # check basic aperiodic detection
-    slope_fit = irasa_tf.get_slopes(fit_func='fixed')
+    slope_fit = irasa_tf.fit_aperiodic_model(fit_func='fixed')
     #       irasa_tf.aperiodic[np.newaxis, :, :], freqs=irasa_tf.freqs, times=irasa_tf.time,
     #  )
 

@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 from attrs import define
 
-from pyrasa.utils.aperiodic_utils import compute_slope_sprint
+from pyrasa.utils.aperiodic_utils import compute_aperiodic_model_sprint
 from pyrasa.utils.peak_utils import get_peak_params_sprint
-from pyrasa.utils.types import SlopeFit
+from pyrasa.utils.types import AperiodicFit
 
 min_ndim = 2
 
@@ -18,9 +18,9 @@ class IrasaTfSpectrum:
     periodic: np.ndarray
     ch_names: np.ndarray | None
 
-    def get_slopes(
+    def fit_aperiodic_model(
         self, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
-    ) -> SlopeFit:
+    ) -> AperiodicFit:
         """
         This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
         The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -34,14 +34,14 @@ class IrasaTfSpectrum:
                         should be None if the whole frequency range is desired.
                         Otherwise a tuple of (lower, upper)
 
-        Returns:    SlopeFit
+        Returns:    AperiodicFit
                         df_aps: DataFrame
                             DataFrame containing the center frequency, bandwidth and peak height for each channel
                         df_gof: DataFrame
                             DataFrame containing the goodness of fit of the specific fit function for each channel.
 
         """
-        return compute_slope_sprint(
+        return compute_aperiodic_model_sprint(
             aperiodic_spectrum=self.aperiodic[np.newaxis, :, :] if self.aperiodic.ndim == min_ndim else self.aperiodic,
             freqs=self.freqs,
             times=self.time,

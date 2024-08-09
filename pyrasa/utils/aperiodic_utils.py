@@ -7,16 +7,16 @@ import numpy as np
 import pandas as pd
 
 from pyrasa.utils.fit_funcs import AbstractFitFun, FixedFitFun, KneeFitFun
-from pyrasa.utils.types import SlopeFit
+from pyrasa.utils.types import AperiodicFit
 
 
-def _compute_slope(
+def _compute_aperiodic_model(
     aperiodic_spectrum: np.ndarray,
     freq: np.ndarray,
     fit_func: str | type[AbstractFitFun],
     scale_factor: float | int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """get the slope of the aperiodic spectrum"""
+    """helper function to model the aperiodic spectrum"""
 
     if isinstance(fit_func, str):
         if fit_func == 'fixed':
@@ -24,7 +24,7 @@ def _compute_slope(
         elif fit_func == 'knee':
             fit_func = KneeFitFun
         else:
-            raise ValueError('fit_func should be either "fixed" or "knee"')
+            raise ValueError('fit_func should be either a string ("fixed", "knee") or of type AbastractFitFun')
 
     fit_f = fit_func(freq, aperiodic_spectrum, scale_factor=scale_factor)
     params, gof = fit_f.fit_func()
@@ -32,14 +32,14 @@ def _compute_slope(
     return params, gof
 
 
-def compute_slope(
+def compute_aperiodic_model(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     fit_func: str | type[AbstractFitFun] = 'fixed',
     ch_names: Iterable | None = None,
     scale: bool = False,
     fit_bounds: tuple[float, float] | None = None,
-) -> SlopeFit:
+) -> AperiodicFit:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -91,7 +91,7 @@ def compute_slope(
 
     if freqs[0] == 0:
         warnings.warn(
-            'The first frequency appears to be 0 this will result in slope fitting problems. '
+            'The first frequency appears to be 0 this will result in aperiodic model fitting problems. '
             + 'Frequencies will be evaluated starting from the next highest in Hz'
         )
         freqs = freqs[1:]
@@ -113,7 +113,7 @@ def compute_slope(
 
     ap_list, gof_list = [], []
     for ix, ch_name in enumerate(ch_names):
-        params, gof = _compute_slope(
+        params, gof = _compute_aperiodic_model(
             aperiodic_spectrum=aperiodic_spectrum[ix],
             freq=freqs,
             fit_func=fit_func,
@@ -127,10 +127,10 @@ def compute_slope(
         gof_list.append(gof)
 
     # combine & return
-    return SlopeFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list))
+    return AperiodicFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list))
 
 
-def compute_slope_sprint(
+def compute_aperiodic_model_sprint(
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     times: np.ndarray,
@@ -138,7 +138,7 @@ def compute_slope_sprint(
     scale: bool = False,
     ch_names: Iterable | None = None,
     fit_bounds: tuple[float, float] | None = None,
-) -> SlopeFit:
+) -> AperiodicFit:
     """
     This function can be used to extract aperiodic parameters from the aperiodic spectrogram extracted from IRASA.
     The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
@@ -169,7 +169,7 @@ def compute_slope_sprint(
     ap_t_list, gof_t_list = [], []
 
     for ix, t in enumerate(times):
-        slope_fit = compute_slope(
+        aperiodic_fit = compute_aperiodic_model(
             aperiodic_spectrum[:, :, ix],
             freqs=freqs,
             fit_func=fit_func,
@@ -177,10 +177,10 @@ def compute_slope_sprint(
             fit_bounds=fit_bounds,
             scale=scale,
         )
-        slope_fit.aperiodic_params['time'] = t
-        slope_fit.gof['time'] = t
+        aperiodic_fit.aperiodic_params['time'] = t
+        aperiodic_fit.gof['time'] = t
 
-        ap_t_list.append(slope_fit.aperiodic_params)
-        gof_t_list.append(slope_fit.gof)
+        ap_t_list.append(aperiodic_fit.aperiodic_params)
+        gof_t_list.append(aperiodic_fit.gof)
 
-    return SlopeFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list))
+    return AperiodicFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list))
