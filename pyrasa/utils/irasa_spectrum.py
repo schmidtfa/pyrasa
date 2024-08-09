@@ -3,6 +3,7 @@ import pandas as pd
 from attrs import define
 
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
+from pyrasa.utils.fit_funcs import AbstractFitFun
 from pyrasa.utils.peak_utils import get_peak_params
 from pyrasa.utils.types import AperiodicFit
 
@@ -16,27 +17,59 @@ class IrasaSpectrum:
     ch_names: np.ndarray | None
 
     def fit_aperiodic_model(
-        self, fit_func: str = 'fixed', scale: bool = False, fit_bounds: tuple[float, float] | None = None
+        self,
+        fit_func: str | type[AbstractFitFun] = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
     ) -> AperiodicFit:
         """
-        This method can be used to extract aperiodic parameters from the aperiodic spectrum extracted from IRASA.
-        The algorithm works by applying one of two different curve fit functions and returns the associated parameters,
-        as well as the respective goodness of fit.
+        Computes aperiodic parameters from the aperiodic spectrum using scipy's curve fitting function.
 
-        Parameters:
-                    fit_func : string
-                        Can be either "fixed" or "knee".
-                    fit_bounds : None, tuple
-                        Lower and upper bound for the fit function,
-                        should be None if the whole frequency range is desired.
-                        Otherwise a tuple of (lower, upper)
+        This method can be used to model the aperiodic (1/f-like) component of the power spectrum. Per default,
+        users can choose between a fixed or knee model fit or specify their own fit method see examples
+        custom_fit_functions.ipynb for an example.
+        The method returns the fitted parameters for each channel along with some goodness of fit metrics.
 
-        Returns:    AperiodicFit
-                        df_aps: DataFrame
-                            DataFrame containing the center frequency, bandwidth and peak height for each channel
-                        df_gof: DataFrame
-                            DataFrame containing the goodness of fit of the specific fit function for each channel.
+        Parameters
+        ----------
+        fit_func : str or type[AbstractFitFun], optional
+            The fitting function to use. Can be "fixed" for a linear fit or "knee" for a fit that includes a
+            knee (bend) in the spectrum or a class that is inherited from AbstractFitFun. The default is 'fixed'.
+        ch_names : Iterable or None, optional
+            Channel names corresponding to the aperiodic spectrum. If None, channels will be named numerically
+            in ascending order. Default is None.
+        scale : bool, optional
+            Whether to scale the data to improve fitting accuracy. This is useful in cases where
+            power values are very small (e.g., 1e-28), which may lead to numerical precision issues during fitting.
+            After fitting, the parameters are rescaled to match the original data scale. Default is False.
+        fit_bounds : tuple[float, float] or None, optional
+            Tuple specifying the lower and upper frequency bounds for the fit function. If None, the entire frequency
+            range is used. Otherwise, the spectrum is cropped to the specified bounds. Default is None.
 
+        Returns
+        -------
+        AperiodicFit
+            An object containing two pandas DataFrames:
+                - aperiodic_params : pd.DataFrame
+                    A DataFrame containing the fitted aperiodic parameters for each channel.
+                - gof : pd.DataFrame
+                    A DataFrame containing the goodness of fit metrics for each channel.
+
+        Notes
+        -----
+        This function fits the aperiodic component of the power spectrum using scipy's curve fitting function.
+        The fitting can be performed using either a simple linear model ('fixed') or a more complex model
+        that includes a "knee" point, where the spectrum bends. The resulting parameters can help in
+        understanding the underlying characteristics of the aperiodic component in the data.
+
+        If the `fit_bounds` parameter is used, it ensures that only the specified frequency range is considered
+        for fitting, which can be important to avoid fitting artifacts outside the region of interest.
+
+        The `scale` parameter can be crucial when dealing with data that have extremely small values,
+        as it helps to mitigate issues related to machine precision during the fitting process.
+
+        The function asserts that the input data are of the correct type and shape, and raises warnings
+        if the first frequency value is zero, as this can cause issues during model fitting.
         """
         return compute_aperiodic_model(
             aperiodic_spectrum=self.aperiodic,
@@ -57,26 +90,56 @@ class IrasaSpectrum:
         peak_width_limits: tuple[float, float] = (0.5, 12),
     ) -> pd.DataFrame:
         """
-        This method can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
-        The algorithm works by smoothing the spectrum, zeroing out negative values and
-        extracting peaks based on user specified parameters.
+        Extracts peak parameters from the periodic spectrum obtained via IRASA.
 
-        Parameters: smoothing window : int, optional, default: 2
-                        Smoothing window in Hz handed over to the savitzky-golay filter.
-                    cut_spectrum : tuple of (float, float), optional, default (1, 40)
-                        Cut the periodic spectrum to limit peak finding to a sensible range
-                    peak_threshold : float, optional, default: 1
-                        Relative threshold for detecting peaks. This threshold is defined in
-                        relative units of the periodic spectrum
-                    min_peak_height : float, optional, default: 0.01
-                        Absolute threshold for identifying peaks. The threhsold is defined in relative
-                        units of the power spectrum. Setting this is somewhat necessary when a
-                        "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
-                    peak_width_limits : tuple of (float, float), optional, default (.5, 12)
-                        Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+        This method identifies and extracts peak parameters such as center frequency (cf), bandwidth (bw),
+        and peak height (pw) from a periodic spectrum using scipy's find_peaks function.
+        The spectrum can be optionally smoothed prior to the peak detection.
 
-        Returns:    df_peaks: DataFrame
-                        DataFrame containing the center frequency, bandwidth and peak height for each channel
+        Parameters
+        ----------
+        smooth : bool, optional
+            Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
+            better identifying peaks. Default is True.
+        smoothing_window : int or float, optional
+            The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.
+        polyorder : int, optional
+            The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
+            less than the window length. Default is 1.
+        cut_spectrum : tuple of (float, float) or None, optional
+            Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
+            before peak extraction. If None, peaks are detected across the full frequency range. Default is None.
+        peak_threshold : float, optional
+            Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
+            filtered spectrum. Default is 1.0.
+        min_peak_height : float, optional
+            The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
+            This can be useful for filtering out noise or insignificant peaks, especially when a "knee" is present
+            in the original data, which may persist in the periodic spectrum. Default is 0.01.
+        peak_width_limits : tuple of (float, float), optional
+            The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
+            meaningful features. Default is (0.5, 12.0).
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
+            following columns:
+            - 'ch_name': Channel name
+            - 'cf': Center frequency of the peak
+            - 'bw': Bandwidth of the peak
+            - 'pw': Peak height (power)
+
+
+        Notes
+        -----
+        The function works by first optionally smoothing the periodic spectrum using a Savitzky-Golay filter.
+        Then, it performs peak detection using the `scipy.signal.find_peaks` function, taking into account the
+        specified peak thresholds and width limits. Peaks that do not meet the minimum height requirement are
+        filtered out.
+
+        The `cut_spectrum` parameter can be used to focus peak detection on a specific frequency range, which is
+        particularly useful when the region of interest is known in advance.
 
         """
 

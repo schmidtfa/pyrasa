@@ -108,7 +108,7 @@ Contributions to PyRASA are welcome! Whether it's raising issues, improving docu
 
 If you are using IRASA please cite the smart people who came up with the algorithm:
 
-Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. Brain topography, 29, 13-26.
+Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. Brain topography, 29, 13-26. https://doi.org/10.1007/s10548-015-0448-0
 
 If you are using PyRASA it would be nice, if you could additionally cite us (whenever the paper is finally ready):
 
