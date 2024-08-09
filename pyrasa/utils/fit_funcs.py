@@ -29,10 +29,6 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     mse = np.mean(residuals**2)
     n = len(psd)
 
-    # loglik = -n/2.*(1+np.log(mse)+np.log(2*np.pi))
-    # aic = 2 * (k-loglik)
-    # bic = k * np.log(n)-2 * loglik
-
     bic = n * np.log(mse) + k * np.log(n)
     aic = n * np.log(mse) + 2 * k
 
