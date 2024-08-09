@@ -65,8 +65,7 @@ def test_slope_fitting_settings(
         compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(1, 1000))
 
     # test bounds correct
-    with pytest.raises(AssertionError):
-        compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(5, 40))
+    compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(5, 40))
 
     # test for warning
     with pytest.warns(UserWarning, match=match_txt):
