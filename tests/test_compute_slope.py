@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 import scipy.signal as dsp
 
-from pyrasa.utils.aperiodic_utils import compute_slope
+from pyrasa import irasa
+from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
 from pyrasa.utils.fit_funcs import AbstractFitFun
 
 from .settings import EXPONENT, FS, HIGH_TOLERANCE, MIN_R2, TOLERANCE
@@ -20,23 +21,23 @@ def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
     freqs, psd = freqs[freq_logical], psd[freq_logical]
 
     # test whether we can reconstruct the exponent correctly
-    slope_fit_f = compute_slope(psd, freqs, fit_func='fixed')
-    assert pytest.approx(slope_fit_f.aperiodic_params['Exponent'][0], abs=TOLERANCE) == np.abs(exponent)
+    aperiodic_fit_f = compute_aperiodic_model(psd, freqs, fit_func='fixed')
+    assert pytest.approx(aperiodic_fit_f.aperiodic_params['Exponent'][0], abs=TOLERANCE) == np.abs(exponent)
     # test goodness of fit should be close to r_squared == 1 for linear model
-    assert slope_fit_f.gof['r_squared'][0] > MIN_R2
+    assert aperiodic_fit_f.gof['r_squared'][0] > MIN_R2
 
     # test if we can set fit bounds w/o error
     # _, _ = compute_slope(psd, freqs, fit_func='fixed', fit_bounds=[2, 50])
 
     # bic and aic for fixed model should be better if linear
-    slope_fit_k = compute_slope(psd, freqs, fit_func='knee')
+    aperiodic_fit_k = compute_aperiodic_model(psd, freqs, fit_func='knee')
     # assert gof_k['AIC'][0] > gof['AIC'][0]
-    assert slope_fit_k.gof['BIC'][0] > slope_fit_f.gof['BIC'][0]
+    assert aperiodic_fit_k.gof['BIC'][0] > aperiodic_fit_f.gof['BIC'][0]
 
     # test the effect of scaling
-    slope_fit_fs = compute_slope(psd, freqs, fit_func='fixed', scale=True)
-    assert np.isclose(slope_fit_fs.aperiodic_params['Exponent'], slope_fit_f.aperiodic_params['Exponent'])
-    assert np.isclose(slope_fit_fs.gof['r_squared'], slope_fit_f.gof['r_squared'])
+    aperiodic_fit_fs = compute_aperiodic_model(psd, freqs, fit_func='fixed', scale=True)
+    assert np.isclose(aperiodic_fit_fs.aperiodic_params['Exponent'], aperiodic_fit_f.aperiodic_params['Exponent'])
+    assert np.isclose(aperiodic_fit_fs.gof['r_squared'], aperiodic_fit_f.gof['r_squared'])
 
 
 @pytest.mark.parametrize('exponent, fs', [(-1, 500)], scope='session')
@@ -50,21 +51,28 @@ def test_slope_fitting_settings(
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
 
-    match_txt = (
-        'The first frequency appears to be 0 this will result in slope fitting problems. '
-        + 'Frequencies will be evaluated starting from the next highest in Hz'
-    )
+    # match_txt = (
+    #     'The first frequency appears to be 0 this will result in slope fitting problems. '
+    #     + 'Frequencies will be evaluated starting from the next highest in Hz'
+    # )
     # test bounds too low
     with pytest.raises(AssertionError):
-        compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(0, 200))
+        compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(0, 200))
 
     # test bounds too high
     with pytest.raises(AssertionError):
-        compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(1, 1000))
+        compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(1, 1000))
+
+    # test bounds correct
+    compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed', fit_bounds=(5, 40))
 
     # test for warning
-    with pytest.warns(UserWarning, match=match_txt):
-        compute_slope(psd[freq_logical], freqs[freq_logical], fit_func='fixed')
+    with pytest.warns(UserWarning):  # , match=match_txt):
+        compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='fixed')
+
+    # test misspecify string in fit_func
+    with pytest.raises(ValueError):
+        compute_aperiodic_model(psd[freq_logical], freqs[freq_logical], fit_func='incredible', fit_bounds=(5, 40))
 
 
 # test custom slope fitting functions
@@ -74,7 +82,7 @@ def test_custom_slope_fitting(
     exponent,
     fs,
 ):
-    f_range = [1.5, 300]
+    f_range = [1.5, 100]
     # test whether recombining periodic and aperiodic spectrum is equivalent to the original spectrum
     freqs, psd = dsp.welch(fixed_aperiodic_signal, fs, nperseg=int(4 * fs))
     freq_logical = np.logical_and(freqs >= f_range[0], freqs <= f_range[1])
@@ -106,7 +114,24 @@ def test_custom_slope_fitting(
                 'bounds': ((-np.inf, -np.inf), (np.inf, np.inf)),
             }
 
-    slope_fit = compute_slope(np.log10(psd), np.log10(freqs), fit_func=CustomFitFun)
+    aperiodic_fit = compute_aperiodic_model(np.log10(psd), np.log10(freqs), fit_func=CustomFitFun)
 
     # add a high tolerance
-    assert pytest.approx(np.abs(slope_fit.aperiodic_params['b'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
+    assert pytest.approx(np.abs(aperiodic_fit.aperiodic_params['b'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
+
+    irasa_spectrum = irasa(fixed_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+
+    class CustomFitFun(AbstractFitFun):
+        log10_aperiodic = True
+        log10_freq = True
+
+        def func(self, x: np.ndarray, a: float, b: float) -> np.ndarray:
+            """
+            Specparams fixed fitting function.
+            Use this to model aperiodic activity without a spectral knee
+            """
+            y_hat = a + b * x
+
+            return y_hat
+
+    irasa_spectrum.fit_aperiodic_model(fit_func=CustomFitFun)

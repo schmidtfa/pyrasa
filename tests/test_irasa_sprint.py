@@ -24,7 +24,7 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
     )
 
     # check basic aperiodic detection
-    slope_fit = irasa_tf.get_slopes(fit_func='fixed')
+    slope_fit = irasa_tf.fit_aperiodic_model(fit_func='fixed')
     #       irasa_tf.aperiodic[np.newaxis, :, :], freqs=irasa_tf.freqs, times=irasa_tf.time,
     #  )
 
@@ -98,6 +98,17 @@ def test_irasa_sprint_settings(ts4sprint, fs):
             fs=fs,
             band=(1, 100),
             win_func=dsp.windows.dpss,
-            dpss_settings_time_bandwidth=1,
+            dpss_settings_time_bandwidth=4,
+            freq_res=0.5,
+        )
+
+    # test ratios
+    with pytest.raises(ValueError):
+        irasa_sprint(
+            ts4sprint[np.newaxis, :],
+            fs=fs,
+            band=(1, 100),
+            win_func=dsp.windows.dpss,
+            dpss_settings_time_bandwidth=4,
             freq_res=0.5,
         )

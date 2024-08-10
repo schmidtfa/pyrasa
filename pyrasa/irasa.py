@@ -1,3 +1,5 @@
+"""Functions to compute IRASA."""
+
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
@@ -37,51 +39,70 @@ def irasa(
     hset_accuracy: int = 4,
 ) -> IrasaSpectrum:
     """
-    This function can be used to generate aperiodic and periodic power spectra from a time series
-    using the IRASA algorithm (Wen & Liu, 2016).
+    Computes the aperiodic and periodic components of the power spectrum from a time series using the
+    Irregular Resampling Autocorrelation (IRASA) algorithm.
 
-    This function gives you maximal control over all parameters so its up to you set things up properly.
-
-    If you have preprocessed your data in mne python we recommend that you use the
-    irasa_raw or irasa_epochs functions from `pyrasa.irasa_mne`, as they directly work on your
-    `mne.io.BaseRaw` and `mne.io.BaseEpochs` classes and take care of the necessary checks.
+    The IRASA algorithm allows for the decomposition of neural signals into fractal (aperiodic) and
+    oscillatory (periodic) components, providing insight into the underlying dynamics of the data.
 
     Parameters
     ----------
-    data : :py:class:˚numpy.ndarray˚
-        The timeseries data used to extract aperiodic and periodic power spectra.
+    data : np.ndarray
+        Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).
     fs : int
-        The sampling frequency of the data. Can be omitted if data is :py:class:˚mne.io.BaseRaw˚.
-    band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
+        Sampling frequency of the data in Hz.
+    band : tuple[float, float]
+        The frequency range (lower and upper bounds in Hz) over which to compute the spectra.
     psd_kwargs : dict
-        A dictionary containing all the keyword arguments that are passed onto `scipy.signal.welch`.
-    filter_settings : tuple
-        A tuple containing the cut-off of the High- and Lowpass filter. It is highly advisable to set this
-        correctly in order to avoid filter artifacts in your evaluated frequency range.
-    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
-        Contains information about the range of the up/downsampling factors.
-        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
-    hset_accuracy : int
-        floating point accuracy for the up/downsampling factor of the signal (default=4).
+        Keyword arguments to be passed to the `scipy.signal.welch` function for PSD estimation.
+    ch_names : np.ndarray | None, optional
+        Channel names associated with the data, if available. Default is None.
+    win_func : Callable, optional
+        Window function to be used in Welch's method. Default is `dsp.windows.hann`.
+    win_func_kwargs : dict | None, optional
+        Additional keyword arguments for the window function. Default is None.
+    dpss_settings_time_bandwidth : float, optional
+        Time-bandwidth product for the DPSS windows if used. Default is 2.0.
+    dpss_settings_low_bias : bool, optional
+        Keep only tapers with eigenvalues > 0.9. Default is True.
+    dpss_eigenvalue_weighting : bool, optional
+        Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by
+        the concentration ratio of their respective tapers before combining. Default is True.
+    filter_settings : tuple[float | None, float | None], optional
+        Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.
+        Default is (None, None).
+    hset_info : tuple[float, float, float], optional
+        Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).
+    hset_accuracy : int, optional
+        Decimal precision for the resampling factors. Default is 4.
 
     Returns
     -------
-    freqs : :py:class:`numpy.ndarray`
-        The Frequencys associated with the (a-)periodic spectra.
-    aperiodic : :py:class:`numpy.ndarray`
-        The aperiodic component of the data.
-    periodic : :py:class:`numpy.ndarray`
-        The periodic component of the data.
+    IrasaSpectrum
+        An object containing the following attributes:
+            - freqs: np.ndarray
+                Frequencies corresponding to the computed spectra.
+            - raw_spectrum: np.ndarray
+                The raw power spectrum.
+            - aperiodic: np.ndarray
+                The aperiodic (fractal) component of the spectrum.
+            - periodic: np.ndarray
+                The periodic (oscillatory) component of the spectrum.
+            - ch_names: np.ndarray
+                Channel names if provided.
+
+    Notes
+    -----
+    This function provides fine-grained control over the IRASA parameters. For users working with MNE-Python,
+    the `irasa_raw` and `irasa_epochs` functions from `pyrasa.irasa_mne` are recommended, as they handle
+    additional preprocessing steps.
 
     References
     ----------
-    [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
-        Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.
-        https://doi.org/10.1007/s10548-015-0448-0
-
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
+    of Neurophysiological Signal. Brain Topography, 29(1), 13–26. https://doi.org/10.1007/s10548-015-0448-0
     """
+
     # set parameters
     if win_func_kwargs is None:
         win_func_kwargs = {}
@@ -166,80 +187,84 @@ def irasa_sprint(  # noqa PLR0915 C901
     hset_accuracy: int = 4,
 ) -> IrasaTfSpectrum:
     """
+    Computes time-resolved aperiodic and periodic components of the power spectrum from a time series
+    using the Irregular Resampling Autocorrelation (IRASA) algorithm.
 
-    This function can be used to seperate aperiodic from periodic power spectra
-    using the IRASA algorithm (Wen & Liu, 2016) in a time resolved manner.
+    This function is useful for analyzing how the aperiodic and periodic components of the power spectrum
+    change over time, providing a time-frequency decomposition of the signal.
 
     Parameters
     ----------
-    data : :py:class:˚numpy.ndarray˚
-        The timeseries data used to extract aperiodic and periodic power spectra.
+    data : np.ndarray
+        Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).
     fs : int
-        The sampling frequency of the data.
-    band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract (a-)periodic spectra.
-    freq_res : float
-        The desired frequency resolution in Hz.
-    smooth : bool
-        Whether or not to smooth the time-frequency data before computing IRASA
-        by averaging over adjacent fft bins using n_avgs.
-    n_avgs :  int
-        Number indicating the amount of fft bins to average across.
-    win_duration : float
-        The time width of window in seconds used to calculate the stffts.
-    hop : int
-        Time increment in signal samples for sliding window.
-    win_duration : float
-        The time width of window in seconds used to calculate the stffts.
-    win_func : :py:class:`scipy.signal.windows`
-        The desired window function. Can be any window function
-        specified in :py:class:`scipy.signal.windows`.
-        The default is `scipy.signal.windows.hann`.
-    win_func_kwargs: dict
-        A dictionary containing keyword arguments passed to win_func.
-    dpss_settings:
-        In case that you want to do multitapering using dpss
-        we added a "sensible" preconfiguration as `scipy.signal.windows.dpss`
-        requires more parameters than the window functions in :py:class:`scipy.signal.windows`.
-        To change the settings adjust the parameter `win_func_kwargs`.
-    filter_settings : tuple
-        A tuple containing the cut-off of the High- and Lowpass filter.
-        It is highly advisable to set this correctly in order to avoid
-        filter artifacts in your evaluated frequency range.
-    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
-        Contains information about the range of the up/downsampling factors.
-        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
-    hset_accuracy : int
-        floating point accuracy for the up/downsampling factor of the signal (default=4).
-
+        Sampling frequency of the data in Hz.
+    ch_names : np.ndarray | None, optional
+        Channel names associated with the data, if available. Default is None.
+    band : tuple[float, float], optional
+        The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).
+    freq_res : float, optional
+        Desired frequency resolution in Hz. Default is 0.5 Hz.
+    win_duration : float, optional
+        Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.
+    hop : int, optional
+        Time increment in signal samples for the sliding window in STFT. Default is 10 samples.
+    win_func : Callable, optional
+        Window function to be used in computing the time frequency spectrum. Default is `dsp.windows.hann`.
+    win_func_kwargs : dict | None, optional
+        Additional keyword arguments for the window function. Default is None.
+    dpss_settings_time_bandwidth : float, optional
+        Time-bandwidth product for the DPSS windows if used. Default is 2.0.
+    dpss_settings_low_bias : bool, optional
+        Keep only tapers with eigenvalues > 0.9. Default is True.
+    dpss_eigenvalue_weighting : bool, optional
+        Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by
+        the concentration ratio of their respective tapers before combining. Default is True.
+    filter_settings : tuple[float | None, float | None], optional
+        Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.
+        Default is (None, None).
+    hset_info : tuple[float, float, float], optional
+        Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).
+    hset_accuracy : int, optional
+        Decimal precision for the resampling factors. Default is 4.
 
     Returns
     -------
-    aperiodic : :py:class:`numpy.ndarray`
-        The aperiodic component of the data.
-    periodic : :py:class:`numpy.ndarray`
-        The periodic component of the data.
-    freqs : :py:class:`numpy.ndarray`
-        The Frequencys associated with the (a-)periodic spectra.
-    time : :py:class:`numpy.ndarray`
-        The time bins in seconds associated with the (a-)periodic spectra.
+    IrasaTfSpectrum
+        An object containing the following attributes:
+            - freqs: np.ndarray
+                Frequencies corresponding to the computed spectra.
+            - time: np.ndarray
+                Time bins in seconds associated with the (a-)periodic spectra.
+            - raw_spectrum: np.ndarray
+                The raw time-frequency power spectrum.
+            - aperiodic: np.ndarray
+                The aperiodic (fractal) component of the spectrum.
+            - periodic: np.ndarray
+                The periodic (oscillatory) component of the spectrum.
+            - ch_names: np.ndarray
+                Channel names if provided.
 
+    Notes
+    -----
+    This function performs a time-frequency decomposition of the input data, allowing for a time-resolved analysis
+    of the periodic and aperiodic components of the signal. The STFT is computed for each time window, and IRASA
+    is applied to separate the spectral components.
 
     References
     ----------
-        [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
-        Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.https://doi.org/10.1007/s10548-015-0448-0
-
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum of
+    Neurophysiological Signal. Brain Topography, 29(1), 13–26. https://doi.org/10.1007/s10548-015-0448-0
     """
 
     # set parameters
     if win_func_kwargs is None:
         win_func_kwargs = {}
 
-    # Safety checks
-    assert isinstance(data, np.ndarray), 'Data should be a numpy array.'
-    assert data.ndim == 2, 'Data shape needs to be of shape (Channels, Samples).'  # noqa PLR2004
+    # Minimal safety checks
+    if data.ndim == 1:
+        data = data[np.newaxis, :]
+    assert data.ndim == 2, 'Data shape needs to be either of shape (Channels, Samples) or (Samples, ).'  # noqa PLR2004
 
     irasa_params = {
         'data': data,

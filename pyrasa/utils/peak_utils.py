@@ -18,36 +18,67 @@ def get_peak_params(
     cut_spectrum: tuple[float, float] | None = None,
     peak_threshold: float = 1.0,
     min_peak_height: float = 0.01,
-    peak_width_limits: tuple[float, float] = (0.5, 6.0),
+    peak_width_limits: tuple[float, float] = (0.5, 12.0),
 ) -> pd.DataFrame:
     """
-    This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
-    The algorithm works by smoothing the spectrum, zeroing out negative values and
-    extracting peaks based on user specified parameters.
+    Extracts peak parameters from the periodic spectrum obtained via IRASA.
 
-    Parameters: periodic_spectrum : 1d or 2d array
-                    Power values for the periodic spectrum extracted using IRASA shape(channel x frequency)
-                freqs : 1d array
-                    Frequency values for the periodic spectrum
-                ch_names: list, optional, default: []
-                    Channel names ordered according to the periodic spectrum.
-                    If empty channel names are given as numbers in ascending order.
-                smoothing window : int, optional, default: 2
-                    Smoothing window in Hz handed over to the savitzky-golay filter.
-                cut_spectrum : tuple of (float, float), optional, default (1, 40)
-                    Cut the periodic spectrum to limit peak finding to a sensible range
-                peak_threshold : float, optional, default: 1
-                    Relative threshold for detecting peaks. This threshold is defined in
-                    relative units of the periodic spectrum
-                min_peak_height : float, optional, default: 0.01
-                    Absolute threshold for identifying peaks. The threhsold is defined in relative
-                    units of the power spectrum. Setting this is somewhat necessary when a
-                    "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
-                peak_width_limits : tuple of (float, float), optional, default (.5, 12)
-                    Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+    This function identifies and extracts peak parameters such as center frequency (cf), bandwidth (bw),
+    and peak height (pw) from a periodic spectrum using scipy's find_peaks function.
+    The spectrum can be optionally smoothed prior peak detection.
 
-    Returns:    df_peaks: DataFrame
-                    DataFrame containing the center frequency, bandwidth and peak height for each channel
+    Parameters
+    ----------
+    periodic_spectrum : np.ndarray
+        1D or 2D array containing power values of the periodic spectrum (shape: [Channels, Frequencies]
+        or [Frequencies]).
+    freqs : np.ndarray
+        1D array containing frequency values corresponding to the periodic spectrum.
+    ch_names : Iterable or None, optional
+        List of channel names corresponding to the periodic spectrum. If None, channels are labeled numerically.
+        Default is None.
+    smooth : bool, optional
+        Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
+        better identifying peaks. Default is True.
+    smoothing_window : int or float, optional
+        The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.
+    polyorder : int, optional
+        The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
+        less than the window length. Default is 1.
+    cut_spectrum : tuple of (float, float) or None, optional
+        Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
+        before peak extraction. If None, peaks are detected across the full frequency range. Default is None.
+    peak_threshold : float, optional
+        Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
+        filtered spectrum. Default is 1.0.
+    min_peak_height : float, optional
+        The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
+        This can be useful for filtering out noise or insignificant peaks, especially when a "knee" is present
+        in the original data, which may persist in the periodic spectrum. Default is 0.01.
+    peak_width_limits : tuple of (float, float), optional
+        The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
+        meaningful features. Default is (0.5, 12.0).
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
+        following columns:
+        - 'ch_name': Channel name
+        - 'cf': Center frequency of the peak
+        - 'bw': Bandwidth of the peak
+        - 'pw': Peak height (power)
+
+
+    Notes
+    -----
+    The function works by first optionally smoothing the periodic spectrum using a Savitzky-Golay filter.
+    Then, it performs peak detection using the `scipy.signal.find_peaks` function, taking into account the
+    specified peak thresholds and width limits. Peaks that do not meet the minimum height requirement are
+    filtered out.
+
+    The `cut_spectrum` parameter can be used to focus peak detection on a specific frequency range, which is
+    particularly useful when the region of interest is known in advance.
 
     """
 
@@ -115,7 +146,7 @@ def get_peak_params(
     return df_peaks
 
 
-# %% find peaks in irasa sprint
+# % find peaks in irasa sprint
 
 
 def get_peak_params_sprint(
@@ -132,36 +163,65 @@ def get_peak_params_sprint(
     peak_width_limits: tuple[float, float] = (0.5, 12),
 ) -> pd.DataFrame:
     """
-    This function can be used to extract peak parameters from the periodic spectrum extracted from IRASA.
-    The algorithm works by smoothing the spectrum, zeroing out negative values and
-    extracting peaks based on user specified parameters.
+    Extracts peak parameters from a periodic spectrogram obtained via IRASA.
 
-    Parameters: periodic_spectrum : 1d or 2d array
-                    Power values for the periodic spectrum extracted using IRASA shape(channel x frequency)
-                freqs : 1d array
-                    Frequency values for the periodic spectrogram
-                time : 1d array
-                    time points of the periodic spectrogram
-                ch_names: list, optional, default: []
-                    Channel names ordered according to the periodic spectrum.
-                    If empty channel names are given as numbers in ascending order.
-                smoothing window : int, optional, default: 2
-                    Smoothing window in Hz handed over to the savitzky-golay filter.
-                cut_spectrum : tuple of (float, float), optional, default (1, 40)
-                    Cut the periodic spectrum to limit peak finding to a sensible range
-                peak_threshold : float, optional, default: 1
-                    Relative threshold for detecting peaks. This threshold is defined in
-                    relative units of the periodic spectrum
-                min_peak_height : float, optional, default: 0.01
-                    Absolute threshold for identifying peaks. The threhsold is defined in relative
-                    units of the power spectrum. Setting this is somewhat necessary when a
-                    "knee" is present in the data as it will carry over to the periodic spctrum in irasa.
-                peak_width_limits : tuple of (float, float), optional, default (.5, 12)
-                    Limits on possible peak width, in Hz, as (lower_bound, upper_bound)
+    This function processes a time-resolved periodic spectrum to identify and extract peak parameters such as
+    center frequency (cf), bandwidth (bw), and peak height (pw) for each time point. It applies smoothing,
+    peak detection, and thresholding according to user-defined parameters
+    (see get_peak_params for additional Information).
 
-    Returns:    df_peaks: DataFrame
-                    DataFrame containing the center frequency,
-                    bandwidth and peak height for each channel and time point.
+    Parameters
+    ----------
+    periodic_spectrum : np.ndarray
+        2 or 3D array containing power values of the periodic spectrogram (shape: [Channels, Frequencies, Time Points]).
+    freqs : np.ndarray
+        1D array containing frequency values corresponding to the periodic spectrogram.
+    times : np.ndarray
+        1D array containing time points corresponding to the periodic spectrogram.
+    ch_names : Iterable or None, optional
+        List of channel names corresponding to the periodic spectrogram. If None, channels are labeled numerically.
+        Default is None.
+    smooth : bool, optional
+        Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and better
+        identifying peaks. Default is True.
+    smoothing_window : int or float, optional
+        The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 2 Hz.
+    polyorder : int, optional
+        The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be less
+        than the window length. Default is 1.
+    cut_spectrum : tuple of (float, float) or None, optional
+        Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut before
+        peak extraction. If None, the full frequency range is used. Default is (1, 40).
+    peak_threshold : int or float, optional
+        Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the filtered
+        spectrum. Default is 1.
+    min_peak_height : float, optional
+        The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
+        This can be useful for filtering out noise or insignificant peaks, especially when a "knee" is present
+        in the data. Default is 0.01.
+    peak_width_limits : tuple of (float, float), optional
+        The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
+        meaningful features. Default is (0.5, 12).
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the detected peak parameters for each channel and time point. The DataFrame
+        includes the following columns:
+        - 'ch_name': Channel name
+        - 'cf': Center frequency of the peak
+        - 'bw': Bandwidth of the peak
+        - 'pw': Peak height (power)
+        - 'time': Corresponding time point for the peak
+
+    Notes
+    -----
+    This function iteratively processes each time point in the spectrogram, applying the `get_peak_params`
+    function to extract peak parameters at each time point. The resulting peak parameters are combined into
+    a single DataFrame.
+
+    The function is particularly useful for analyzing time-varying spectral features, such as in dynamic or
+    non-stationary M/EEG data, where peaks may shift in frequency, bandwidth, or amplitude over time.
 
     """
 
@@ -191,20 +251,43 @@ def get_peak_params_sprint(
 # %% find peaks irasa style
 def get_band_info(df_peaks: pd.DataFrame, freq_range: tuple[int, int], ch_names: list) -> pd.DataFrame:
     """
-    This function can be used to extract peaks in a specified frequency range
-    from the Peak DataFrame obtained via "get_peak_params".
+    Extract peak information within a specified frequency range from a DataFrame of peak parameters.
 
-    Parameters : df_peaks : DataFrame
-                    DataFrame containing peak parameters obtained via "get_peak_params".
-                 freq_range : tuple (int, int)
-                    Lower and upper limits for the to be extracted frequency range.
-                 ch_names: list
-                    Channel names used in the computation of the periodic spectrum.
-                    This information is needed to fill channels without a peak in the specified range with nans.
+    This function filters peaks found in the periodic spectrum or spectrogram to those within
+    a specified frequency range.It ensures that every channel is represented in the output,
+    filling in missing channels (i.e., channels without detected peaks in the specified range) with NaN values.
 
-    Returns:    df_band_peaks: DataFrame
-                    DataFrame containing the center frequency, bandwidth and peak height for each channel
-                    in a specified frequency range
+    Parameters
+    ----------
+    df_peaks : pd.DataFrame
+        DataFrame containing peak parameters obtained from the `get_peak_params` function.
+        The DataFrame should include columns for 'ch_name' (channel name), 'cf' (center frequency),
+        'bw' (bandwidth), and 'pw' (peak height).
+    freq_range : tuple of (int, int)
+        Tuple specifying the lower and upper frequency bounds (in Hz) to filter peaks by. Only peaks
+        with center frequencies (cf) within this range will be included in the output.
+    ch_names : list
+        List of channel names used in the computation of the periodic spectrum. This list ensures that
+        every channel is accounted for in the output, even if no peaks were found in the specified range
+        for certain channels.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing the peak parameters ('cf', 'bw', 'pw') for each channel within the specified
+        frequency range. Channels without detected peaks in this range will have NaN values for these parameters.
+        The DataFrame includes:
+        - 'ch_name': Channel name
+        - 'cf': Center frequency of the peak within the specified range
+        - 'bw': Bandwidth of the peak within the specified range
+        - 'pw': Peak height (power) within the specified range
+
+    Notes
+    -----
+    This function is useful for isolating and analyzing peaks that occur within specific canonical frequency bands
+    (e.g., alpha, beta, gamma) across multiple channels in a periodic spectrum. The inclusion of NaN
+    entries for channels without detected peaks ensures that the output DataFrame is complete and aligned
+    with the original channel list.
 
     """
 

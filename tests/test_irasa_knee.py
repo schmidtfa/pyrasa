@@ -23,8 +23,8 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
     freq_logical = np.logical_and(freqs_psd >= f_range[0], freqs_psd <= f_range[1])
     r = np.corrcoef(psd[freq_logical], psd_cmb)[0, 1]
     assert r > MIN_CORR_PSD_CMB
-    slope_fit_k = irasa_out.get_slopes(fit_func='knee')
-    slope_fit_f = irasa_out.get_slopes(fit_func='fixed')
+    slope_fit_k = irasa_out.fit_aperiodic_model(fit_func='knee')
+    slope_fit_f = irasa_out.fit_aperiodic_model(fit_func='fixed')
     # test whether we can get the first exponent correctly
     assert bool(np.isclose(slope_fit_k.aperiodic_params['Exponent_1'][0], 0, atol=TOLERANCE))
     # test whether we can get the second exponent correctly
@@ -54,8 +54,8 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     freq_logical = np.logical_and(freqs_psd >= f_range[0], freqs_psd <= f_range[1])
     r = np.corrcoef(psd[freq_logical], psd_cmb)[0, 1]
     assert r > MIN_CORR_PSD_CMB
-    slope_fit_k = irasa_out.get_slopes(fit_func='knee')
-    slope_fit_f = irasa_out.get_slopes(fit_func='fixed')
+    slope_fit_k = irasa_out.fit_aperiodic_model(fit_func='knee')
+    slope_fit_f = irasa_out.fit_aperiodic_model(fit_func='fixed')
     # test whether we can get the first exponent correctly
     assert bool(np.isclose(slope_fit_k.aperiodic_params['Exponent_1'][0], 0, atol=TOLERANCE))
     # test whether we can get the second exponent correctly

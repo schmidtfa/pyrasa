@@ -64,6 +64,7 @@ neurodsp = ">=2.2.0,<2.3"
 mne = ">=1.7.0,<1.8"
 mypy = ">=1.10.1,<2"
 pandas-stubs = ">=2.2.2.240603,<3"
+tabulate = ">=0.9.0,<0.10"
 
 [tool.pixi.feature]
 py311 = {dependencies = {python="3.11.*"}}

@@ -1,3 +1,5 @@
+"""Interface to use the IRASA algorithm with MNE objects."""
+
 import mne
 import numpy as np
 
@@ -20,43 +22,55 @@ def irasa_raw(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
 ) -> IrasaRaw:
     """
-    This function can be used to seperate aperiodic from periodic power spectra using
-    the IRASA algorithm (Wen & Liu, 2016).
+    Separate aperiodic from periodic power spectra using the IRASA algorithm.
+
+    This function applies the Irregular Resampling Auto-Spectral Analysis (IRASA) algorithm
+    as described by Wen & Liu (2016) to decompose the power spectrum of neurophysiological
+    signals into aperiodic (fractal) and periodic (oscillatory) components. This function is
+    essentially a wrapper function for `pyrasa.irasa`
 
     Parameters
     ----------
-    data : :py:class:˚mne.io.BaseRaw˚
-        The timeseries data used to extract aperiodic and periodic power spectra.
-        Should be :py:class:˚mne.io.BaseRaw˚ in which case 'fs' and 'filter_settings'
-        will be automatically extracted.
-    band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract
-        (a-)periodic spectra.
-    duration : float
-        The time window of each segment in seconds used to calculate the psd.
-    overlap : float
-        The overlap between segments in percent
-    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
-        Contains information about the range of the up/downsampling factors.
-        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
-    as_array : bool
-        The function returns an :py:class:˚mne.time_frequency.SpectrumArray˚ if set to False (default)
-        if set to True the data is returned as :py:class:`numpy.ndarray`.
+    data : mne.io.Raw
+        The time-series data from which the aperiodic and periodic power spectra are extracted.
+        This should be an instance of `mne.io.Raw`. The function will automatically extract
+        relevant parameters such as sampling frequency (`sfreq`) and filtering settings from the `mne` object
+        to make sure the model is specified correctly.
+    band : tuple of (float, float), optional, default: (1.0, 100.0)
+        A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
+        for extracting the aperiodic and periodic spectra.
+    duration : float, required
+        The duration (in seconds) of each segment used to calculate the power spectral density (PSD).
+        This must be less than the total duration of the data.
+    overlap : float or int, optional, default: 50
+        The overlap between segments, specified as a percentage (0-100).
+    hset_info : tuple of (float, float, float), optional, default: (1.05, 2.0, 0.05)
+        Contains the range of up/downsampling factors used in the IRASA algorithm.
+        This should be a tuple specifying the (min, max, step) values for the resampling.
 
     Returns
     -------
-        aperiodic : :py:class:˚mne.time_frequency.SpectrumArray˚
-            The aperiodic component of the data as an mne.time_frequency.SpectrumArray object.
-        periodic : :py:class:˚mne.time_frequency.SpectrumArray˚
-            The periodic component of the data as mne.time_frequency.SpectrumArray object.
-
+    IrasaRaw
+        A custom object containing the separated aperiodic and periodic components of the data:
+        - `periodic`: An instance of `PeriodicSpectrumArray`, which includes the periodic
+          (oscillatory) component of the power spectrum.
+        - `aperiodic`: An instance of `AperiodicSpectrumArray`, which includes the aperiodic
+          (fractal) component of the power spectrum.
 
     References
     ----------
-    [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
-        Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.
-        https://doi.org/10.1007/s10548-015-0448-0
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
+    of Neurophysiological Signal. Brain Topography, 29(1), 13–26.
+    https://doi.org/10.1007/s10548-015-0448-0
+
+    Notes
+    -----
+    - Ensure that `data` does not contain any bad channels (`data.info['bads']` should be empty),
+      as this could affect the results.
+    - The overlap percentage should be carefully chosen to balance between segment independence
+      and sufficient data for analysis. A value between 0 and 100% is valid.
+    - The function will raise assertions if the input parameters are not consistent with the
+      expected formats or if the provided `duration` exceeds the length of the data.
 
     """
 
@@ -109,39 +123,38 @@ def irasa_epochs(
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
 ) -> IrasaEpoched:
     """
-    This function can be used to seperate aperiodic from periodic power spectra
-    using the IRASA algorithm (Wen & Liu, 2016).
+    Separate aperiodic from periodic power spectra using the IRASA algorithm for Epochs data.
+
+    This function applies the Irregular Resampling Auto-Spectral Analysis (IRASA) algorithm
+    as described by Wen & Liu (2016) to decompose the power spectrum of neurophysiological
+    signals into aperiodic (fractal) and periodic (oscillatory) components. It is specifically
+    designed for time-series data in `mne.Epochs` format, making it suitable for event-related
+    EEG/MEG analyses.
 
     Parameters
     ----------
-    data : :py:class:˚mne.io.BaseEpochs˚
-        The timeseries data used to extract aperiodic and periodic power spectra.
-        Should be :py:class:˚mne.io.BaseEpochs˚ in which case 'fs', 'filter_settings',
-        'duration' and 'overlap' will be automatically extracted.
-    band : tuple
-        A tuple containing the lower and upper band of the frequency range used to extract
-        (a-)periodic spectra.
-    hset_info : tuple, list or :py:class:˚numpy.ndarray˚
-        Contains information about the range of the up/downsampling factors.
-        This should be a tuple, list or :py:class:˚numpy.ndarray˚ of (min, max, step).
-    as_array : bool
-        The function returns an :py:class:˚mne.time_frequency.EpochsSpectrumArray˚ if set to False (default)
-        if set to True the data is returned as :py:class:`numpy.ndarray`.
+    data : mne.Epochs
+        The time-series data used to extract aperiodic and periodic power spectra.
+        This should be an instance of `mne.Epochs`.
+    band : tuple of (float, float), optional, default: (1.0, 100.0)
+        A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
+        for extracting the aperiodic and periodic spectra.
+    hset_info : tuple of (float, float, float), optional, default: (1.05, 2.0, 0.05)
+        Contains the range of up/downsampling factors used in the IRASA algorithm.
+        This should be a tuple specifying the (min, max, step) values for the resampling.
 
     Returns
     -------
-        aperiodic : :py:class:˚mne.time_frequency.EpochsSpectrumArray˚
-            The aperiodic component of the data as an mne.time_frequency.EpochsSpectrumArray object.
-        periodic : :py:class:˚mne.time_frequency.EpochsSpectrumArray˚
-            The periodic component of the data as mne.time_frequency.EpochsSpectrumArray object.
-
+    aperiodic : AperiodicEpochsSpectrum
+        The aperiodic component of the data as an `AperiodicEpochsSpectrum` object.
+    periodic : PeriodicEpochsSpectrum
+        The periodic component of the data as a `PeriodicEpochsSpectrum` object.
 
     References
     ----------
-    [1] Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory
-        Components in the Power Spectrum of Neurophysiological Signal.
-        Brain Topography, 29(1), 13–26.
-        https://doi.org/10.1007/s10548-015-0448-0
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
+    of Neurophysiological Signal. Brain Topography, 29(1), 13–26.
+    https://doi.org/10.1007/s10548-015-0448-0
 
     """
 
