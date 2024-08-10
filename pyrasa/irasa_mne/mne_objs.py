@@ -1,3 +1,5 @@
+"""Classes for the MNE Python interface."""
+
 # %% inherit from spectrum array
 
 import matplotlib

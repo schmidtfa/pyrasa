@@ -1,3 +1,5 @@
+"""Classes used to model aperiodic spectra"""
+
 import abc
 import inspect
 from collections.abc import Callable
@@ -10,16 +12,61 @@ from scipy.optimize import curve_fit
 
 
 def _get_args(f: Callable) -> list:
+    """
+    Extracts the argument names from a function, excluding the first two.
+
+    Parameters
+    ----------
+    f : Callable
+        The function or method from which to extract argument names.
+
+    Returns
+    -------
+    list
+        A list of argument names, excluding the first two.
+    """
+
     return inspect.getfullargspec(f)[0][2:]
 
 
 def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd.DataFrame:
     """
-    get goodness of fit (i.e. mean squared error and R2)
-    BIC and AIC currently assume OLS
-    https://machinelearningmastery.com/probabilistic-model-selection-measures/
+    Calculate the goodness of fit metrics for a given model prediction against
+    actual aperiodic power spectral density (PSD) data.
+
+    This function computes several statistics to evaluate how well the predicted PSD values
+    match the observed PSD values. The metrics include Mean Squared Error (MSE), R-squared (R²),
+    Bayesian Information Criterion (BIC), and Akaike Information Criterion (AIC).
+
+    Parameters
+    ----------
+    psd : np.ndarray
+        The observed power spectral density values.
+    psd_pred : np.ndarray
+        The predicted power spectral density values from the model.
+    k : int
+        The number of parameters in the curve fitting function used to predict the `psd`.
+    fit_type : str
+        A description or label for the type of fit/model used, which will be included in the output DataFrame.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the goodness of fit metrics:
+        - 'mse': Mean Squared Error
+        - 'r_squared': R-squared value
+        - 'BIC': Bayesian Information Criterion
+        - 'AIC': Akaike Information Criterion
+        - 'fit_type': The type of fit/model used (provided as input)
+
+    Notes
+    -----
+    - BIC and AIC calculations currently assume Ordinary Least Squares (OLS) regression.
+
+    References
+    ----------
+    For further details on BIC and AIC, see: https://machinelearningmastery.com/probabilistic-model-selection-measures/
     """
-    # k number of parameters in curve fitting function
 
     # add np.log10 to psd
     residuals = psd - psd_pred
@@ -39,6 +86,57 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
 
 @define
 class AbstractFitFun(abc.ABC):
+    """
+    Abstract base class for fitting functions used to model aperiodic spectra.
+
+    This class provides a framework for defining and fitting models to aperiodic spectra.
+    It handles common functionality required for fitting a model, such as scaling and goodness-of-fit
+    computation. Subclasses should implement the `func` method to define the specific fitting function
+    used for curve fitting.
+
+    Attributes
+    ----------
+    freq : np.ndarray
+        The frequency values associated with the aperiodic spectrum data.
+    aperiodic_spectrum : np.ndarray
+        The aperiodic spectrum data to which the model will be fit.
+    scale_factor : int | float
+        A scaling factor used to adjust the fit results.
+    label : ClassVar[str]
+        A label to identify the type of fit or model used. Default is 'custom'.
+    log10_aperiodic : ClassVar[bool]
+        If True, the aperiodic spectrum values will be transformed using log10. Default is False.
+    log10_freq : ClassVar[bool]
+        If True, the frequency values will be transformed using log10. Default is False.
+
+    Methods
+    -------
+    __attrs_post_init__()
+        Post-initialization method to apply log10 transformations if specified.
+    func(x: np.ndarray, *args: float) -> np.ndarray
+        Abstract method to define the model function. Must be implemented by subclasses
+        and should be applicable to scipy.optimize.curve_fit.
+    curve_kwargs() -> dict[str, Any]
+        Returns keyword arguments for the curve fitting process.
+    add_infos_to_df(df_params: pd.DataFrame) -> pd.DataFrame
+        Method to add additional information to the parameters DataFrame. Can be overridden by subclasses.
+    handle_scaling(df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame
+        Adjusts the parameters DataFrame based on the scaling factor. Can be overridden by subclasses.
+    fit_func() -> tuple[pd.DataFrame, pd.DataFrame]
+        Fits the model to the data and returns DataFrames containing the model parameters and goodness-of-fit metrics.
+
+    Notes
+    -----
+    - Subclasses must implement the `func` method to define the model's functional form.
+    - The `curve_kwargs` method can be overridden to customize curve fitting options.
+    - The `add_infos_to_df` and `handle_scaling` methods are intended to be overridden if additional
+      functionality or specific scaling behavior is required.
+
+    References
+    ----------
+    For details on goodness-of-fit metrics and their calculations, see the documentation for `_get_gof`.
+    """
+
     freq: np.ndarray
     aperiodic_spectrum: np.ndarray
     scale_factor: int | float

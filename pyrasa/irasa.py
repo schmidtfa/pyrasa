@@ -1,4 +1,4 @@
-"""Functions to compute the IRASA algorithm."""
+"""Functions to compute IRASA."""
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any

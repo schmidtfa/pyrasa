@@ -1,3 +1,5 @@
+"""Interface to use the IRASA algorithm with MNE objects."""
+
 import mne
 import numpy as np
 

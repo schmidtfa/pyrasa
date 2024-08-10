@@ -72,6 +72,7 @@ def _get_windows(
     nperseg: int, dpss_settings: dict, win_func: Callable, win_func_kwargs: dict
 ) -> tuple[np.ndarray, np.ndarray]:
     """Generate a window function used for tapering"""
+
     low_bias_ratio = 0.9
     min_time_bandwidth = 2.0
     win_func_kwargs = copy(win_func_kwargs)
