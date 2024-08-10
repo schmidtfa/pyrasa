@@ -1,3 +1,5 @@
+"""Output Class of pyrasa.irasa_sprint"""
+
 import numpy as np
 import pandas as pd
 from attrs import define

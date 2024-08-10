@@ -60,5 +60,7 @@ class IrasaSprintKwargsTyped(TypedDict):
 
 @define
 class AperiodicFit:
+    """Container for the results of aperiodic model fits."""
+
     aperiodic_params: pd.DataFrame
     gof: pd.DataFrame

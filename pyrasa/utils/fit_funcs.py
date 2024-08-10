@@ -192,6 +192,30 @@ class AbstractFitFun(abc.ABC):
 
 
 class FixedFitFun(AbstractFitFun):
+    """
+    A model for fitting aperiodic activity in power spectra.
+
+    The `FixedFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra
+    using a fixed function that does not include a spectral knee. This model is suitable for
+    cases where the aperiodic component of the spectrum follows a consistent slope across
+    the entire frequency range.
+
+    Attributes
+    ----------
+    label : str
+        A label to identify this fitting model. Default is 'fixed'.
+    log10_aperiodic : bool
+        Indicates whether to log-transform the aperiodic spectrum. Default is True.
+
+    Methods
+    -------
+    func(x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray
+        Defines the model function for aperiodic activity without a spectral knee.
+
+    curve_kwargs() -> dict[str, Any]
+        Generates initial guess parameters and other keyword arguments for curve fitting.
+    """
+
     label = 'fixed'
     log10_aperiodic = True
 
@@ -222,6 +246,33 @@ class FixedFitFun(AbstractFitFun):
 
 
 class KneeFitFun(AbstractFitFun):
+    """
+    A model for fitting aperiodic activity in power spectra with a spectral knee.
+
+    The `KneeFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra
+    using a function that includes a spectral knee. This model is particularly useful for
+    cases where the aperiodic component of the spectrum has a break or knee, representing
+    a transition between two different spectral slopes.
+
+    Attributes
+    ----------
+    label : str
+        A label to identify this fitting model. Default is 'knee'.
+    log10_aperiodic : bool
+        Indicates whether to log-transform the aperiodic spectrum. Default is True.
+
+    Methods
+    -------
+    func(x: np.ndarray, Offset: float, Knee: float, Exponent_1: float, Exponent_2: float) -> np.ndarray
+        Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.
+
+    add_infos_to_df(df_params: pd.DataFrame) -> pd.DataFrame
+        Adds calculated knee frequency to the DataFrame of fit parameters.
+
+    curve_kwargs() -> dict[str, Any]
+        Generates initial guess parameters and other keyword arguments for curve fitting.
+    """
+
     label = 'knee'
     log10_aperiodic = True
 

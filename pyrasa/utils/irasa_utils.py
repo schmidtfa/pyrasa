@@ -19,13 +19,49 @@ def _gen_irasa(
     time: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    This function is implementing the IRASA algorithm using a custom function to
-    compute a power/cross-spectral density and returns an "original", "periodic" and "aperiodic spectrum".
-    This implementation of the IRASA algorithm is based on the yasa.irasa function in (Vallat & Walker, 2021).
+    Generate original, aperiodic, and periodic spectra using the IRASA algorithm.
 
-    [1] Vallat, Raphael, and Matthew P. Walker. “An open-source,
-    high-performance tool for automated sleep staging.”
-    Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
+    This function implements the IRASA (Irregular Resampling Auto-Spectral Analysis) algorithm
+    to decompose a power or cross-spectral density into its periodic and aperiodic components.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The input time-series data, typically with shape (n_channels, n_times) or similar.
+    orig_spectrum : np.ndarray
+        The original power spectral density from which periodic and aperiodic components are to be extracted.
+    fs : int
+        The sampling frequency of the input data in Hz.
+    irasa_fun : IrasaFun
+        A custom function used to compute power spectral densities. This function should
+        take resampled data and return the corresponding spectrum.
+    hset : np.ndarray
+        An array of up/downsampling factors (e.g., [1.1, 1.2, 1.3, ...]) used in the IRASA algorithm.
+    time : np.ndarray | None, optional
+        The time vector associated with the original data. This is only necessary if the IRASA function
+        requires the time stamps of the original data.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray, np.ndarray]
+        A tuple containing:
+        - `orig_spectrum` (np.ndarray): The original spectrum provided as input.
+        - `aperiodic_spectrum` (np.ndarray): The median of the geometric mean of up/downsampled spectra,
+        representing the aperiodic component.
+        - `periodic_spectrum` (np.ndarray): The difference between the original and the aperiodic spectrum,
+        representing the periodic component.
+
+    Notes
+    -----
+    This implementation of the IRASA algorithm is based on the `yasa.irasa` function from (Vallat & Walker, 2021).
+    The IRASA algorithm involves upsampling and downsampling the time-series data by a set of factors (`hset`),
+    calculating the power spectra of these resampled data, and then taking the geometric mean of the upsampled
+    and downsampled spectra to isolate the aperiodic component.
+
+    References
+    ----------
+    [1] Vallat, Raphael, and Matthew P. Walker. “An open-source, high-performance tool for automated sleep staging.”
+        Elife 10 (2021). doi: https://doi.org/10.7554/eLife.70092
     """
 
     spectra = np.zeros((len(hset), *orig_spectrum.shape))
@@ -162,7 +198,7 @@ def _compute_psd_welch(
     axis: int = -1,
     average: str = 'mean',
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Function to compute power spectral densities using welchs method"""
+    """Compute power spectral densities via scipy.signal.welch"""
 
     if nperseg is None:
         nperseg = data.shape[-1]
@@ -206,7 +242,7 @@ def _compute_sgramm(  # noqa C901
     up_down: str | None = None,
     time_orig: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Function to compute spectrograms"""
+    """Compute spectrograms via scipy.signal.stft"""
 
     nperseg = int(np.floor(fs * win_duration))
 
@@ -235,6 +271,6 @@ def _compute_sgramm(  # noqa C901
     if time_orig is not None:
         sgramm = sgramm[:, :, : time_orig.shape[-1]]
 
-    sgramm = np.squeeze(sgramm)  # bring in proper format
+    sgramm = np.squeeze(sgramm)
 
     return freq, time, sgramm
