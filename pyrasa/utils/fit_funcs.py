@@ -296,6 +296,7 @@ class KneeFitFun(AbstractFitFun):
         df_params['Knee Frequency (Hz)'] = df_params['Knee'] ** (
             1.0 / (2 * df_params['Exponent_1'] + df_params['Exponent_2'])
         )
+        df_params['tau'] = 1.0 / (2 * np.pi * df_params['Knee Frequency (Hz)'])
         return df_params
 
     @property
