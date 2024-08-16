@@ -30,7 +30,7 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
     # test whether we can get the second exponent correctly
     assert bool(
         np.isclose(
-            slope_fit_k.aperiodic_params['Exponent_1'][0] + slope_fit_k.aperiodic_params['Exponent_2'][0],
+            slope_fit_k.aperiodic_params['Exponent_2'][0],
             np.abs(exponent),
             atol=TOLERANCE,
         )
@@ -67,7 +67,7 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     # test whether we can get the second exponent correctly
     assert bool(
         np.isclose(
-            slope_fit_k.aperiodic_params['Exponent_1'][0] + slope_fit_k.aperiodic_params['Exponent_2'][0],
+            slope_fit_k.aperiodic_params['Exponent_2'][0],
             np.abs(exponent),
             atol=TOLERANCE,
         )
