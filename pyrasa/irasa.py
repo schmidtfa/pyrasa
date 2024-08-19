@@ -163,8 +163,15 @@ def irasa(
 
     freq, psd_aperiodic, psd_periodic, psd = _crop_data(band, freq, psd_aperiodic, psd_periodic, psd, axis=-1)
 
+    del irasa_params['data']
+    irasa_params['hmax'] = hset_info[1]
     return IrasaSpectrum(
-        freqs=freq, raw_spectrum=psd, aperiodic=psd_aperiodic, periodic=psd_periodic, ch_names=ch_names
+        freqs=freq,
+        raw_spectrum=psd,
+        aperiodic=psd_aperiodic,
+        periodic=psd_periodic,
+        ch_names=ch_names,
+        irasa_settings=irasa_params,
     )
 
 
