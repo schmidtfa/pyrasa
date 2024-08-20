@@ -180,7 +180,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     ch_names: np.ndarray | None = None,
     band: tuple[float, float] = (1.0, 100.0),
     win_duration: float = 0.4,
-    hop: int = 10,
+    overlap_fraction: float = 0.90,
     win_func: Callable = dsp.windows.hann,
     win_func_kwargs: dict | None = None,
     dpss_settings_time_bandwidth: float = 2.0,
@@ -209,8 +209,8 @@ def irasa_sprint(  # noqa PLR0915 C901
         The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).
     win_duration : float, optional
         Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.
-    hop : int, optional
-        Time increment in signal samples for the sliding window in STFT. Default is 10 samples.
+    overlap_fraction : int, optional
+        The overlap between the STFT sliding windows as fraction. Default is .99 of the windows.
     win_func : Callable, optional
         Window function to be used in computing the time frequency spectrum. Default is `dsp.windows.hann`.
     win_func_kwargs : dict | None, optional
@@ -280,7 +280,6 @@ def irasa_sprint(  # noqa PLR0915 C901
     hset = np.round(np.arange(*hset_info), hset_accuracy)
     hset = [h for h in hset if h % 1 != 0]  # filter integers
 
-    nfft = int(2 ** np.ceil(np.log2(np.max(hset) * win_duration * fs)))
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
         'time_bandwidth': dpss_settings_time_bandwidth,
@@ -288,6 +287,9 @@ def irasa_sprint(  # noqa PLR0915 C901
         'eigenvalue_weighting': dpss_eigenvalue_weighting,
     }
 
+    nfft = int(2 ** np.ceil(np.log2(np.max(hset) * win_duration * fs)))
+    hop = int((1 - overlap_fraction) * win_duration * fs)
+    # hop = int((1 - overlap_fraction) * nfft)
     irasa_kwargs: IrasaSprintKwargsTyped = {
         'nfft': nfft,
         'hop': hop,
@@ -324,12 +326,13 @@ def irasa_sprint(  # noqa PLR0915 C901
     # adjust time info (i.e. cut the padded stuff)
     tmax = data.shape[1] / fs
     t_mask = np.logical_and(time >= 0, time < tmax)
+    freq_mask = freq > (1 / win_duration)  # mask rayleigh
 
     return IrasaTfSpectrum(
-        freqs=freq,
+        freqs=freq[freq_mask],
         time=time[t_mask],
         raw_spectrum=sgramm,
-        periodic=sgramm_periodic[:, t_mask],
-        aperiodic=sgramm_aperiodic[:, t_mask],
+        periodic=sgramm_periodic[:, t_mask][freq_mask, :],
+        aperiodic=sgramm_aperiodic[:, t_mask][freq_mask, :],
         ch_names=ch_names,
     )

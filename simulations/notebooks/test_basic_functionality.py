@@ -45,12 +45,15 @@ irasa_psd = irasa(
 )
 
 #%%
+duration = 5
+
 irasa_out_tf = irasa_sprint(
     sig,
     fs=fs,
     band=(1, 50),
-    win_duration=4,
-    hset_info=(1, 3, 0.1),
+    win_duration=duration,
+    overlap_fraction=.9,
+    hset_info=(1, 2, 0.1),
 )
 #%%
 from neurodsp.plts import plot_timefrequency
@@ -62,7 +65,6 @@ plot_timefrequency(times=irasa_out_tf.time,
 plot_timefrequency(times=irasa_out_tf.time, 
                    freqs=irasa_out_tf.freqs, 
                    powers=irasa_out_tf.aperiodic)
-
 
 
 # %%
