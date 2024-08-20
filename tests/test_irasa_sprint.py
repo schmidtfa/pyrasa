@@ -20,7 +20,6 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
         # win_duration=1,
         fs=fs,
         band=(0.1, 100),
-        freq_res=0.5,
     )
 
     # check basic aperiodic detection
@@ -88,7 +87,6 @@ def test_irasa_sprint_settings(ts4sprint, fs):
         fs=fs,
         band=(0.1, 100),
         win_func=dsp.windows.dpss,
-        freq_res=0.5,
     )
 
     # test too much bandwidht
@@ -99,7 +97,6 @@ def test_irasa_sprint_settings(ts4sprint, fs):
             band=(1, 100),
             win_func=dsp.windows.dpss,
             dpss_settings_time_bandwidth=4,
-            freq_res=0.5,
         )
 
     # test ratios
@@ -110,5 +107,4 @@ def test_irasa_sprint_settings(ts4sprint, fs):
             band=(1, 100),
             win_func=dsp.windows.dpss,
             dpss_settings_time_bandwidth=4,
-            freq_res=0.5,
         )
