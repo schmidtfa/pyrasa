@@ -123,6 +123,7 @@ def irasa(
     _check_irasa_settings(irasa_params=irasa_params, hset_info=hset_info)
 
     hset = np.round(np.arange(*hset_info), hset_accuracy)
+    hset = [h for h in hset if h % 1 != 0]  # filter integers
 
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
@@ -163,15 +164,12 @@ def irasa(
 
     freq, psd_aperiodic, psd_periodic, psd = _crop_data(band, freq, psd_aperiodic, psd_periodic, psd, axis=-1)
 
-    del irasa_params['data']
-    irasa_params['hmax'] = hset_info[1]
     return IrasaSpectrum(
         freqs=freq,
         raw_spectrum=psd,
         aperiodic=psd_aperiodic,
         periodic=psd_periodic,
         ch_names=ch_names,
-        irasa_settings=irasa_params,
     )
 
 
@@ -181,7 +179,6 @@ def irasa_sprint(  # noqa PLR0915 C901
     fs: int,
     ch_names: np.ndarray | None = None,
     band: tuple[float, float] = (1.0, 100.0),
-    freq_res: float = 0.5,
     win_duration: float = 0.4,
     hop: int = 10,
     win_func: Callable = dsp.windows.hann,
@@ -210,8 +207,6 @@ def irasa_sprint(  # noqa PLR0915 C901
         Channel names associated with the data, if available. Default is None.
     band : tuple[float, float], optional
         The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).
-    freq_res : float, optional
-        Desired frequency resolution in Hz. Default is 0.5 Hz.
     win_duration : float, optional
         Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.
     hop : int, optional
@@ -283,8 +278,9 @@ def irasa_sprint(  # noqa PLR0915 C901
     _check_irasa_settings(irasa_params=irasa_params, hset_info=hset_info)
 
     hset = np.round(np.arange(*hset_info), hset_accuracy)
+    hset = [h for h in hset if h % 1 != 0]  # filter integers
 
-    nfft = int(fs / freq_res)
+    nfft = int(2 ** np.ceil(np.log2(np.max(hset) * win_duration * fs)))
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
         'time_bandwidth': dpss_settings_time_bandwidth,
@@ -321,7 +317,6 @@ def irasa_sprint(  # noqa PLR0915 C901
         time=time,
     )
 
-    # NOTE: we need to transpose the data as crop_data extracts stuff from the last axis
     freq, sgramm_aperiodic, sgramm_periodic, sgramm = _crop_data(
         band, freq, sgramm_aperiodic, sgramm_periodic, sgramm, axis=0
     )

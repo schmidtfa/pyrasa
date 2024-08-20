@@ -68,7 +68,6 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     For further details on BIC and AIC, see: https://machinelearningmastery.com/probabilistic-model-selection-measures/
     """
 
-    # add np.log10 to psd
     residuals = psd - psd_pred
     ss_res = np.sum(residuals**2)
     ss_tot = np.sum((psd - np.mean(psd)) ** 2)

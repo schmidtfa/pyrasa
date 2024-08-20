@@ -4,6 +4,7 @@ from neurodsp.utils import create_times
 import scipy.signal as dsp
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pyrasa import irasa
 
 sns.set_style('ticks')
 sns.set_context('poster')
@@ -32,16 +33,38 @@ axes[1].set_xlabel('Frequency (Hz)')
 plt.tight_layout()
 
 
-from pyrasa.irasa import irasa
+from pyrasa.irasa import irasa, irasa_sprint
 
 # %%
-freq_irasa, psd_ap, psd_p = irasa(
+irasa_psd = irasa(
     sig,
     fs=fs,
-    band=(1, 150),
-    kwargs_psd={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
-    hset_info=(1, 2, 0.05),
+    band=(1, 50),
+    psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
+    hset_info=(1, 4, 0.05),
 )
+
+#%%
+irasa_out_tf = irasa_sprint(
+    sig,
+    fs=fs,
+    band=(1, 50),
+    win_duration=4,
+    hset_info=(1, 3, 0.1),
+)
+#%%
+from neurodsp.plts import plot_timefrequency
+plot_timefrequency(times=irasa_out_tf.time, 
+                   freqs=irasa_out_tf.freqs, 
+                   powers=irasa_out_tf.periodic)
+
+#%%
+plot_timefrequency(times=irasa_out_tf.time, 
+                   freqs=irasa_out_tf.freqs, 
+                   powers=irasa_out_tf.aperiodic)
+
+
+
 # %%
 f, axes = plt.subplots(ncols=2, figsize=(8, 4))
 axes[0].set_title('Periodic')

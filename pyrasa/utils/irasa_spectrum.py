@@ -3,7 +3,6 @@
 import numpy as np
 import pandas as pd
 from attrs import define
-from scipy.signal import medfilt
 
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
 from pyrasa.utils.fit_funcs import AbstractFitFun
@@ -18,7 +17,6 @@ class IrasaSpectrum:
     aperiodic: np.ndarray
     periodic: np.ndarray
     ch_names: np.ndarray | None
-    irasa_settings: dict
 
     def fit_aperiodic_model(
         self,
@@ -158,43 +156,3 @@ class IrasaSpectrum:
             polyorder=polyorder,
             peak_width_limits=peak_width_limits,
         )
-
-    def get_aperiodic_error(self, kernel_size: int | np.ndarray) -> pd.DataFrame:
-        """
-        Computes the error of the aperiodic_fit.
-
-        The function takes the absolut of the periodic spectrum and gets rid of spectral peaks or oscillation
-        using median filtering. Afterwards the area under the curve is computed.
-        If the kernel size of the median filter is specified correctly this function can
-        be used to get an estimate of the aperiodic model error.
-
-        Parameters
-        ----------
-        kernel_size: A scalar or an N-length list giving the size of the median filter window in each dimension.
-        Elements of kernel_size should be odd.
-        If kernel_size is a scalar, then this scalar is used as the size in each dimension.
-
-        Returns
-        ----------
-        Definite integral of the aperiodic error as approximated by the trapezoidal rule. (see numpy.trapz)
-        """
-
-        ch_names = self.ch_names
-        assert isinstance(
-            ch_names, list | tuple | np.ndarray | None
-        ), 'Channel names should be of type list, tuple or numpy.ndarray or None'
-
-        if ch_names is None:
-            ch_names = np.arange(self.periodic.shape[0])
-
-        aperiodic_error = [
-            np.trapz(medfilt(np.abs(self.periodic[ix, :]), kernel_size=kernel_size)) for ix, ch in enumerate(ch_names)
-        ]
-
-        df_aperiodic_error = pd.DataFrame({'error': aperiodic_error, 'ch_name': ch_names})
-        df_aperiodic_error['hmax'] = self.irasa_settings['hmax']
-        df_aperiodic_error['lower_band'] = self.irasa_settings['band'][0]
-        df_aperiodic_error['upper_band'] = self.irasa_settings['band'][1]
-        df_aperiodic_error['frequency_resolution'] = self.freqs[1] - self.freqs[0]
-
-        return df_aperiodic_error
