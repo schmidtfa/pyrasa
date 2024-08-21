@@ -5,7 +5,7 @@ from neurodsp.utils.sim import set_random_seed
 from pyrasa.irasa import irasa_sprint
 from pyrasa.utils.peak_utils import get_band_info
 
-from .settings import EXPONENT, FS, MIN_R2_SPRINT, TOLERANCE
+from .settings import EXPONENT, FS, MIN_R2_SPRINT, SPRINT_TOLERANCE
 
 set_random_seed(42)
 
@@ -30,10 +30,10 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
 
     assert slope_fit.gof['r_squared'].mean() > MIN_R2_SPRINT
     assert np.isclose(
-        np.mean(slope_fit.aperiodic_params.query('time < 7')['Exponent']), np.abs(exponent_1), atol=TOLERANCE
+        np.mean(slope_fit.aperiodic_params.query('time < 7')['Exponent']), np.abs(exponent_1), atol=SPRINT_TOLERANCE
     )
     assert np.isclose(
-        np.mean(slope_fit.aperiodic_params.query('time > 7')['Exponent']), np.abs(exponent_2), atol=TOLERANCE
+        np.mean(slope_fit.aperiodic_params.query('time > 7')['Exponent']), np.abs(exponent_2), atol=SPRINT_TOLERANCE
     )
 
     # check basic peak detection

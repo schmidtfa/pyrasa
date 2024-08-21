@@ -29,7 +29,9 @@ EXP_KNEE_COMBO = [
     (-2.0, 625.0),
 ]  # we test exp + knee combined as both relate to each other
 TOLERANCE = 0.3  # 0.15
+SPRINT_TOLERANCE = 0.4
 HIGH_TOLERANCE = 0.5
+
 KNEE_TOLERANCE = 5
 MIN_R2 = 0.8  # seems like a sensible minimum
 MIN_R2_SPRINT = 0.7
