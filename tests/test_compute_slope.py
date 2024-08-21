@@ -115,11 +115,8 @@ def test_custom_slope_fitting(
             }
 
     aperiodic_fit = compute_aperiodic_model(np.log10(psd), np.log10(freqs), fit_func=CustomFitFun)
-
     # add a high tolerance
     assert pytest.approx(np.abs(aperiodic_fit.aperiodic_params['b'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)
-
-    irasa_spectrum = irasa(fixed_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
 
     class CustomFitFun(AbstractFitFun):
         log10_aperiodic = True
@@ -134,4 +131,8 @@ def test_custom_slope_fitting(
 
             return y_hat
 
-    irasa_spectrum.fit_aperiodic_model(fit_func=CustomFitFun)
+    irasa_spectrum = irasa(fixed_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+    aperiodic_fit = irasa_spectrum.fit_aperiodic_model(fit_func=CustomFitFun)
+
+    # add a high tolerance
+    assert pytest.approx(np.abs(aperiodic_fit.aperiodic_params['b'][0]), abs=HIGH_TOLERANCE) == np.abs(exponent)

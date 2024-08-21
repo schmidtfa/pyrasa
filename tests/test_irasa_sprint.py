@@ -5,7 +5,7 @@ from neurodsp.utils.sim import set_random_seed
 from pyrasa.irasa import irasa_sprint
 from pyrasa.utils.peak_utils import get_band_info
 
-from .settings import EXPONENT, FS, MIN_R2_SPRINT
+from .settings import EXPONENT, FS, MIN_R2_SPRINT, SPRINT_TOLERANCE
 
 set_random_seed(42)
 
@@ -16,11 +16,11 @@ set_random_seed(42)
 def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
     irasa_tf = irasa_sprint(
         ts4sprint[np.newaxis, :],
-        # hop=25,
-        # win_duration=1,
+        win_duration=0.5,
+        overlap_fraction=0.98,
         fs=fs,
-        band=(0.1, 100),
-        freq_res=0.5,
+        band=(0.1, 50),
+        hset_info=(1.05, 4.0, 0.05),
     )
 
     # check basic aperiodic detection
@@ -29,14 +29,18 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
     #  )
 
     assert slope_fit.gof['r_squared'].mean() > MIN_R2_SPRINT
-    assert np.isclose(np.mean(slope_fit.aperiodic_params.query('time < 7')['Exponent']), np.abs(exponent_1), atol=0.5)
-    assert np.isclose(np.mean(slope_fit.aperiodic_params.query('time > 7')['Exponent']), np.abs(exponent_2), atol=0.5)
+    assert np.isclose(
+        np.mean(slope_fit.aperiodic_params.query('time < 7')['Exponent']), np.abs(exponent_1), atol=SPRINT_TOLERANCE
+    )
+    assert np.isclose(
+        np.mean(slope_fit.aperiodic_params.query('time > 7')['Exponent']), np.abs(exponent_2), atol=SPRINT_TOLERANCE
+    )
 
     # check basic peak detection
     df_peaks = irasa_tf.get_peaks(
         cut_spectrum=(1, 40),
         smooth=True,
-        smoothing_window=1,
+        smoothing_window=3,
         min_peak_height=0.01,
         peak_width_limits=(0.5, 12),
     )
@@ -88,7 +92,6 @@ def test_irasa_sprint_settings(ts4sprint, fs):
         fs=fs,
         band=(0.1, 100),
         win_func=dsp.windows.dpss,
-        freq_res=0.5,
     )
 
     # test too much bandwidht
@@ -99,7 +102,6 @@ def test_irasa_sprint_settings(ts4sprint, fs):
             band=(1, 100),
             win_func=dsp.windows.dpss,
             dpss_settings_time_bandwidth=4,
-            freq_res=0.5,
         )
 
     # test ratios
@@ -110,5 +112,4 @@ def test_irasa_sprint_settings(ts4sprint, fs):
             band=(1, 100),
             win_func=dsp.windows.dpss,
             dpss_settings_time_bandwidth=4,
-            freq_res=0.5,
         )

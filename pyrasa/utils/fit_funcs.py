@@ -68,7 +68,6 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     For further details on BIC and AIC, see: https://machinelearningmastery.com/probabilistic-model-selection-measures/
     """
 
-    # add np.log10 to psd
     residuals = psd - psd_pred
     ss_res = np.sum(residuals**2)
     ss_tot = np.sum((psd - np.mean(psd)) ** 2)
@@ -76,8 +75,12 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     mse = np.mean(residuals**2)
     n = len(psd)
 
-    bic = n * np.log(mse) + k * np.log(n)
-    aic = n * np.log(mse) + 2 * k
+    loglik = -n / 2 * (1 + np.log(mse) + np.log(2 * np.pi))
+    aic = 2 * (k - loglik)
+    bic = k * np.log(n) - 2 * loglik
+
+    # bic = n * np.log(mse) + k * np.log(n)
+    # aic = n * np.log(mse) + 2 * k
 
     gof = pd.DataFrame({'mse': mse, 'r_squared': 1 - (ss_res / ss_tot), 'BIC': bic, 'AIC': aic}, index=[0])
     gof['fit_type'] = fit_type
