@@ -237,11 +237,14 @@ class AperiodicSpectrumArray(SpectrumArray):
         Returns
         -------
         AperiodicFit
-            An object containing two pandas DataFrames:
+            An object containing three pandas DataFrames:
                 - aperiodic_params : pd.DataFrame
                     A DataFrame containing the fitted aperiodic parameters for each channel.
                 - gof : pd.DataFrame
                     A DataFrame containing the goodness of fit metrics for each channel.
+                - pred : pd.DataFrame
+                    A DataFrame containing the predicted aperiodic model for each channel and each time point.
+
 
         Notes
         -----
@@ -525,11 +528,14 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
         Returns
         -------
         AperiodicFit
-            An object containing two pandas DataFrames:
+            An object containing three pandas DataFrames:
                 - aperiodic_params : pd.DataFrame
                     A DataFrame containing the fitted aperiodic parameters for each channel.
                 - gof : pd.DataFrame
                     A DataFrame containing the goodness of fit metrics for each channel.
+                - pred : pd.DataFrame
+                    A DataFrame containing the predicted aperiodic model for each channel and each time point.
+
 
         Notes
         -----
@@ -551,7 +557,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
         event_dict = {val: key for key, val in self.event_id.items()}
         events = self.events[:, 2]
 
-        aps_list, gof_list = [], []
+        aps_list, gof_list, pred_list = [], [], []
         for ix, cur_epoch in enumerate(self.get_data()):
             slope_fit = compute_aperiodic_model(
                 cur_epoch,
@@ -566,8 +572,9 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             slope_fit.gof['event_id'] = event_dict[events[ix]]
             aps_list.append(slope_fit.aperiodic_params.copy())
             gof_list.append(slope_fit.gof.copy())
+            pred_list.append(slope_fit.pred)
 
-        return AperiodicFit(aperiodic_params=pd.concat(aps_list), gof=pd.concat(gof_list))
+        return AperiodicFit(aperiodic_params=pd.concat(aps_list), gof=pd.concat(gof_list), pred=pd.concat(pred_list))
 
 
 @define
