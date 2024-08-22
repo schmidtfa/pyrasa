@@ -179,8 +179,8 @@ def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
         'Either change your filter settings, adjust hset or the parameter "band" accordingly. \n'
         f'You want to make sure that the lower band limit divided by the upper bound of the hset '
         f'> {np.round(filter_settings[0], irasa_params["hset_accuracy"])} \n'
-        f'and that upper band limit times the upper bound of the hset < {np.round(filter_settings[1],
-                                                                                  irasa_params["hset_accuracy"])}'
+        'and that upper band limit times the upper bound of the hset < '
+        f'{np.round(filter_settings[1], irasa_params["hset_accuracy"])}'
     )
 
 
