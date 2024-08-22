@@ -24,7 +24,7 @@ def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
     aperiodic_fit_f = compute_aperiodic_model(psd, freqs, fit_func='fixed')
     assert pytest.approx(aperiodic_fit_f.aperiodic_params['Exponent'][0], abs=TOLERANCE) == np.abs(exponent)
     # test goodness of fit should be close to r_squared == 1 for linear model
-    assert aperiodic_fit_f.gof['r_squared'][0] > MIN_R2
+    assert aperiodic_fit_f.gof['R2'][0] > MIN_R2
 
     # test if we can set fit bounds w/o error
     # _, _ = compute_slope(psd, freqs, fit_func='fixed', fit_bounds=[2, 50])
