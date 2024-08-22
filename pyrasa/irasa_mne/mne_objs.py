@@ -242,7 +242,7 @@ class AperiodicSpectrumArray(SpectrumArray):
                     A DataFrame containing the fitted aperiodic parameters for each channel.
                 - gof : pd.DataFrame
                     A DataFrame containing the goodness of fit metrics for each channel.
-                - pred : pd.DataFrame
+                - model : pd.DataFrame
                     A DataFrame containing the predicted aperiodic model for each channel and each time point.
 
 
@@ -533,7 +533,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
                     A DataFrame containing the fitted aperiodic parameters for each channel.
                 - gof : pd.DataFrame
                     A DataFrame containing the goodness of fit metrics for each channel.
-                - pred : pd.DataFrame
+                - model : pd.DataFrame
                     A DataFrame containing the predicted aperiodic model for each channel and each time point.
 
 
@@ -572,9 +572,9 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
             slope_fit.gof['event_id'] = event_dict[events[ix]]
             aps_list.append(slope_fit.aperiodic_params.copy())
             gof_list.append(slope_fit.gof.copy())
-            pred_list.append(slope_fit.pred)
+            pred_list.append(slope_fit.model)
 
-        return AperiodicFit(aperiodic_params=pd.concat(aps_list), gof=pd.concat(gof_list), pred=pd.concat(pred_list))
+        return AperiodicFit(aperiodic_params=pd.concat(aps_list), gof=pd.concat(gof_list), model=pd.concat(pred_list))
 
 
 @define

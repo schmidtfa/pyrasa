@@ -207,6 +207,7 @@ class AbstractFitFun(abc.ABC):
         if self.log10_freq:
             freq = 10**freq
         df_pred = pd.DataFrame({'Frequency (Hz)': freq, 'aperiodic_model': pred})
+        df_pred['fit_type'] = self.label
 
         return df_params, df_gof, df_pred
 

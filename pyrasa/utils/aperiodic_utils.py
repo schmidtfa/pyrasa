@@ -77,7 +77,7 @@ def compute_aperiodic_model(
                 A DataFrame containing the fitted aperiodic parameters for each channel.
             - gof : pd.DataFrame
                 A DataFrame containing the goodness of fit metrics for each channel.
-            - pred : pd.DataFrame
+            - model : pd.DataFrame
                 A DataFrame containing the predicted aperiodic model for each channel.
 
     Notes
@@ -156,7 +156,7 @@ def compute_aperiodic_model(
         pred_list.append(pred)
 
     # combine & return
-    return AperiodicFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list), pred=pd.concat(pred_list))
+    return AperiodicFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list), model=pd.concat(pred_list))
 
 
 def compute_aperiodic_model_sprint(
@@ -208,7 +208,7 @@ def compute_aperiodic_model_sprint(
                 for each channel and each time point.
             - gof : pd.DataFrame
                 A DataFrame containing the goodness of fit metrics for each channel and each time point.
-            - pred : pd.DataFrame
+            - model : pd.DataFrame
                 A DataFrame containing the predicted aperiodic model for each channel and each time point.
 
     Notes
@@ -238,10 +238,10 @@ def compute_aperiodic_model_sprint(
         )
         aperiodic_fit.aperiodic_params['time'] = t
         aperiodic_fit.gof['time'] = t
-        aperiodic_fit.pred['time'] = t
+        aperiodic_fit.model['time'] = t
 
         ap_t_list.append(aperiodic_fit.aperiodic_params)
         gof_t_list.append(aperiodic_fit.gof)
-        pred_t_list.append(aperiodic_fit.pred)
+        pred_t_list.append(aperiodic_fit.model)
 
-    return AperiodicFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list), pred=pd.concat(pred_t_list))
+    return AperiodicFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list), model=pd.concat(pred_t_list))
