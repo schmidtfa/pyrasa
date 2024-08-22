@@ -158,7 +158,8 @@ def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
     assert band_evaluated[0] > 0, 'The evaluated frequency range is 0 or lower this makes no sense'
     assert band_evaluated[1] < nyquist, (
         f'The evaluated frequency range goes up to {np.round(band_evaluated[1], 2)}Hz '
-        'which is higher than Nyquist (fs / 2)'
+        f'which is higher than the Nyquist frequency for your data of {nyquist}Hz, \n'
+        'try to either lower the upper bound for the hset or decrease the upper band limit, when running IRASA.'
     )
 
     filter_settings: list[float] = list(irasa_params['filter_settings'])
@@ -168,18 +169,18 @@ def _check_irasa_settings(irasa_params: dict, hset_info: tuple) -> None:
         filter_settings[1] = band_evaluated[1]
 
     assert np.logical_and(band_evaluated[0] >= filter_settings[0], band_evaluated[1] <= filter_settings[1]), (
-        f'You run IRASA in a frequency range from'
-        f'{np.round(band_evaluated[0], irasa_params["hset_accuracy"])} -'
+        f'You run IRASA in a frequency range from '
+        f'{np.round(band_evaluated[0], irasa_params["hset_accuracy"])} - '
         f'{np.round(band_evaluated[1], irasa_params["hset_accuracy"])}Hz. \n'
-        'Your settings specified in "filter_settings" indicate that you have '
-        'a bandpass filter from '
+        'Your settings specified in "filter_settings" indicate that you have a pass band from '
         f'{np.round(filter_settings[0], irasa_params["hset_accuracy"])} - '
         f'{np.round(filter_settings[1], irasa_params["hset_accuracy"])}Hz. \n'
         'This means that your evaluated range likely contains filter artifacts. \n'
         'Either change your filter settings, adjust hset or the parameter "band" accordingly. \n'
-        f'You want to make sure that band[0] / hset.max() '
-        f'> {np.round(filter_settings[0], irasa_params["hset_accuracy"])} '
-        f'and that band[1] * hset.max() < {np.round(filter_settings[1], irasa_params["hset_accuracy"])}'
+        f'You want to make sure that the lower band limit divided by the upper bound of the hset '
+        f'> {np.round(filter_settings[0], irasa_params["hset_accuracy"])} \n'
+        f'and that upper band limit times the upper bound of the hset < {np.round(filter_settings[1],
+                                                                                  irasa_params["hset_accuracy"])}'
     )
 
 
