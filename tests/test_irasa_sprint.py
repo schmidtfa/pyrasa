@@ -28,7 +28,7 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
     #       irasa_tf.aperiodic[np.newaxis, :, :], freqs=irasa_tf.freqs, times=irasa_tf.time,
     #  )
 
-    assert slope_fit.gof['r_squared'].mean() > MIN_R2_SPRINT
+    assert slope_fit.gof['R2'].mean() > MIN_R2_SPRINT
     assert np.isclose(
         np.mean(slope_fit.aperiodic_params.query('time < 7')['Exponent']), np.abs(exponent_1), atol=SPRINT_TOLERANCE
     )

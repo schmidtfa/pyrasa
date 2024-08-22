@@ -37,7 +37,7 @@ def test_slope_fitting_fixed(fixed_aperiodic_signal, fs, exponent):
     # test the effect of scaling
     aperiodic_fit_fs = compute_aperiodic_model(psd, freqs, fit_func='fixed', scale=True)
     assert np.isclose(aperiodic_fit_fs.aperiodic_params['Exponent'], aperiodic_fit_f.aperiodic_params['Exponent'])
-    assert np.isclose(aperiodic_fit_fs.gof['r_squared'], aperiodic_fit_f.gof['r_squared'])
+    assert np.isclose(aperiodic_fit_fs.gof['R2'], aperiodic_fit_f.gof['R2'])
 
 
 @pytest.mark.parametrize('exponent, fs', [(-1, 500)], scope='session')

@@ -76,11 +76,14 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     n = len(psd)
 
     # https://robjhyndman.com/hyndsight/lm_aic.html
-    c = n + n * np.log(2 * np.pi)
-    aic = 2 * k + n * np.log(mse) + c
+    # c is in practice sometimes dropped. Only relevant when comparing models with different n
+    # c = n + n * np.log(2 * np.pi)
+    # aic = 2 * k + n * np.log(mse) + c #real
+    aic = 2 * k + np.log(n) * np.log(mse)
     # according to Sclove 1987 only difference between BIC and AIC
-    # is that BIC uses log(n) * k instead of 2
-    bic = np.log(n) * k + n * np.log(mse) + c
+    # is that BIC uses log(n) * k instead of 2 * k
+    # bic = np.log(n) * k + n * np.log(mse) + c #real
+    bic = np.log(n) * k + np.log(n) * np.log(mse)
     # Sclove 1987 also hints at sample size adjusted bic
     an = np.log((n + 2) / 24)  # defined in Rissanen 1978 based on minimum-bit representation of a signal
     # abic -> https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7299313/
@@ -89,7 +92,7 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     r2 = 1 - (ss_res / ss_tot)
     r2_adj = 1 - (((1 - r2) * (n - 1)) / (n - k - 1))
 
-    gof = pd.DataFrame({'mse': mse, 'R2': r2, 'R2_adj.': r2_adj, 'BIC': bic, 'ABIC': abic, 'AIC': aic}, index=[0])
+    gof = pd.DataFrame({'mse': mse, 'R2': r2, 'R2_adj.': r2_adj, 'BIC': bic, 'BIC_adj.': abic, 'AIC': aic}, index=[0])
     gof['fit_type'] = fit_type
     return gof
 
