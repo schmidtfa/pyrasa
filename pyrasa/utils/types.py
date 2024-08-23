@@ -64,3 +64,4 @@ class AperiodicFit:
 
     aperiodic_params: pd.DataFrame
     gof: pd.DataFrame
+    model: pd.DataFrame

@@ -43,7 +43,7 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
     assert bool(np.isclose(knee_hat, knee_real, atol=KNEE_TOLERANCE))
     # test bic/aic -> should be better for knee
     assert slope_fit_k.gof['AIC'][0] < slope_fit_f.gof['AIC'][0]
-    assert slope_fit_k.gof['BIC'][0] < slope_fit_f.gof['BIC'][0]
+    assert slope_fit_k.gof['BIC_adj.'][0] < slope_fit_f.gof['BIC_adj.'][0]
 
 
 # knee model
@@ -80,7 +80,7 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     assert bool(np.isclose(knee_hat, knee_real, atol=KNEE_TOLERANCE))
     # test bic/aic -> should be better for knee
     assert slope_fit_k.gof['AIC'][0] < slope_fit_f.gof['AIC'][0]
-    assert slope_fit_k.gof['BIC'][0] < slope_fit_f.gof['BIC'][0]
+    assert slope_fit_k.gof['BIC_adj.'][0] < slope_fit_f.gof['BIC_adj.'][0]
     # test whether we can reconstruct the peak frequency correctly
     pe_params = irasa_out.get_peaks()
     assert bool(np.isclose(np.round(pe_params['cf'], 0), osc_freq))

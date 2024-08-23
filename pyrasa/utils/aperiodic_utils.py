@@ -15,7 +15,7 @@ def _compute_aperiodic_model(
     freq: np.ndarray,
     fit_func: str | type[AbstractFitFun],
     scale_factor: float | int = 1,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """helper function to model the aperiodic spectrum"""
 
     if isinstance(fit_func, str):
@@ -27,9 +27,9 @@ def _compute_aperiodic_model(
             raise ValueError('fit_func should be either a string ("fixed", "knee") or of type AbastractFitFun')
 
     fit_f = fit_func(freq, aperiodic_spectrum, scale_factor=scale_factor)
-    params, gof = fit_f.fit_func()
+    params, gof, pred = fit_f.fit_func()
 
-    return params, gof
+    return params, gof, pred
 
 
 def compute_aperiodic_model(
@@ -72,11 +72,13 @@ def compute_aperiodic_model(
     Returns
     -------
     AperiodicFit
-        An object containing two pandas DataFrames:
+        An object containing three pandas DataFrames:
             - aperiodic_params : pd.DataFrame
                 A DataFrame containing the fitted aperiodic parameters for each channel.
             - gof : pd.DataFrame
                 A DataFrame containing the goodness of fit metrics for each channel.
+            - model : pd.DataFrame
+                A DataFrame containing the predicted aperiodic model for each channel.
 
     Notes
     -----
@@ -136,9 +138,9 @@ def compute_aperiodic_model(
     else:
         scale_factor = 1
 
-    ap_list, gof_list = [], []
+    ap_list, gof_list, pred_list = [], [], []
     for ix, ch_name in enumerate(ch_names):
-        params, gof = _compute_aperiodic_model(
+        params, gof, pred = _compute_aperiodic_model(
             aperiodic_spectrum=aperiodic_spectrum[ix],
             freq=freqs,
             fit_func=fit_func,
@@ -147,12 +149,14 @@ def compute_aperiodic_model(
 
         params['ch_name'] = ch_name
         gof['ch_name'] = ch_name
+        pred['ch_name'] = ch_name
 
         ap_list.append(params)
         gof_list.append(gof)
+        pred_list.append(pred)
 
     # combine & return
-    return AperiodicFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list))
+    return AperiodicFit(aperiodic_params=pd.concat(ap_list), gof=pd.concat(gof_list), model=pd.concat(pred_list))
 
 
 def compute_aperiodic_model_sprint(
@@ -198,12 +202,14 @@ def compute_aperiodic_model_sprint(
     Returns
     -------
     AperiodicFit
-        An object containing two pandas DataFrames:
+        An object containing three pandas DataFrames:
             - aperiodic_params : pd.DataFrame
-                A DataFrame containing the aperiodic parameters (e.g., center frequency, bandwidth, peak height)
+                A DataFrame containing the aperiodic parameters (e.g., Offset and Exponent)
                 for each channel and each time point.
             - gof : pd.DataFrame
                 A DataFrame containing the goodness of fit metrics for each channel and each time point.
+            - model : pd.DataFrame
+                A DataFrame containing the predicted aperiodic model for each channel and each time point.
 
     Notes
     -----
@@ -219,7 +225,7 @@ def compute_aperiodic_model_sprint(
 
     """
 
-    ap_t_list, gof_t_list = [], []
+    ap_t_list, gof_t_list, pred_t_list = [], [], []
 
     for ix, t in enumerate(times):
         aperiodic_fit = compute_aperiodic_model(
@@ -232,8 +238,10 @@ def compute_aperiodic_model_sprint(
         )
         aperiodic_fit.aperiodic_params['time'] = t
         aperiodic_fit.gof['time'] = t
+        aperiodic_fit.model['time'] = t
 
         ap_t_list.append(aperiodic_fit.aperiodic_params)
         gof_t_list.append(aperiodic_fit.gof)
+        pred_t_list.append(aperiodic_fit.model)
 
-    return AperiodicFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list))
+    return AperiodicFit(aperiodic_params=pd.concat(ap_t_list), gof=pd.concat(gof_t_list), model=pd.concat(pred_t_list))

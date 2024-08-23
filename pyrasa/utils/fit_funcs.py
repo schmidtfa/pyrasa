@@ -75,14 +75,24 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     mse = np.mean(residuals**2)
     n = len(psd)
 
-    loglik = -n / 2 * (1 + np.log(mse) + np.log(2 * np.pi))
-    aic = 2 * (k - loglik)
-    bic = k * np.log(n) - 2 * loglik
+    # https://robjhyndman.com/hyndsight/lm_aic.html
+    # c is in practice sometimes dropped. Only relevant when comparing models with different n
+    # c = n + n * np.log(2 * np.pi)
+    # aic = 2 * k + n * np.log(mse) + c #real
+    aic = 2 * k + np.log(n) * np.log(mse)
+    # according to Sclove 1987 only difference between BIC and AIC
+    # is that BIC uses log(n) * k instead of 2 * k
+    # bic = np.log(n) * k + n * np.log(mse) + c #real
+    bic = np.log(n) * k + np.log(n) * np.log(mse)
+    # Sclove 1987 also hints at sample size adjusted bic
+    an = np.log((n + 2) / 24)  # defined in Rissanen 1978 based on minimum-bit representation of a signal
+    # abic -> https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7299313/
+    abic = np.log(an) * k + an * np.log(mse)
 
-    # bic = n * np.log(mse) + k * np.log(n)
-    # aic = n * np.log(mse) + 2 * k
+    r2 = 1 - (ss_res / ss_tot)
+    r2_adj = 1 - (((1 - r2) * (n - 1)) / (n - k - 1))
 
-    gof = pd.DataFrame({'mse': mse, 'r_squared': 1 - (ss_res / ss_tot), 'BIC': bic, 'AIC': aic}, index=[0])
+    gof = pd.DataFrame({'mse': mse, 'R2': r2, 'R2_adj.': r2_adj, 'BIC': bic, 'BIC_adj.': abic, 'AIC': aic}, index=[0])
     gof['fit_type'] = fit_type
     return gof
 
@@ -177,7 +187,7 @@ class AbstractFitFun(abc.ABC):
             raise ValueError('Scale Factor not handled. You need to overwrite the handle_scaling method.')
         return df_params
 
-    def fit_func(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def fit_func(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         curve_kwargs = self.curve_kwargs
         p, _ = curve_fit(self.func, self.freq, self.aperiodic_spectrum, **curve_kwargs)
 
@@ -191,7 +201,15 @@ class AbstractFitFun(abc.ABC):
         df_params = self.add_infos_to_df(df_params)
         df_params = self.handle_scaling(df_params, scale_factor=self.scale_factor)
 
-        return df_params, df_gof
+        freq = self.freq.copy()
+        if self.log10_aperiodic:
+            pred = 10**pred
+        if self.log10_freq:
+            freq = 10**freq
+        df_pred = pd.DataFrame({'Frequency (Hz)': freq, 'aperiodic_model': pred})
+        df_pred['fit_type'] = self.label
+
+        return df_params, df_gof, df_pred
 
 
 class FixedFitFun(AbstractFitFun):
