@@ -77,17 +77,19 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
 
     # https://robjhyndman.com/hyndsight/lm_aic.html
     # c is in practice sometimes dropped. Only relevant when comparing models with different n
-    # c = n + n * np.log(2 * np.pi)
+    # c = np.log(n) + np.log(n) * np.log(2 * np.pi)
     # aic = 2 * k + n * np.log(mse) + c #real
-    aic = 2 * k + np.log(n) * np.log(mse)
+    aic = 2 * k + np.log(n) * np.log(mse)  # + c
+    # aic = 2 * k + n * mse
     # according to Sclove 1987 only difference between BIC and AIC
     # is that BIC uses log(n) * k instead of 2 * k
     # bic = np.log(n) * k + n * np.log(mse) + c #real
-    bic = np.log(n) * k + np.log(n) * np.log(mse)
+    bic = np.log(n) * k + np.log(n) * np.log(mse)  # + c
+    # bic = np.log(n) * k + n * mse
     # Sclove 1987 also hints at sample size adjusted bic
-    an = np.log((n + 2) / 24)  # defined in Rissanen 1978 based on minimum-bit representation of a signal
+    an = (n + 2) / 24  # defined in Rissanen 1978 based on minimum-bit representation of a signal
     # abic -> https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7299313/
-    abic = np.log(an) * k + an * np.log(mse)
+    abic = np.log(an) * k + np.log(n) * np.log(mse)
 
     r2 = 1 - (ss_res / ss_tot)
     r2_adj = 1 - (((1 - r2) * (n - 1)) / (n - k - 1))
