@@ -156,3 +156,52 @@ class IrasaSpectrum:
             polyorder=polyorder,
             peak_width_limits=peak_width_limits,
         )
+
+    def get_aperiodic_error(self, peak_kwargs: None | dict = None) -> np.ndarray:
+        """
+        Computes the frequency resolved error of the aperiodic spectrum.
+
+        This method first computes the absolute of the periodic spectrum and subsequently zeroes out
+        any peaks in the spectrum that are potentially "oscillations", yielding the residual error of the aperiodic
+        spectrum as a function of frequency.
+        This can be useful when trying to optimize hyperparameters such as the hset.
+
+        peak_kwargs : dict
+            A dictionary containing keyword arguments that are passed on to the peak finding method 'get_peaks'
+
+        Returns
+        -------
+            np.ndarray
+                A numpy array containing the frequency resolved squared error of the aperiodic
+                spectrum extracted using irasa
+
+
+        Notes
+        -----
+        While not strictly necessary, setting peak_kwargs is highly recommended.
+        The reason for this is that through up-/downsampling and averaging "broadband"
+        parameters such as spectral knees can bleed in the periodic spectrum and could be wrongfully
+        interpreted as oscillations. This can be avoided by e.g. explicitely setting `min_peak_height`.
+        A good way of making a decision for the periodic parameters is to base it on the settings
+        used in peak detection.
+
+        """
+
+        if peak_kwargs is None:
+            peak_kwargs = {}
+        # get absolute periodic spectrum
+        aperiodic_error = np.abs(self.periodic[0, :])
+
+        # zero-out peaks
+        peaks = self.get_peaks(**peak_kwargs)
+        freqs = self.freqs
+
+        for _, peak in peaks.iterrows():
+            cur_upper = peak['cf'] + peak['bw']
+            cur_lower = peak['cf'] - peak['bw']
+
+            freq_mask = np.logical_and(freqs < cur_upper, freqs > cur_lower)
+
+            aperiodic_error[freq_mask] = 0
+
+        return aperiodic_error

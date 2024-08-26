@@ -84,3 +84,28 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     # test whether we can reconstruct the peak frequency correctly
     pe_params = irasa_out.get_peaks()
     assert bool(np.isclose(np.round(pe_params['cf'], 0), osc_freq))
+
+
+@pytest.mark.parametrize('exponent, knee', [(-1.5, 1000)], scope='session')
+@pytest.mark.parametrize('fs', [1000], scope='session')
+@pytest.mark.parametrize('osc_freq', [10], scope='session')
+def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
+    duration = 4
+    overlap = 0.5
+    irasa_out = irasa(
+        load_knee_cmb_signal,
+        fs=fs,
+        band=(0.1, 50),
+        psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
+        hset_info=(1, 2.0, 0.05),
+    )
+
+    irasa_out_bad = irasa(
+        load_knee_cmb_signal,
+        fs=fs,
+        band=(0.1, 50),
+        psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
+        hset_info=(1, 8.0, 0.05),
+    )
+
+    assert np.mean(irasa_out.get_aperiodic_error()) < np.mean(irasa_out_bad.get_aperiodic_error())
