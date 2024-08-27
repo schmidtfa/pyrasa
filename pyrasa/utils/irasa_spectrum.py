@@ -189,19 +189,24 @@ class IrasaSpectrum:
 
         if peak_kwargs is None:
             peak_kwargs = {}
+
+        aperiodic_errors = []
         # get absolute periodic spectrum
-        aperiodic_error = np.abs(self.periodic[0, :])
+        for ix in range(self.periodic.shape[0]):
+            aperiodic_error = np.abs(self.periodic[ix, :])
 
-        # zero-out peaks
-        peaks = self.get_peaks(**peak_kwargs)
-        freqs = self.freqs
+            # zero-out peaks
+            peaks = self.get_peaks(**peak_kwargs)
+            freqs = self.freqs
 
-        for _, peak in peaks.iterrows():
-            cur_upper = peak['cf'] + peak['bw']
-            cur_lower = peak['cf'] - peak['bw']
+            for _, peak in peaks.iterrows():
+                cur_upper = peak['cf'] + peak['bw']
+                cur_lower = peak['cf'] - peak['bw']
 
-            freq_mask = np.logical_and(freqs < cur_upper, freqs > cur_lower)
+                freq_mask = np.logical_and(freqs < cur_upper, freqs > cur_lower)
 
-            aperiodic_error[freq_mask] = 0
+                aperiodic_error[freq_mask] = 0
 
-        return aperiodic_error
+            aperiodic_errors.append(aperiodic_error)
+
+        return np.array(aperiodic_errors)
