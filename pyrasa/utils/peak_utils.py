@@ -89,7 +89,7 @@ def get_peak_params(
 
     # generate channel names if not given
     if ch_names is None:
-        ch_names = np.arange(periodic_spectrum.shape[0])
+        ch_names = [str(i) for i in np.arange(periodic_spectrum.shape[0])]
 
     # cut data
     if cut_spectrum is not None:

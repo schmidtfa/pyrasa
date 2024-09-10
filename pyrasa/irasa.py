@@ -318,9 +318,14 @@ def irasa_sprint(  # noqa PLR0915 C901
         hset=hset,
         time=time,
     )
+    single_ch_dim = 2
+    sgramm_aperiodic = (
+        sgramm_aperiodic[np.newaxis, :, :] if sgramm_aperiodic.ndim == single_ch_dim else sgramm_aperiodic
+    )
+    sgramm_periodic = sgramm_periodic[np.newaxis, :, :] if sgramm_periodic.ndim == single_ch_dim else sgramm_periodic
 
     freq, sgramm_aperiodic, sgramm_periodic, sgramm = _crop_data(
-        band, freq, sgramm_aperiodic, sgramm_periodic, sgramm, axis=0
+        band, freq, sgramm_aperiodic, sgramm_periodic, sgramm, axis=1
     )
 
     # adjust time info (i.e. cut the padded stuff)
@@ -332,7 +337,7 @@ def irasa_sprint(  # noqa PLR0915 C901
         freqs=freq[freq_mask],
         time=time[t_mask],
         raw_spectrum=sgramm,
-        periodic=sgramm_periodic[:, t_mask][freq_mask, :],
-        aperiodic=sgramm_aperiodic[:, t_mask][freq_mask, :],
+        periodic=sgramm_periodic[:, :, t_mask][:, freq_mask, :],
+        aperiodic=sgramm_aperiodic[:, :, t_mask][:, freq_mask, :],
         ch_names=ch_names,
     )
