@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import scipy.signal as dsp
 
-from pyrasa import irasa
+from pyrasa import irasa, irasa_sprint
 
 from .settings import EXP_KNEE_COMBO, FS, KNEE_TOLERANCE, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 
@@ -105,6 +105,31 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
         fs=fs,
         band=(0.1, 50),
         psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
+        hset_info=(1, 8.0, 0.05),
+    )
+
+    assert np.mean(irasa_out.get_aperiodic_error()) < np.mean(irasa_out_bad.get_aperiodic_error())
+
+
+@pytest.mark.parametrize('fs', [1000], scope='session')
+@pytest.mark.parametrize('exponent_1', [-1], scope='session')
+@pytest.mark.parametrize('exponent_2', [-2], scope='session')
+def test_aperiodic_error_tf(ts4sprint, fs, exponent, knee, osc_freq):
+    irasa_out = irasa_sprint(
+        ts4sprint,
+        fs=fs,
+        band=(0.1, 50),
+        overlap_fraction=0.95,
+        win_duration=0.5,
+        hset_info=(1, 2.0, 0.05),
+    )
+
+    irasa_out_bad = irasa_sprint(
+        ts4sprint,
+        fs=fs,
+        band=(0.1, 50),
+        overlap_fraction=0.95,
+        win_duration=0.5,
         hset_info=(1, 8.0, 0.05),
     )
 

@@ -54,18 +54,18 @@ sim_ts = np.concatenate([exp_1 + alphas,
 freqs = np.arange(1, 50, 0.5)
 import scipy.signal as dsp
 
-irasa_sprint_spectrum = irasa_sprint(np.array([sim_ts, sim_ts]), 
+irasa_sprint_spectrum = irasa_sprint(sim_ts,#np.array([sim_ts, sim_ts]), 
                                     fs=fs,
                                     band=(1, 50),
                                     overlap_fraction=.95,
                                     win_duration=.5,
-                                    #ch_names=['A'],
+                                    ch_names=['A'],
                                     hset_info=(1.05, 4., 0.05),
                                     win_func=dsp.windows.hann)
 # %%
 peak_kwargs = { 'smooth': True,
                 'smoothing_window':1,
-                'peak_threshold':2,
+                'peak_threshold':5,
                 'min_peak_height':.01,
                 'peak_width_limits': (0.5, 12)}
 ap_error = irasa_sprint_spectrum.get_aperiodic_error(peak_kwargs)
