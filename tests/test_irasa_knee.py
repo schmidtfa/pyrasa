@@ -112,8 +112,8 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
 
 
 @pytest.mark.parametrize('fs', [1000], scope='session')
-@pytest.mark.parametrize('exponent_1', [-1], scope='session')
-@pytest.mark.parametrize('exponent_2', [-2], scope='session')
+@pytest.mark.parametrize('exponent_1', [-0], scope='session')
+@pytest.mark.parametrize('exponent_2', [-3], scope='session')
 def test_aperiodic_error_tf(ts4sprint, fs, exponent, knee, osc_freq):
     irasa_out = irasa_sprint(
         ts4sprint,
