@@ -114,9 +114,9 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
 @pytest.mark.parametrize('fs', [1000], scope='session')
 @pytest.mark.parametrize('exponent_1', [-0], scope='session')
 @pytest.mark.parametrize('exponent_2', [-2], scope='session')
-def test_aperiodic_error_tf(ts4sprint, fs, exponent, knee, osc_freq):
+def test_aperiodic_error_tf(ts4sprint_knee, fs, exponent_1, exponent_2):
     irasa_out = irasa_sprint(
-        ts4sprint,
+        ts4sprint_knee,
         fs=fs,
         band=(0.1, 50),
         overlap_fraction=0.95,
@@ -125,7 +125,7 @@ def test_aperiodic_error_tf(ts4sprint, fs, exponent, knee, osc_freq):
     )
 
     irasa_out_bad = irasa_sprint(
-        ts4sprint,
+        ts4sprint_knee,
         fs=fs,
         band=(0.1, 50),
         overlap_fraction=0.95,
@@ -133,4 +133,14 @@ def test_aperiodic_error_tf(ts4sprint, fs, exponent, knee, osc_freq):
         hset_info=(1, 8.0, 0.05),
     )
 
-    assert np.mean(irasa_out.get_aperiodic_error()) < np.mean(irasa_out_bad.get_aperiodic_error())
+    kwargs = {
+        'cut_spectrum': (1, 40),
+        'smooth': True,
+        'smoothing_window': 3,
+        'min_peak_height': 0.01,
+        'peak_width_limits': (0.5, 12),
+    }
+
+    assert np.mean(irasa_out.get_aperiodic_error(peak_kwargs=kwargs)) < np.mean(
+        irasa_out_bad.get_aperiodic_error(peak_kwargs=kwargs)
+    )
