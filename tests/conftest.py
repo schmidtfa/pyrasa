@@ -88,6 +88,35 @@ def ts4sprint(fs, exponent_1, exponent_2):
 
 
 @pytest.fixture(scope='session')
+def ts4sprint_knee(fs, exponent_1, exponent_2):
+    alpha = sim_oscillation(n_seconds=0.5, fs=fs, freq=10)
+    no_alpha = np.zeros(len(alpha))
+    beta = sim_oscillation(n_seconds=0.5, fs=fs, freq=25)
+    no_beta = np.zeros(len(beta))
+
+    knee1 = 20 ** np.abs(exponent_1)
+    knee2 = 20 ** np.abs(exponent_2)
+    exp_1 = sim_knee(n_seconds=2.5, fs=fs, exponent1=0, exponent2=exponent_1, knee=knee1)
+    exp_2 = sim_knee(n_seconds=2.5, fs=fs, exponent1=0, exponent2=exponent_2, knee=knee2)
+
+    # %%
+    alphas = np.concatenate([no_alpha, alpha, no_alpha, alpha, no_alpha])
+    betas = np.concatenate([beta, no_beta, beta, no_beta, beta])
+
+    sim_ts = np.concatenate(
+        [
+            exp_1 + alphas,
+            exp_1 + alphas + betas,
+            exp_1 + betas,
+            exp_2 + alphas,
+            exp_2 + alphas + betas,
+            exp_2 + betas,
+        ]
+    )
+    yield sim_ts
+
+
+@pytest.fixture(scope='session')
 def gen_mne_data_raw():
     data_path = sample.data_path()
 

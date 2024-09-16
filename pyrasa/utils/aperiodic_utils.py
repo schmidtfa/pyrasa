@@ -126,7 +126,7 @@ def compute_aperiodic_model(
 
     # generate channel names if not given
     if ch_names is None:
-        ch_names = np.arange(aperiodic_spectrum.shape[0])
+        ch_names = [str(i) for i in np.arange(aperiodic_spectrum.shape[0])]
 
     if scale:
 

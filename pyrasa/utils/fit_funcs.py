@@ -77,7 +77,7 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
 
     # https://robjhyndman.com/hyndsight/lm_aic.html
     # c is in practice sometimes dropped. Only relevant when comparing models with different n
-    # c = np.log(n) + np.log(n) * np.log(2 * np.pi)
+    # c = n + n * np.log(2 * np.pi)
     # aic = 2 * k + n * np.log(mse) + c #real
     aic = 2 * k + np.log(n) * np.log(mse)  # + c
     # aic = 2 * k + n * mse
