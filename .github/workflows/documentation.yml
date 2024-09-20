@@ -18,7 +18,7 @@ jobs:
           cache: true
           locked: false
           frozen: false
-          environments: ['doc']
+          environments: doc
       - run: pixi run -e doc build_docs
       - uses: peaceiris/actions-gh-pages@v3
         with:
