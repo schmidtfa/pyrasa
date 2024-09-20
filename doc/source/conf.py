@@ -6,8 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import pyrasa
 from sphinx.config import is_serializable
+
+import pyrasa
 
 project = 'PyRASA'
 copyright = '2024, Fabian Schmidt, Thomas Hartmann'
@@ -29,7 +30,7 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = []
 
-source_suffix = [".rst", ".md"]
+source_suffix = ['.rst', '.md']
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -41,45 +42,44 @@ version = pyrasa.__version__
 release = version
 
 
-
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "pydata_sphinx_theme"
+html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
 
-switcher_version_match = "dev" if "dev" in release else version
+switcher_version_match = 'dev' if 'dev' in release else version
 
 html_theme_options = {
-    "icon_links": [
+    'icon_links': [
         dict(
-            name="GitHub",
-            url="https://github.com/schmidtfa/pyrasa",
-            icon="fab fa-github-square",
+            name='GitHub',
+            url='https://github.com/schmidtfa/pyrasa',
+            icon='fab fa-github-square',
         ),
     ],
-    "icon_links_label": "Quick Links",  # for screen reader
-    "use_edit_page_button": False,
-    "navigation_with_keys": False,
-    "show_toc_level": 1,
-    "header_links_before_dropdown": 6,
-    "navbar_end": ["theme-switcher", "version-switcher", "navbar-icon-links"],
-    "switcher": {
-        "json_url": "https://raw.githubusercontent.com/mne-tools/mne-bids/main/doc/_static/versions.json",  # noqa: E501
-        "version_match": switcher_version_match,
+    'icon_links_label': 'Quick Links',  # for screen reader
+    'use_edit_page_button': False,
+    'navigation_with_keys': False,
+    'show_toc_level': 1,
+    'header_links_before_dropdown': 6,
+    'navbar_end': ['theme-switcher', 'version-switcher', 'navbar-icon-links'],
+    'switcher': {
+        'json_url': 'https://raw.githubusercontent.com/mne-tools/mne-bids/main/doc/_static/versions.json',  # noqa: E501
+        'version_match': switcher_version_match,
     },
 }
 
 sphinx_gallery_conf = {
-    "doc_module": "pyrasa",
-    "reference_url": {
-        "pyrasa": None,
+    'doc_module': 'pyrasa',
+    'reference_url': {
+        'pyrasa': None,
     },
-    "backreferences_dir": "generated",
-    "examples_dirs": "../../examples",
-    "within_subsection_order": "ExampleTitleSortKey",
-    "gallery_dirs": "auto_examples",
-    "filename_pattern": "^((?!sgskip).)*$",
+    'backreferences_dir': 'generated',
+    'examples_dirs': '../../examples',
+    'within_subsection_order': 'ExampleTitleSortKey',
+    'gallery_dirs': 'auto_examples',
+    'filename_pattern': '^((?!sgskip).)*$',
 }
 
 assert is_serializable(sphinx_gallery_conf)
