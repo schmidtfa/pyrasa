@@ -23,6 +23,7 @@ dependencies = ["numpy", "pandas", "scipy>=1.12", "attrs"]
 
 [project.optional-dependencies]
 mne = ['mne']
+doc = ['sphinx', 'sphinx_gallery', 'pydata-sphinx-theme', 'sphinx-autobuild']
 
 [project.urls]
 repository = "https://github.com/schmidtfa/pyrasa"
@@ -74,6 +75,7 @@ py312 = {dependencies = {python="3.12.*"}}
 default = {features = [], solve-group = "default"}
 mne = {features = ["mne"], solve-group = "default"}
 jupyter = {features = ["jupyter"], solve-group = "default"}
+doc = {features = ["doc"], solve-group = "default"}
 testpy311 = ['py311']
 testpy312 = ['py312']
 
