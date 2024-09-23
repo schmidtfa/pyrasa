@@ -19,16 +19,16 @@ author = 'Fabian Schmidt, Thomas Hartmann'
 
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.autosummary',
+    #'sphinx.ext.githubpages',
+    #'sphinx.ext.intersphinx',
+    #'sphinx.ext.viewcode',
+    #'sphinx.ext.autosummary',
     'numpydoc',
     'sphinx_gallery.gen_gallery',
 ]
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ["auto_examples/index.rst", "_build", "Thumbs.db", ".DS_Store", "generated"]
 
 source_suffix = ['.rst', '.md']
 
