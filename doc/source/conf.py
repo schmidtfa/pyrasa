@@ -28,7 +28,7 @@ extensions = [
 ]
 
 templates_path = ['_templates']
-exclude_patterns = ["auto_examples/index.rst", "_build", "Thumbs.db", ".DS_Store", "generated"]
+exclude_patterns = ['auto_examples/index.rst', '_build', 'Thumbs.db', '.DS_Store', 'generated']
 
 source_suffix = ['.rst', '.md']
 
