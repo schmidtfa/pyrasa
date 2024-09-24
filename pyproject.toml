@@ -61,7 +61,7 @@ test = "pytest --cov=pyrasa --cov-report=lcov"
 lint = "ruff format && ruff check --fix"
 lint_ci = "ruff check"
 check_types = "mypy pyrasa tests"
-doc_dev = "sphinx-autobuild -v --ignore sg_execution_times.rst --ignore generated --ignore auto_example doc/source doc/build"
+doc_dev = "sphinx-autobuild --ignore 'doc/source/auto_examples/*' doc/source doc/build"
 build_docs = "cd doc; make clean; make html"
 
 [tool.pixi.dependencies]
