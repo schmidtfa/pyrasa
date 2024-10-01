@@ -6,6 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+# import os
+# import sys
+
 from sphinx.config import is_serializable
 
 import pyrasa
@@ -17,27 +20,67 @@ author = 'Fabian Schmidt, Thomas Hartmann'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
+
+# curdir = os.path.dirname(__file__)
+# sys.path.append(os.path.abspath(os.path.join(curdir, '../..', 'pyrasa')))
+# sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
+
+
 extensions = [
+    'sphinx.ext.githubpages',
     'sphinx.ext.autodoc',
-    #'sphinx.ext.githubpages',
-    #'sphinx.ext.intersphinx',
-    #'sphinx.ext.viewcode',
-    #'sphinx.ext.autosummary',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx',
     'numpydoc',
     'sphinx_gallery.gen_gallery',
 ]
 
-templates_path = ['_templates']
+
+numpydoc_xref_param_type = True
+numpydoc_class_members_toctree = False
+numpydoc_attributes_as_param_list = True
+numpydoc_xref_aliases = {
+    'array-like': ':term:`array_like <numpy:array_like>`',
+    'int': ':class:`int <python:int>`',
+    'bool': ':class:`bool <python:bool>`',
+    'float': ':class:`float <python:float>`',
+    'list': ':class:`list <python:list>`',
+    'tuple': ':class:`tuple <python:tuple>`',
+}
+numpydoc_xref_ignore = {
+    # words
+    'instance',
+    'instances',
+    'of',
+}
+
+
+# generate autosummary even if no references
+autosummary_generate = True
+autodoc_default_options = {'inherited-members': None}
+default_role = 'autolink'  # XXX silently allows bad syntax, someone should fix
+
 exclude_patterns = ['auto_examples/index.rst', '_build', 'Thumbs.db', '.DS_Store', 'generated']
 
+html_show_sourcelink = False
+html_copy_source = False
+
+html_theme = 'pydata_sphinx_theme'
+
+templates_path = ['_templates']
+html_static_path = ['_static']
+# html_css_files = ["style.css"]
+
 source_suffix = ['.rst', '.md']
+# master_doc = "index"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = pyrasa.__version__
+version = 'dev' if 'dev' in pyrasa.__version__ else pyrasa.__version__
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -45,12 +88,9 @@ release = version
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'pydata_sphinx_theme'
-html_static_path = ['_static']
-
-switcher_version_match = 'dev' if 'dev' in release else version
 
 html_theme_options = {
+    #'navbar_sidebarrel': False,
     'icon_links': [
         dict(
             name='GitHub',
@@ -63,12 +103,19 @@ html_theme_options = {
     'navigation_with_keys': False,
     'show_toc_level': 1,
     'header_links_before_dropdown': 6,
-    'navbar_end': ['theme-switcher', 'version-switcher', 'navbar-icon-links'],
-    'switcher': {
-        'json_url': 'https://raw.githubusercontent.com/mne-tools/mne-bids/main/doc/_static/versions.json',  # noqa: E501
-        'version_match': switcher_version_match,
-    },
+    'navbar_end': ['theme-switcher', 'navbar-icon-links'],
 }
+
+html_context = {
+    'default_mode': 'auto',
+    'doc_path': 'doc',
+}
+
+html_sidebars = {}
+
+
+html_short_title = 'PyRASA'
+
 
 sphinx_gallery_conf = {
     'doc_module': 'pyrasa',
