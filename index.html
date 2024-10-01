@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="./" >
+<html lang="en" data-content_root="./" data-theme="auto">
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PyRASA &#8212; PyRASA 0.1.0.dev0 </title>
+    <title>PyRASA - Spectral parameterization in python based on IRASA &#8212; PyRASA dev documentation</title>
   
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
@@ -39,18 +39,23 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=965fac30"></script>
+    <script src="_static/documentation_options.js?v=81f007b9"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="next" title="&lt;no title&gt;" href="examples.html" />
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/scrollfix.js"></script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
 
   
   
@@ -120,7 +125,7 @@
   
   
   
-    <p class="title logo__title">PyRASA 0.1.0</p>
+    <p class="title logo__title">PyRASA dev documentation</p>
   
 </a></div>
     
@@ -134,6 +139,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
     API
@@ -174,9 +186,6 @@ document.write(`
   </button>
 `);
 </script></div>
-      
-        <div class="navbar-item">
-</div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -246,6 +255,13 @@ document.write(`
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
     API
   </a>
@@ -270,30 +286,6 @@ document.write(`
     <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
     <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
   </button>
-`);
-</script></div>
-        
-          <div class="navbar-item">
-<script>
-document.write(`
-  <div class="version-switcher__container dropdown">
-    <button id="pst-version-switcher-button-3"
-      type="button"
-      class="version-switcher__button btn btn-sm dropdown-toggle"
-      data-bs-toggle="dropdown"
-      aria-haspopup="listbox"
-      aria-controls="pst-version-switcher-list-3"
-      aria-label="Version switcher list"
-    >
-      Choose version  <!-- this text may get changed later by javascript -->
-      <span class="caret"></span>
-    </button>
-    <div id="pst-version-switcher-list-3"
-      class="version-switcher__menu dropdown-menu list-group-flush py-0"
-      role="listbox" aria-labelledby="pst-version-switcher-button-3">
-      <!-- dropdown will be populated by javascript on page load -->
-    </div>
-  </div>
 `);
 </script></div>
         
@@ -340,13 +332,156 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="pyrasa-documentation">
-<h1>PyRASA<a class="headerlink" href="#pyrasa-documentation" title="Link to this heading">#</a></h1>
-<p>Add your content using <code class="docutils literal notranslate"><span class="pre">reStructuredText</span></code> syntax. See the
-<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html">reStructuredText</a>
-documentation for details.</p>
+  <section id="pyrasa-spectral-parameterization-in-python-based-on-irasa">
+<h1>PyRASA - Spectral parameterization in python based on IRASA<a class="headerlink" href="#pyrasa-spectral-parameterization-in-python-based-on-irasa" title="Link to this heading">#</a></h1>
+<a class="reference external image-reference" href="https://www.repostatus.org/#wip"><img alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." src="https://www.repostatus.org/badges/latest/wip.svg" />
+</a>
+<a class="reference external image-reference" href="https://opensource.org/licenses/BSD-2-Clause"><img alt="License" src="https://img.shields.io/badge/License-BSD_2--Clause-orange.svg" />
+</a>
+<a class="reference external image-reference" href="http://mypy-lang.org/"><img alt="Checked with mypy" src="http://www.mypy-lang.org/static/mypy_badge.svg" />
+</a>
+<a class="reference external image-reference" href="https://coveralls.io/github/schmidtfa/pyrasa?branch=main"><img alt="Coverage Status" src="https://coveralls.io/repos/github/schmidtfa/pyrasa/badge.svg?branch=main" />
+</a>
+<p>PyRASA is a Python library designed to separate and parametrize aperiodic (fractal) and periodic (oscillatory) components in time series data based on the IRASA algorithm (Wen &amp; Liu, 2016).</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Aperiodic and Periodic Decomposition:</strong> Utilize the IRASA algorithm to decompose power spectra into aperiodic and periodic components, enabling better interpretation of neurophysiological signals.</p></li>
+<li><p><strong>Time Resolved Spectral Parametrization:</strong> Perform time resolved spectral parametrization, allowing you to track changes in spectral components over time.</p></li>
+<li><p><strong>Support for Raw and Epoched MNE Objects:</strong> PyRASA provides functions designed for both continuous (Raw) and event-related (Epochs) data, making it versatile for various types of EEG/MEG analyses.</p></li>
+<li><p><strong>Consistent Ontology:</strong> PyRASA uses the same jargon to label parameters as specparam, the most commonly used tool to parametrize power spectra, to allow users to easily switch between tools depending on their needs, while keeping the labeling of features consistent.</p></li>
+<li><p><strong>Custom Aperiodic Fit Models:</strong> In addition to the built-in “fixed” and “knee” models for aperiodic fitting, users can specify their custom aperiodic fit functions, offering flexibility in how aperiodic components are modeled.</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
+<p>Documentation for PyRASA, including detailed descriptions of functions, parameters, and examples, will soon be available <a class="reference external" href="https://github.com/schmidtfa/pyrasa">here</a>.</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>To install the latest stable version of PyRASA, you can soon use pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install pyrasa
+</pre></div>
+</div>
+<p>or conda:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install pyrasa
+</pre></div>
+</div>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<p>PyRASA has the following dependencies:</p>
+<ul class="simple">
+<li><p><strong>Core Dependencies:</strong>
+- <a class="reference external" href="https://github.com/numpy/numpy">numpy</a>
+- <a class="reference external" href="https://github.com/scipy/scipy">scipy</a>
+- <a class="reference external" href="https://github.com/pandas-dev/pandas">pandas</a></p></li>
+<li><p><strong>Optional Dependencies for Full Functionality:</strong>
+- <a class="reference external" href="https://github.com/mne-tools/mne-python">mne</a>: Required for directly working with EEG/MEG data in <em class="xref py py-obj">Raw</em> or <em class="xref py py-obj">Epochs</em> formats.</p></li>
+</ul>
+</section>
+<section id="example-usage">
+<h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
+<p>Decompose spectra into periodic and aperiodic components:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrasa.irasa</span> <span class="kn">import</span> <span class="n">irasa</span>
+
+<span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
+                  <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+                  <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+                  <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                              <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
+                             <span class="p">},</span>
+                  <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="Example knee image" src="https://raw.githubusercontent.com/schmidtfa/pyrasa/main/simulations/example_knee.png" />
+<p>Extract periodic parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span><span class="o">.</span><span class="n">get_peaks</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>ch_name</p></th>
+<th class="head"><p>cf</p></th>
+<th class="head"><p>bw</p></th>
+<th class="head"><p>pw</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>9.5</p></td>
+<td><p>1.4426</p></td>
+<td><p>0.4178</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Extract aperiodic parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span><span class="o">.</span><span class="n">fit_aperiodic_model</span><span class="p">(</span><span class="n">fit_func</span><span class="o">=</span><span class="s1">&#39;knee&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">aperiodic_params</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Offset</p></th>
+<th class="head"><p>Knee</p></th>
+<th class="head"><p>Exponent_1</p></th>
+<th class="head"><p>Exponent_2</p></th>
+<th class="head"><p>fit_type</p></th>
+<th class="head" colspan="3"><p>Knee Frequency (Hz) |   tau  |  ch_name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1.737e-16</p></td>
+<td><p>60.94</p></td>
+<td><p>0.0396</p></td>
+<td><p>1.4727</p></td>
+<td><p>knee</p></td>
+<td><p>14.131</p></td>
+<td><p>0.0113</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>And the goodness of fit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span><span class="o">.</span><span class="n">fit_aperiodic_model</span><span class="p">(</span><span class="n">fit_func</span><span class="o">=</span><span class="s1">&#39;knee&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gof</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>mse</p></th>
+<th class="head"><p>r_squared</p></th>
+<th class="head"><p>BIC</p></th>
+<th class="head"><p>AIC</p></th>
+<th class="head"><p>fit_type</p></th>
+<th class="head"><p>ch_name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.000051</p></td>
+<td><p>0.999751</p></td>
+<td><p>-3931.840</p></td>
+<td><p>-3947.806</p></td>
+<td><p>knee</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="how-to-contribute">
+<h2>How to Contribute<a class="headerlink" href="#how-to-contribute" title="Link to this heading">#</a></h2>
+<p>Contributions to PyRASA are welcome! Whether it’s raising issues, improving documentation, fixing bugs, or adding new features, your help is appreciated. Please refer to the <a class="reference external" href="CONTRIBUTING.md">CONTRIBUTING.md</a> file for more information on how to get involved.</p>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<p>If you are using IRASA, please cite the smart people who came up with the algorithm:</p>
+<p>Wen, H., &amp; Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. <em>Brain Topography</em>, 29, 13-26. <a class="reference external" href="https://doi.org/10.1007/s10548-015-0448-0">https://doi.org/10.1007/s10548-015-0448-0</a></p>
+<p>If you are using PyRASA, it would be nice if you could additionally cite us (whenever the paper is finally ready):</p>
+<p>Schmidt F., Hartmann T., &amp; Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. <em>SOME JOURNAL THAT LIKES US</em></p>
 <div class="toctree-wrapper compound">
 </div>
+</section>
 </section>
 
 
@@ -360,11 +495,11 @@ documentation for details.</p>
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="api.html"
+       href="examples.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">API Documentation</p>
+        <p class="prev-next-title">&lt;no title&gt;</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -379,13 +514,22 @@ documentation for details.</p>
 
 
   <div class="sidebar-secondary-item">
-
-  <div class="tocsection sourcelink">
-    <a href="_sources/index.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
   </div>
-</div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage">Example Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-contribute">How to Contribute</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
+</ul>
+  </nav></div>
 
 </div></div>
               

@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyrasa.irasa &#8212; PyRASA dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyrasa/irasa';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../../_static/scrollfix.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">PyRASA dev documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/schmidtfa/pyrasa" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/schmidtfa/pyrasa" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">pyrasa.irasa</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyrasa.irasa</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions to compute IRASA.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">dsp</span>
+
+<span class="kn">from</span> <span class="nn">pyrasa.utils.irasa_spectrum</span> <span class="kn">import</span> <span class="n">IrasaSpectrum</span>
+<span class="kn">from</span> <span class="nn">pyrasa.utils.irasa_tf_spectrum</span> <span class="kn">import</span> <span class="n">IrasaTfSpectrum</span>
+
+<span class="c1"># from scipy.stats.mstats import gmean</span>
+<span class="kn">from</span> <span class="nn">pyrasa.utils.irasa_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_check_irasa_settings</span><span class="p">,</span>
+    <span class="n">_compute_psd_welch</span><span class="p">,</span>
+    <span class="n">_compute_sgramm</span><span class="p">,</span>
+    <span class="n">_crop_data</span><span class="p">,</span>
+    <span class="n">_gen_irasa</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyrasa.utils.types</span> <span class="kn">import</span> <span class="n">IrasaSprintKwargsTyped</span>
+
+
+<span class="c1"># %% irasa</span>
+<div class="viewcode-block" id="irasa">
+<a class="viewcode-back" href="../../_autoexamples/pyrasa.irasa.irasa.html#pyrasa.irasa.irasa">[docs]</a>
+<span class="k">def</span> <span class="nf">irasa</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">band</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">psd_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">ch_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">win_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">hann</span><span class="p">,</span>
+    <span class="n">win_func_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dpss_settings_time_bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">dpss_settings_low_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">dpss_eigenvalue_weighting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">filter_settings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="n">hset_info</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+    <span class="n">hset_accuracy</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IrasaSpectrum</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the aperiodic and periodic components of the power spectrum from a time series using the</span>
+<span class="sd">    Irregular Resampling Autocorrelation (IRASA) algorithm.</span>
+
+<span class="sd">    The IRASA algorithm allows for the decomposition of neural signals into fractal (aperiodic) and</span>
+<span class="sd">    oscillatory (periodic) components, providing insight into the underlying dynamics of the data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).</span>
+<span class="sd">    fs : int</span>
+<span class="sd">        Sampling frequency of the data in Hz.</span>
+<span class="sd">    band : tuple[float, float]</span>
+<span class="sd">        The frequency range (lower and upper bounds in Hz) over which to compute the spectra.</span>
+<span class="sd">    psd_kwargs : dict</span>
+<span class="sd">        Keyword arguments to be passed to the `scipy.signal.welch` function for PSD estimation.</span>
+<span class="sd">    ch_names : np.ndarray | None, optional</span>
+<span class="sd">        Channel names associated with the data, if available. Default is None.</span>
+<span class="sd">    win_func : Callable, optional</span>
+<span class="sd">        Window function to be used in Welch&#39;s method. Default is `dsp.windows.hann`.</span>
+<span class="sd">    win_func_kwargs : dict | None, optional</span>
+<span class="sd">        Additional keyword arguments for the window function. Default is None.</span>
+<span class="sd">    dpss_settings_time_bandwidth : float, optional</span>
+<span class="sd">        Time-bandwidth product for the DPSS windows if used. Default is 2.0.</span>
+<span class="sd">    dpss_settings_low_bias : bool, optional</span>
+<span class="sd">        Keep only tapers with eigenvalues &gt; 0.9. Default is True.</span>
+<span class="sd">    dpss_eigenvalue_weighting : bool, optional</span>
+<span class="sd">        Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by</span>
+<span class="sd">        the concentration ratio of their respective tapers before combining. Default is True.</span>
+<span class="sd">    filter_settings : tuple[float | None, float | None], optional</span>
+<span class="sd">        Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.</span>
+<span class="sd">        Default is (None, None).</span>
+<span class="sd">    hset_info : tuple[float, float, float], optional</span>
+<span class="sd">        Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).</span>
+<span class="sd">    hset_accuracy : int, optional</span>
+<span class="sd">        Decimal precision for the resampling factors. Default is 4.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IrasaSpectrum</span>
+<span class="sd">        An object containing the following attributes:</span>
+<span class="sd">            - freqs: np.ndarray</span>
+<span class="sd">                Frequencies corresponding to the computed spectra.</span>
+<span class="sd">            - raw_spectrum: np.ndarray</span>
+<span class="sd">                The raw power spectrum.</span>
+<span class="sd">            - aperiodic: np.ndarray</span>
+<span class="sd">                The aperiodic (fractal) component of the spectrum.</span>
+<span class="sd">            - periodic: np.ndarray</span>
+<span class="sd">                The periodic (oscillatory) component of the spectrum.</span>
+<span class="sd">            - ch_names: np.ndarray</span>
+<span class="sd">                Channel names if provided.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function provides fine-grained control over the IRASA parameters. For users working with MNE-Python,</span>
+<span class="sd">    the `irasa_raw` and `irasa_epochs` functions from `pyrasa.irasa_mne` are recommended, as they handle</span>
+<span class="sd">    additional preprocessing steps.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Wen, H., &amp; Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum</span>
+<span class="sd">    of Neurophysiological Signal. Brain Topography, 29(1), 13–26. https://doi.org/10.1007/s10548-015-0448-0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># set parameters</span>
+    <span class="k">if</span> <span class="n">win_func_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">win_func_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Minimal safety checks</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Data shape needs to be either of shape (Channels, Samples) or (Samples, ).&#39;</span>  <span class="c1"># noqa PLR2004</span>
+
+    <span class="n">irasa_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s1">&#39;fs&#39;</span><span class="p">:</span> <span class="n">fs</span><span class="p">,</span>
+        <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="n">band</span><span class="p">,</span>
+        <span class="s1">&#39;filter_settings&#39;</span><span class="p">:</span> <span class="n">filter_settings</span><span class="p">,</span>
+        <span class="s1">&#39;hset_accuracy&#39;</span><span class="p">:</span> <span class="n">hset_accuracy</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">_check_irasa_settings</span><span class="p">(</span><span class="n">irasa_params</span><span class="o">=</span><span class="n">irasa_params</span><span class="p">,</span> <span class="n">hset_info</span><span class="o">=</span><span class="n">hset_info</span><span class="p">)</span>
+
+    <span class="n">hset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">hset_info</span><span class="p">),</span> <span class="n">hset_accuracy</span><span class="p">)</span>
+    <span class="n">hset</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hset</span> <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># filter integers</span>
+
+    <span class="n">win_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;win_func&#39;</span><span class="p">:</span> <span class="n">win_func</span><span class="p">,</span> <span class="s1">&#39;win_func_kwargs&#39;</span><span class="p">:</span> <span class="n">win_func_kwargs</span><span class="p">}</span>
+    <span class="n">dpss_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;time_bandwidth&#39;</span><span class="p">:</span> <span class="n">dpss_settings_time_bandwidth</span><span class="p">,</span>
+        <span class="s1">&#39;low_bias&#39;</span><span class="p">:</span> <span class="n">dpss_settings_low_bias</span><span class="p">,</span>
+        <span class="s1">&#39;eigenvalue_weighting&#39;</span><span class="p">:</span> <span class="n">dpss_eigenvalue_weighting</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_local_irasa_fun</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_compute_psd_welch</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+            <span class="n">nperseg</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nperseg&#39;</span><span class="p">),</span>
+            <span class="n">win_kwargs</span><span class="o">=</span><span class="n">win_kwargs</span><span class="p">,</span>
+            <span class="n">dpss_settings</span><span class="o">=</span><span class="n">dpss_settings</span><span class="p">,</span>
+            <span class="n">noverlap</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;noverlap&#39;</span><span class="p">),</span>
+            <span class="n">nfft</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nfft&#39;</span><span class="p">),</span>
+        <span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">freq</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">_compute_psd_welch</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+        <span class="n">nperseg</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nperseg&#39;</span><span class="p">),</span>
+        <span class="n">win_kwargs</span><span class="o">=</span><span class="n">win_kwargs</span><span class="p">,</span>
+        <span class="n">dpss_settings</span><span class="o">=</span><span class="n">dpss_settings</span><span class="p">,</span>
+        <span class="n">noverlap</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;noverlap&#39;</span><span class="p">),</span>
+        <span class="n">nfft</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nfft&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">psd</span><span class="p">,</span> <span class="n">psd_aperiodic</span><span class="p">,</span> <span class="n">psd_periodic</span> <span class="o">=</span> <span class="n">_gen_irasa</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">orig_spectrum</span><span class="o">=</span><span class="n">psd</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">irasa_fun</span><span class="o">=</span><span class="n">_local_irasa_fun</span><span class="p">,</span> <span class="n">hset</span><span class="o">=</span><span class="n">hset</span>
+    <span class="p">)</span>
+
+    <span class="n">freq</span><span class="p">,</span> <span class="n">psd_aperiodic</span><span class="p">,</span> <span class="n">psd_periodic</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">_crop_data</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">psd_aperiodic</span><span class="p">,</span> <span class="n">psd_periodic</span><span class="p">,</span> <span class="n">psd</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">IrasaSpectrum</span><span class="p">(</span>
+        <span class="n">freqs</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+        <span class="n">raw_spectrum</span><span class="o">=</span><span class="n">psd</span><span class="p">,</span>
+        <span class="n">aperiodic</span><span class="o">=</span><span class="n">psd_aperiodic</span><span class="p">,</span>
+        <span class="n">periodic</span><span class="o">=</span><span class="n">psd_periodic</span><span class="p">,</span>
+        <span class="n">ch_names</span><span class="o">=</span><span class="n">ch_names</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># irasa sprint</span>
+<div class="viewcode-block" id="irasa_sprint">
+<a class="viewcode-back" href="../../_autoexamples/pyrasa.irasa.irasa_sprint.html#pyrasa.irasa.irasa_sprint">[docs]</a>
+<span class="k">def</span> <span class="nf">irasa_sprint</span><span class="p">(</span>  <span class="c1"># noqa PLR0915 C901</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">ch_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">band</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">),</span>
+    <span class="n">win_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">overlap_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.90</span><span class="p">,</span>
+    <span class="n">win_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">hann</span><span class="p">,</span>
+    <span class="n">win_func_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dpss_settings_time_bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">dpss_settings_low_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">dpss_eigenvalue_weighting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">filter_settings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="n">hset_info</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+    <span class="n">hset_accuracy</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IrasaTfSpectrum</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes time-resolved aperiodic and periodic components of the power spectrum from a time series</span>
+<span class="sd">    using the Irregular Resampling Autocorrelation (IRASA) algorithm.</span>
+
+<span class="sd">    This function is useful for analyzing how the aperiodic and periodic components of the power spectrum</span>
+<span class="sd">    change over time, providing a time-frequency decomposition of the signal.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).</span>
+<span class="sd">    fs : int</span>
+<span class="sd">        Sampling frequency of the data in Hz.</span>
+<span class="sd">    ch_names : np.ndarray | None, optional</span>
+<span class="sd">        Channel names associated with the data, if available. Default is None.</span>
+<span class="sd">    band : tuple[float, float], optional</span>
+<span class="sd">        The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).</span>
+<span class="sd">    win_duration : float, optional</span>
+<span class="sd">        Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.</span>
+<span class="sd">    overlap_fraction : int, optional</span>
+<span class="sd">        The overlap between the STFT sliding windows as fraction. Default is .99 of the windows.</span>
+<span class="sd">    win_func : Callable, optional</span>
+<span class="sd">        Window function to be used in computing the time frequency spectrum. Default is `dsp.windows.hann`.</span>
+<span class="sd">    win_func_kwargs : dict | None, optional</span>
+<span class="sd">        Additional keyword arguments for the window function. Default is None.</span>
+<span class="sd">    dpss_settings_time_bandwidth : float, optional</span>
+<span class="sd">        Time-bandwidth product for the DPSS windows if used. Default is 2.0.</span>
+<span class="sd">    dpss_settings_low_bias : bool, optional</span>
+<span class="sd">        Keep only tapers with eigenvalues &gt; 0.9. Default is True.</span>
+<span class="sd">    dpss_eigenvalue_weighting : bool, optional</span>
+<span class="sd">        Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by</span>
+<span class="sd">        the concentration ratio of their respective tapers before combining. Default is True.</span>
+<span class="sd">    filter_settings : tuple[float | None, float | None], optional</span>
+<span class="sd">        Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.</span>
+<span class="sd">        Default is (None, None).</span>
+<span class="sd">    hset_info : tuple[float, float, float], optional</span>
+<span class="sd">        Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).</span>
+<span class="sd">    hset_accuracy : int, optional</span>
+<span class="sd">        Decimal precision for the resampling factors. Default is 4.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IrasaTfSpectrum</span>
+<span class="sd">        An object containing the following attributes:</span>
+<span class="sd">            - freqs: np.ndarray</span>
+<span class="sd">                Frequencies corresponding to the computed spectra.</span>
+<span class="sd">            - time: np.ndarray</span>
+<span class="sd">                Time bins in seconds associated with the (a-)periodic spectra.</span>
+<span class="sd">            - raw_spectrum: np.ndarray</span>
+<span class="sd">                The raw time-frequency power spectrum.</span>
+<span class="sd">            - aperiodic: np.ndarray</span>
+<span class="sd">                The aperiodic (fractal) component of the spectrum.</span>
+<span class="sd">            - periodic: np.ndarray</span>
+<span class="sd">                The periodic (oscillatory) component of the spectrum.</span>
+<span class="sd">            - ch_names: np.ndarray</span>
+<span class="sd">                Channel names if provided.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function performs a time-frequency decomposition of the input data, allowing for a time-resolved analysis</span>
+<span class="sd">    of the periodic and aperiodic components of the signal. The STFT is computed for each time window, and IRASA</span>
+<span class="sd">    is applied to separate the spectral components.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Wen, H., &amp; Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum of</span>
+<span class="sd">    Neurophysiological Signal. Brain Topography, 29(1), 13–26. https://doi.org/10.1007/s10548-015-0448-0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># set parameters</span>
+    <span class="k">if</span> <span class="n">win_func_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">win_func_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Minimal safety checks</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Data shape needs to be either of shape (Channels, Samples) or (Samples, ).&#39;</span>  <span class="c1"># noqa PLR2004</span>
+
+    <span class="n">irasa_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s1">&#39;fs&#39;</span><span class="p">:</span> <span class="n">fs</span><span class="p">,</span>
+        <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="n">band</span><span class="p">,</span>
+        <span class="s1">&#39;filter_settings&#39;</span><span class="p">:</span> <span class="n">filter_settings</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">_check_irasa_settings</span><span class="p">(</span><span class="n">irasa_params</span><span class="o">=</span><span class="n">irasa_params</span><span class="p">,</span> <span class="n">hset_info</span><span class="o">=</span><span class="n">hset_info</span><span class="p">)</span>
+
+    <span class="n">hset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">hset_info</span><span class="p">),</span> <span class="n">hset_accuracy</span><span class="p">)</span>
+    <span class="n">hset</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hset</span> <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># filter integers</span>
+
+    <span class="n">win_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;win_func&#39;</span><span class="p">:</span> <span class="n">win_func</span><span class="p">,</span> <span class="s1">&#39;win_func_kwargs&#39;</span><span class="p">:</span> <span class="n">win_func_kwargs</span><span class="p">}</span>
+    <span class="n">dpss_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;time_bandwidth&#39;</span><span class="p">:</span> <span class="n">dpss_settings_time_bandwidth</span><span class="p">,</span>
+        <span class="s1">&#39;low_bias&#39;</span><span class="p">:</span> <span class="n">dpss_settings_low_bias</span><span class="p">,</span>
+        <span class="s1">&#39;eigenvalue_weighting&#39;</span><span class="p">:</span> <span class="n">dpss_eigenvalue_weighting</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">nfft</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">hset</span><span class="p">)</span> <span class="o">*</span> <span class="n">win_duration</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)))</span>
+    <span class="n">hop</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">overlap_fraction</span><span class="p">)</span> <span class="o">*</span> <span class="n">win_duration</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+    <span class="c1"># hop = int((1 - overlap_fraction) * nfft)</span>
+    <span class="n">irasa_kwargs</span><span class="p">:</span> <span class="n">IrasaSprintKwargsTyped</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;nfft&#39;</span><span class="p">:</span> <span class="n">nfft</span><span class="p">,</span>
+        <span class="s1">&#39;hop&#39;</span><span class="p">:</span> <span class="n">hop</span><span class="p">,</span>
+        <span class="s1">&#39;win_duration&#39;</span><span class="p">:</span> <span class="n">win_duration</span><span class="p">,</span>
+        <span class="s1">&#39;dpss_settings&#39;</span><span class="p">:</span> <span class="n">dpss_settings</span><span class="p">,</span>
+        <span class="s1">&#39;win_kwargs&#39;</span><span class="p">:</span> <span class="n">win_kwargs</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_local_irasa_fun</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">up_down</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">time_orig</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_compute_sgramm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">up_down</span><span class="o">=</span><span class="n">up_down</span><span class="p">,</span> <span class="n">time_orig</span><span class="o">=</span><span class="n">time_orig</span><span class="p">,</span> <span class="o">**</span><span class="n">irasa_kwargs</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># get time and frequency info</span>
+    <span class="n">freq</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">sgramm</span> <span class="o">=</span> <span class="n">_compute_sgramm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="o">**</span><span class="n">irasa_kwargs</span><span class="p">)</span>
+
+    <span class="n">sgramm</span><span class="p">,</span> <span class="n">sgramm_aperiodic</span><span class="p">,</span> <span class="n">sgramm_periodic</span> <span class="o">=</span> <span class="n">_gen_irasa</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+        <span class="n">orig_spectrum</span><span class="o">=</span><span class="n">sgramm</span><span class="p">,</span>
+        <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+        <span class="n">irasa_fun</span><span class="o">=</span><span class="n">_local_irasa_fun</span><span class="p">,</span>
+        <span class="n">hset</span><span class="o">=</span><span class="n">hset</span><span class="p">,</span>
+        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">single_ch_dim</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">sgramm_aperiodic</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">sgramm_aperiodic</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">sgramm_aperiodic</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">single_ch_dim</span> <span class="k">else</span> <span class="n">sgramm_aperiodic</span>
+    <span class="p">)</span>
+    <span class="n">sgramm_periodic</span> <span class="o">=</span> <span class="n">sgramm_periodic</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">sgramm_periodic</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">single_ch_dim</span> <span class="k">else</span> <span class="n">sgramm_periodic</span>
+
+    <span class="n">freq</span><span class="p">,</span> <span class="n">sgramm_aperiodic</span><span class="p">,</span> <span class="n">sgramm_periodic</span><span class="p">,</span> <span class="n">sgramm</span> <span class="o">=</span> <span class="n">_crop_data</span><span class="p">(</span>
+        <span class="n">band</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">sgramm_aperiodic</span><span class="p">,</span> <span class="n">sgramm_periodic</span><span class="p">,</span> <span class="n">sgramm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="c1"># adjust time info (i.e. cut the padded stuff)</span>
+    <span class="n">tmax</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">fs</span>
+    <span class="n">t_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">time</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="n">tmax</span><span class="p">)</span>
+    <span class="n">freq_mask</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">win_duration</span><span class="p">)</span>  <span class="c1"># mask rayleigh</span>
+
+    <span class="k">return</span> <span class="n">IrasaTfSpectrum</span><span class="p">(</span>
+        <span class="n">freqs</span><span class="o">=</span><span class="n">freq</span><span class="p">[</span><span class="n">freq_mask</span><span class="p">],</span>
+        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">[</span><span class="n">t_mask</span><span class="p">],</span>
+        <span class="n">raw_spectrum</span><span class="o">=</span><span class="n">sgramm</span><span class="p">,</span>
+        <span class="n">periodic</span><span class="o">=</span><span class="n">sgramm_periodic</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">t_mask</span><span class="p">][:,</span> <span class="n">freq_mask</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">aperiodic</span><span class="o">=</span><span class="n">sgramm_aperiodic</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">t_mask</span><span class="p">][:,</span> <span class="n">freq_mask</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">ch_names</span><span class="o">=</span><span class="n">ch_names</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Fabian Schmidt, Thomas Hartmann.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
