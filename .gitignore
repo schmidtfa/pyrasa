@@ -40,3 +40,4 @@ dist
 .pixi
 *.egg-info
 *.lcov
+/doc/build

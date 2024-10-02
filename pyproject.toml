@@ -46,11 +46,24 @@ ipykernel = ">=6.29.5,<6.30"
 seaborn = ">=0.13.2,<0.14"
 matplotlib = ">=3.9.1,<3.10"
 
+[tool.pixi.feature.doc.dependencies]
+sphinx = "*"
+pydata-sphinx-theme = "*"
+sphinx-autobuild = "*"
+numpydoc = "*"
+nbsphinx = "*"
+
+[tool.pixi.feature.doc.pypi-dependencies]
+sphinx_gallery = "*"
+sphinxcontrib-serializinghtml = "*"
+
 [tool.pixi.tasks]
 test = "pytest --cov=pyrasa --cov-report=lcov"
 lint = "ruff format && ruff check --fix"
 lint_ci = "ruff check"
 check_types = "mypy pyrasa tests"
+doc_dev = "sphinx-autobuild --ignore 'doc/source/auto_examples/*' doc/source doc/build"
+build_docs = "cd doc; make clean; make html"
 
 [tool.pixi.dependencies]
 hatch = ">=1.12.0,<1.13"
@@ -74,6 +87,7 @@ py312 = {dependencies = {python="3.12.*"}}
 default = {features = [], solve-group = "default"}
 mne = {features = ["mne"], solve-group = "default"}
 jupyter = {features = ["jupyter"], solve-group = "default"}
+doc = {features = ["doc"], solve-group = "default"}
 testpy311 = ['py311']
 testpy312 = ['py312']
 
