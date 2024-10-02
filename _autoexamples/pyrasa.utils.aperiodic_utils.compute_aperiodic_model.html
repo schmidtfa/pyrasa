@@ -42,9 +42,11 @@
     <script src="../_static/documentation_options.js?v=81f007b9"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_autoexamples/pyrasa.utils.aperiodic_utils.compute_aperiodic_model';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint" href="pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint.html" />
     <link rel="prev" title="pyrasa.irasa_mne.irasa_epochs" href="pyrasa.irasa_mne.irasa_epochs.html" />
     <script type="text/javascript" src="../_static/copybutton.js"></script>
     <script type="text/javascript" src="../_static/scrollfix.js"></script>
@@ -140,8 +142,15 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Examples
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
   </a>
 </li>
 
@@ -253,8 +262,15 @@ document.write(`
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../examples.html">
-    Examples
+  <a class="nav-link nav-internal" href="../install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
   </a>
 </li>
 
@@ -322,6 +338,17 @@ document.write(`
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">pyrasa.utils.aperiodic_utils.compute_aperiodic_model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint.html">pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.fit_funcs.AbstractFitFun.html">pyrasa.utils.fit_funcs.AbstractFitFun</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.fit_funcs.FixedFitFun.html">pyrasa.utils.fit_funcs.FixedFitFun</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.fit_funcs.KneeFitFun.html">pyrasa.utils.fit_funcs.KneeFitFun</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.peak_utils.get_peak_params.html">pyrasa.utils.peak_utils.get_peak_params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.peak_utils.get_peak_params_sprint.html">pyrasa.utils.peak_utils.get_peak_params_sprint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrasa.utils.peak_utils.get_band_info.html">pyrasa.utils.peak_utils.get_band_info</a></li>
 </ul>
 </div>
 </nav></div>
@@ -383,7 +410,7 @@ document.write(`
 <h1>pyrasa.utils.aperiodic_utils.compute_aperiodic_model<a class="headerlink" href="#pyrasa-utils-aperiodic-utils-compute-aperiodic-model" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrasa.utils.aperiodic_utils.compute_aperiodic_model">
-<span class="sig-prename descclassname"><span class="pre">pyrasa.utils.aperiodic_utils.</span></span><span class="sig-name descname"><span class="pre">compute_aperiodic_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aperiodic_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">AbstractFitFun</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fixed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ch_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AperiodicFit</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/aperiodic_utils.html#compute_aperiodic_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.aperiodic_utils.compute_aperiodic_model" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyrasa.utils.aperiodic_utils.</span></span><span class="sig-name descname"><span class="pre">compute_aperiodic_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aperiodic_spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun" title="pyrasa.utils.fit_funcs.AbstractFitFun"><span class="pre">AbstractFitFun</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fixed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ch_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AperiodicFit</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/aperiodic_utils.html#compute_aperiodic_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.aperiodic_utils.compute_aperiodic_model" title="Link to this definition">#</a></dt>
 <dd><p>Computes aperiodic parameters from the aperiodic spectrum using scipy’s curve fitting function.</p>
 <p>This function can be used to model the aperiodic (1/f-like) component of the power spectrum. Per default, users can
 choose between a fixed or knee model fit or specify their own fit method see examples custom_fit_functions.ipynb
@@ -471,6 +498,15 @@ if the first frequency value is zero, as this can cause issues during model fitt
         <p class="prev-next-subtitle">previous</p>
         <p class="prev-next-title">pyrasa.irasa_mne.irasa_epochs</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>

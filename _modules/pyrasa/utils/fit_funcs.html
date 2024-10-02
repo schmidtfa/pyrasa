@@ -1,0 +1,805 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyrasa.utils.fit_funcs &#8212; PyRASA dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyrasa/utils/fit_funcs';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../../../_static/scrollfix.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">PyRASA dev documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/schmidtfa/pyrasa" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/schmidtfa/pyrasa" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">pyrasa.utils...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pyrasa.utils.fit_funcs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Classes used to model aperiodic spectra&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">no_type_check</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+
+
+<span class="k">def</span> <span class="nf">_get_args</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the argument names from a function, excluding the first two.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : Callable</span>
+<span class="sd">        The function or method from which to extract argument names.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list of argument names, excluding the first two.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_gof</span><span class="p">(</span><span class="n">psd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">psd_pred</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the goodness of fit metrics for a given model prediction against</span>
+<span class="sd">    actual aperiodic power spectral density (PSD) data.</span>
+
+<span class="sd">    This function computes several statistics to evaluate how well the predicted PSD values</span>
+<span class="sd">    match the observed PSD values. The metrics include Mean Squared Error (MSE), R-squared (R²),</span>
+<span class="sd">    Bayesian Information Criterion (BIC), and Akaike Information Criterion (AIC).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    psd : np.ndarray</span>
+<span class="sd">        The observed power spectral density values.</span>
+<span class="sd">    psd_pred : np.ndarray</span>
+<span class="sd">        The predicted power spectral density values from the model.</span>
+<span class="sd">    k : int</span>
+<span class="sd">        The number of parameters in the curve fitting function used to predict the `psd`.</span>
+<span class="sd">    fit_type : str</span>
+<span class="sd">        A description or label for the type of fit/model used, which will be included in the output DataFrame.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        A DataFrame containing the goodness of fit metrics:</span>
+<span class="sd">        - &#39;mse&#39;: Mean Squared Error</span>
+<span class="sd">        - &#39;r_squared&#39;: R-squared value</span>
+<span class="sd">        - &#39;BIC&#39;: Bayesian Information Criterion</span>
+<span class="sd">        - &#39;AIC&#39;: Akaike Information Criterion</span>
+<span class="sd">        - &#39;fit_type&#39;: The type of fit/model used (provided as input)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - BIC and AIC calculations currently assume Ordinary Least Squares (OLS) regression.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    For further details on BIC and AIC, see: https://machinelearningmastery.com/probabilistic-model-selection-measures/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">residuals</span> <span class="o">=</span> <span class="n">psd</span> <span class="o">-</span> <span class="n">psd_pred</span>
+    <span class="n">ss_res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">residuals</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ss_tot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">psd</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">psd</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">residuals</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">psd</span><span class="p">)</span>
+
+    <span class="c1"># https://robjhyndman.com/hyndsight/lm_aic.html</span>
+    <span class="c1"># c is in practice sometimes dropped. Only relevant when comparing models with different n</span>
+    <span class="c1"># c = n + n * np.log(2 * np.pi)</span>
+    <span class="c1"># aic = 2 * k + n * np.log(mse) + c #real</span>
+    <span class="n">aic</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span>  <span class="c1"># + c</span>
+    <span class="c1"># aic = 2 * k + n * mse</span>
+    <span class="c1"># according to Sclove 1987 only difference between BIC and AIC</span>
+    <span class="c1"># is that BIC uses log(n) * k instead of 2 * k</span>
+    <span class="c1"># bic = np.log(n) * k + n * np.log(mse) + c #real</span>
+    <span class="n">bic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span>  <span class="c1"># + c</span>
+    <span class="c1"># bic = np.log(n) * k + n * mse</span>
+    <span class="c1"># Sclove 1987 also hints at sample size adjusted bic</span>
+    <span class="n">an</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span>  <span class="c1"># defined in Rissanen 1978 based on minimum-bit representation of a signal</span>
+    <span class="c1"># abic -&gt; https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7299313/</span>
+    <span class="n">abic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">an</span><span class="p">)</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span>
+
+    <span class="n">r2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ss_res</span> <span class="o">/</span> <span class="n">ss_tot</span><span class="p">)</span>
+    <span class="n">r2_adj</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">gof</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;mse&#39;</span><span class="p">:</span> <span class="n">mse</span><span class="p">,</span> <span class="s1">&#39;R2&#39;</span><span class="p">:</span> <span class="n">r2</span><span class="p">,</span> <span class="s1">&#39;R2_adj.&#39;</span><span class="p">:</span> <span class="n">r2_adj</span><span class="p">,</span> <span class="s1">&#39;BIC&#39;</span><span class="p">:</span> <span class="n">bic</span><span class="p">,</span> <span class="s1">&#39;BIC_adj.&#39;</span><span class="p">:</span> <span class="n">abic</span><span class="p">,</span> <span class="s1">&#39;AIC&#39;</span><span class="p">:</span> <span class="n">aic</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">gof</span><span class="p">[</span><span class="s1">&#39;fit_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fit_type</span>
+    <span class="k">return</span> <span class="n">gof</span>
+
+
+<div class="viewcode-block" id="AbstractFitFun">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun">[docs]</a>
+<span class="nd">@define</span>
+<span class="k">class</span> <span class="nc">AbstractFitFun</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for fitting functions used to model aperiodic spectra.</span>
+
+<span class="sd">    This class provides a framework for defining and fitting models to aperiodic spectra.</span>
+<span class="sd">    It handles common functionality required for fitting a model, such as scaling and goodness-of-fit</span>
+<span class="sd">    computation. Subclasses should implement the `func` method to define the specific fitting function</span>
+<span class="sd">    used for curve fitting.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freq : np.ndarray</span>
+<span class="sd">        The frequency values associated with the aperiodic spectrum data.</span>
+<span class="sd">    aperiodic_spectrum : np.ndarray</span>
+<span class="sd">        The aperiodic spectrum data to which the model will be fit.</span>
+<span class="sd">    scale_factor : int | float</span>
+<span class="sd">        A scaling factor used to adjust the fit results.</span>
+<span class="sd">    label : ClassVar[str]</span>
+<span class="sd">        A label to identify the type of fit or model used. Default is &#39;custom&#39;.</span>
+<span class="sd">    log10_aperiodic : ClassVar[bool]</span>
+<span class="sd">        If True, the aperiodic spectrum values will be transformed using log10. Default is False.</span>
+<span class="sd">    log10_freq : ClassVar[bool]</span>
+<span class="sd">        If True, the frequency values will be transformed using log10. Default is False.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __attrs_post_init__()</span>
+<span class="sd">        Post-initialization method to apply log10 transformations if specified.</span>
+<span class="sd">    func(x: np.ndarray, *args: float) -&gt; np.ndarray</span>
+<span class="sd">        Abstract method to define the model function. Must be implemented by subclasses</span>
+<span class="sd">        and should be applicable to scipy.optimize.curve_fit.</span>
+<span class="sd">    curve_kwargs() -&gt; dict[str, Any]</span>
+<span class="sd">        Returns keyword arguments for the curve fitting process.</span>
+<span class="sd">    add_infos_to_df(df_params: pd.DataFrame) -&gt; pd.DataFrame</span>
+<span class="sd">        Method to add additional information to the parameters DataFrame. Can be overridden by subclasses.</span>
+<span class="sd">    handle_scaling(df_params: pd.DataFrame, scale_factor: float) -&gt; pd.DataFrame</span>
+<span class="sd">        Adjusts the parameters DataFrame based on the scaling factor. Can be overridden by subclasses.</span>
+<span class="sd">    fit_func() -&gt; tuple[pd.DataFrame, pd.DataFrame]</span>
+<span class="sd">        Fits the model to the data and returns DataFrames containing the model parameters and goodness-of-fit metrics.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Subclasses must implement the `func` method to define the model&#39;s functional form.</span>
+<span class="sd">    - The `curve_kwargs` method can be overridden to customize curve fitting options.</span>
+<span class="sd">    - The `add_infos_to_df` and `handle_scaling` methods are intended to be overridden if additional</span>
+<span class="sd">      functionality or specific scaling behavior is required.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    For details on goodness-of-fit metrics and their calculations, see the documentation for `_get_gof`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">freq</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">aperiodic_spectrum</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;custom&#39;</span>
+    <span class="n">log10_aperiodic</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">log10_freq</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_aperiodic</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_freq</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="nd">@no_type_check</span>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">curve_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;maxfev&#39;</span><span class="p">:</span> <span class="mi">10_000</span><span class="p">,</span>
+            <span class="s1">&#39;ftol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;xtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;gtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">add_infos_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_params</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df_params</span>
+
+    <span class="k">def</span> <span class="nf">handle_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_params</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Offset&#39;</span> <span class="ow">in</span> <span class="n">df_params</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Offset&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">scale_factor</span>
+        <span class="k">elif</span> <span class="n">scale_factor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Scale Factor not handled. You need to overwrite the handle_scaling method.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df_params</span>
+
+    <span class="k">def</span> <span class="nf">fit_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="n">curve_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curve_kwargs</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span><span class="p">,</span> <span class="o">**</span><span class="n">curve_kwargs</span><span class="p">)</span>
+
+        <span class="n">my_args</span> <span class="o">=</span> <span class="n">_get_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">df_params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">my_args</span><span class="p">,</span> <span class="n">p</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;fit_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+
+        <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">df_gof</span> <span class="o">=</span> <span class="n">_get_gof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">df_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_infos_to_df</span><span class="p">(</span><span class="n">df_params</span><span class="p">)</span>
+        <span class="n">df_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_scaling</span><span class="p">(</span><span class="n">df_params</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">)</span>
+
+        <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_aperiodic</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">pred</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_freq</span><span class="p">:</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">freq</span>
+        <span class="n">df_pred</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">:</span> <span class="n">freq</span><span class="p">,</span> <span class="s1">&#39;aperiodic_model&#39;</span><span class="p">:</span> <span class="n">pred</span><span class="p">})</span>
+        <span class="n">df_pred</span><span class="p">[</span><span class="s1">&#39;fit_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+
+        <span class="k">return</span> <span class="n">df_params</span><span class="p">,</span> <span class="n">df_gof</span><span class="p">,</span> <span class="n">df_pred</span></div>
+
+
+
+<div class="viewcode-block" id="FixedFitFun">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.FixedFitFun.html#pyrasa.utils.fit_funcs.FixedFitFun">[docs]</a>
+<span class="k">class</span> <span class="nc">FixedFitFun</span><span class="p">(</span><span class="n">AbstractFitFun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A model for fitting aperiodic activity in power spectra.</span>
+
+<span class="sd">    The `FixedFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra</span>
+<span class="sd">    using a fixed function that does not include a spectral knee. This model is suitable for</span>
+<span class="sd">    cases where the aperiodic component of the spectrum follows a consistent slope across</span>
+<span class="sd">    the entire frequency range.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    label : str</span>
+<span class="sd">        A label to identify this fitting model. Default is &#39;fixed&#39;.</span>
+<span class="sd">    log10_aperiodic : bool</span>
+<span class="sd">        Indicates whether to log-transform the aperiodic spectrum. Default is True.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    func(x: np.ndarray, Offset: float, Exponent: float) -&gt; np.ndarray</span>
+<span class="sd">        Defines the model function for aperiodic activity without a spectral knee.</span>
+
+<span class="sd">    curve_kwargs() -&gt; dict[str, Any]</span>
+<span class="sd">        Generates initial guess parameters and other keyword arguments for curve fitting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;fixed&#39;</span>
+    <span class="n">log10_aperiodic</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="FixedFitFun.func">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.FixedFitFun.html#pyrasa.utils.fit_funcs.FixedFitFun.func">[docs]</a>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Offset</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># noqa N803</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specparams fixed fitting function.</span>
+<span class="sd">        Use this to model aperiodic activity without a spectral knee</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">Offset</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">Exponent</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">y_hat</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">curve_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">aperiodic_nolog</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span>
+        <span class="n">off_guess</span> <span class="o">=</span> <span class="p">[</span><span class="n">aperiodic_nolog</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">exp_guess</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">aperiodic_nolog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">aperiodic_nolog</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;maxfev&#39;</span><span class="p">:</span> <span class="mi">10_000</span><span class="p">,</span>
+            <span class="s1">&#39;ftol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;xtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;gtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;p0&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">off_guess</span> <span class="o">+</span> <span class="n">exp_guess</span><span class="p">),</span>
+            <span class="s1">&#39;bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)),</span>
+        <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="KneeFitFun">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.KneeFitFun.html#pyrasa.utils.fit_funcs.KneeFitFun">[docs]</a>
+<span class="k">class</span> <span class="nc">KneeFitFun</span><span class="p">(</span><span class="n">AbstractFitFun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A model for fitting aperiodic activity in power spectra with a spectral knee.</span>
+
+<span class="sd">    The `KneeFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra</span>
+<span class="sd">    using a function that includes a spectral knee. This model is particularly useful for</span>
+<span class="sd">    cases where the aperiodic component of the spectrum has a break or knee, representing</span>
+<span class="sd">    a transition between two different spectral slopes.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    label : str</span>
+<span class="sd">        A label to identify this fitting model. Default is &#39;knee&#39;.</span>
+<span class="sd">    log10_aperiodic : bool</span>
+<span class="sd">        Indicates whether to log-transform the aperiodic spectrum. Default is True.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    func(x: np.ndarray, Offset: float, Knee: float, Exponent_1: float, Exponent_2: float) -&gt; np.ndarray</span>
+<span class="sd">        Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.</span>
+
+<span class="sd">    add_infos_to_df(df_params: pd.DataFrame) -&gt; pd.DataFrame</span>
+<span class="sd">        Adds calculated knee frequency to the DataFrame of fit parameters.</span>
+
+<span class="sd">    curve_kwargs() -&gt; dict[str, Any]</span>
+<span class="sd">        Generates initial guess parameters and other keyword arguments for curve fitting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;knee&#39;</span>
+    <span class="n">log10_aperiodic</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="KneeFitFun.func">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.KneeFitFun.html#pyrasa.utils.fit_funcs.KneeFitFun.func">[docs]</a>
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">Offset</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa N803</span>
+        <span class="n">Knee</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa N803</span>
+        <span class="n">Exponent_1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa N803</span>
+        <span class="n">Exponent_2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>  <span class="c1"># noqa N803</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Model aperiodic activity with a spectral knee and a pre-knee slope.</span>
+<span class="sd">        Use this to model aperiodic activity with a spectral knee</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">Offset</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">Exponent_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">Knee</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="n">Exponent_2</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">y_hat</span></div>
+
+
+    <span class="k">def</span> <span class="nf">add_infos_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_params</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Knee Frequency (Hz)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Knee&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span>
+            <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Exponent_1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Exponent_2&#39;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Knee Frequency (Hz)&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">df_params</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">curve_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">aperiodic_nolog</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span>
+        <span class="n">off_guess</span> <span class="o">=</span> <span class="p">[</span><span class="n">aperiodic_nolog</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">exp_guess</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">aperiodic_nolog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">aperiodic_nolog</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="p">]</span>
+        <span class="n">cumsum_psd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">aperiodic_nolog</span><span class="p">)</span>
+        <span class="n">half_pw_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cumsum_psd</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">cumsum_psd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
+        <span class="c1"># make the knee guess the point where we have half the power in the spectrum seems plausible to me</span>
+        <span class="n">knee_guess</span> <span class="o">=</span> <span class="p">[</span><span class="n">half_pw_freq</span> <span class="o">**</span> <span class="p">(</span><span class="n">exp_guess</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">exp_guess</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;maxfev&#39;</span><span class="p">:</span> <span class="mi">10_000</span><span class="p">,</span>
+            <span class="s1">&#39;ftol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;xtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;gtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="s1">&#39;p0&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">off_guess</span> <span class="o">+</span> <span class="n">knee_guess</span> <span class="o">+</span> <span class="n">exp_guess</span> <span class="o">+</span> <span class="n">exp_guess</span><span class="p">),</span>
+            <span class="s1">&#39;bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)),</span>
+        <span class="p">}</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Fabian Schmidt, Thomas Hartmann.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

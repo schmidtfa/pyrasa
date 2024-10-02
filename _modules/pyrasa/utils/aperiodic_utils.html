@@ -41,6 +41,7 @@
     <script src="../../../_static/documentation_options.js?v=81f007b9"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyrasa/utils/aperiodic_utils';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -138,8 +139,15 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Examples
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
   </a>
 </li>
 
@@ -249,8 +257,15 @@ document.write(`
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples.html">
-    Examples
+  <a class="nav-link nav-internal" href="../../../install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
   </a>
 </li>
 
@@ -520,6 +535,8 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="compute_aperiodic_model_sprint">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint.html#pyrasa.utils.aperiodic_utils.compute_aperiodic_model_sprint">[docs]</a>
 <span class="k">def</span> <span class="nf">compute_aperiodic_model_sprint</span><span class="p">(</span>
     <span class="n">aperiodic_spectrum</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">freqs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -605,7 +622,8 @@ document.write(`
         <span class="n">gof_t_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperiodic_fit</span><span class="o">.</span><span class="n">gof</span><span class="p">)</span>
         <span class="n">pred_t_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperiodic_fit</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">AperiodicFit</span><span class="p">(</span><span class="n">aperiodic_params</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ap_t_list</span><span class="p">),</span> <span class="n">gof</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">gof_t_list</span><span class="p">),</span> <span class="n">model</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">pred_t_list</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">AperiodicFit</span><span class="p">(</span><span class="n">aperiodic_params</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ap_t_list</span><span class="p">),</span> <span class="n">gof</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">gof_t_list</span><span class="p">),</span> <span class="n">model</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">pred_t_list</span><span class="p">))</span></div>
+
 </pre></div>
 
                 </article>

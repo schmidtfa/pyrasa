@@ -42,10 +42,11 @@
     <script src="_static/documentation_options.js?v=81f007b9"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="examples.html" />
+    <link rel="next" title="Installation Guide" href="install.html" />
     <script type="text/javascript" src="_static/copybutton.js"></script>
     <script type="text/javascript" src="_static/scrollfix.js"></script>
 
@@ -140,8 +141,15 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="examples.html">
-    Examples
+  <a class="nav-link nav-internal" href="install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorials.html">
+    Tutorials
   </a>
 </li>
 
@@ -255,8 +263,15 @@ document.write(`
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="examples.html">
-    Examples
+  <a class="nav-link nav-internal" href="install.html">
+    Installation Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorials.html">
+    Tutorials
   </a>
 </li>
 
@@ -353,33 +368,6 @@ document.write(`
 <li><p><strong>Custom Aperiodic Fit Models:</strong> In addition to the built-in “fixed” and “knee” models for aperiodic fitting, users can specify their custom aperiodic fit functions, offering flexibility in how aperiodic components are modeled.</p></li>
 </ul>
 </section>
-<section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
-<p>Documentation for PyRASA, including detailed descriptions of functions, parameters, and examples, will soon be available <a class="reference external" href="https://github.com/schmidtfa/pyrasa">here</a>.</p>
-</section>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>To install the latest stable version of PyRASA, you can soon use pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install pyrasa
-</pre></div>
-</div>
-<p>or conda:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conda install pyrasa
-</pre></div>
-</div>
-</section>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
-<p>PyRASA has the following dependencies:</p>
-<ul class="simple">
-<li><p><strong>Core Dependencies:</strong>
-- <a class="reference external" href="https://github.com/numpy/numpy">numpy</a>
-- <a class="reference external" href="https://github.com/scipy/scipy">scipy</a>
-- <a class="reference external" href="https://github.com/pandas-dev/pandas">pandas</a></p></li>
-<li><p><strong>Optional Dependencies for Full Functionality:</strong>
-- <a class="reference external" href="https://github.com/mne-tools/mne-python">mne</a>: Required for directly working with EEG/MEG data in <em class="xref py py-obj">Raw</em> or <em class="xref py py-obj">Epochs</em> formats.</p></li>
-</ul>
-</section>
 <section id="example-usage">
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
 <p>Decompose spectra into periodic and aperiodic components:</p>
@@ -427,7 +415,9 @@ document.write(`
 <th class="head"><p>Exponent_1</p></th>
 <th class="head"><p>Exponent_2</p></th>
 <th class="head"><p>fit_type</p></th>
-<th class="head" colspan="3"><p>Knee Frequency (Hz) |   tau  |  ch_name</p></th>
+<th class="head"><p>Knee Frequency (Hz)</p></th>
+<th class="head"><p>tau</p></th>
+<th class="head"><p>ch_name</p></th>
 </tr>
 </thead>
 <tbody>
@@ -495,11 +485,11 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="examples.html"
+       href="install.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">&lt;no title&gt;</p>
+        <p class="prev-next-title">Installation Guide</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -522,9 +512,6 @@ document.write(`
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage">Example Usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-contribute">How to Contribute</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
