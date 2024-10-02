@@ -11,6 +11,8 @@ from sphinx.config import is_serializable
 
 import pyrasa
 
+# import pyrasa.irasa_mne
+
 project = 'PyRASA'
 copyright = '2024, Fabian Schmidt, Thomas Hartmann'
 author = 'Fabian Schmidt, Thomas Hartmann'
@@ -25,6 +27,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
     'numpydoc',
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.mathjax',  # optional, if you need to render math
@@ -119,7 +122,7 @@ sphinx_gallery_conf = {
         'pyrasa': None,
     },
     'backreferences_dir': 'generated',
-    'examples_dirs': '../../examples',
+    'examples_dirs': 'examples',
     'within_subsection_order': 'ExampleTitleSortKey',
     'gallery_dirs': 'auto_examples',
     'filename_pattern': '^((?!sgskip).)*$',

@@ -17,7 +17,7 @@ PyRASA is a Python library designed to separate and parametrize aperiodic (fract
 
 
 ## Documentation
-Documentation for PyRASA, including detailed descriptions of functions, parameters, and examples, will soon be available [here].
+Documentation for PyRASA, including detailed descriptions of functions, parameters, and tutorials is available [here](https://schmidtfa.github.io/pyrasa/index.html).
 
 
 ### Installation

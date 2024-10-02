@@ -95,6 +95,8 @@ If you are using PyRASA, it would be nice if you could additionally cite us (whe
 Schmidt F., Hartmann T., & Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. *SOME JOURNAL THAT LIKES US*
 
 
+
+
 .. toctree::
    :hidden:
 
