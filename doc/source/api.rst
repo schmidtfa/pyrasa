@@ -6,8 +6,8 @@
 API Reference
 =================
 
-irasa
-------
+IRASA
+-----
 :py:mod:`pyrasa.irasa`
 
 .. automodule:: pyrasa.irasa
@@ -22,7 +22,7 @@ irasa
    irasa
    irasa_sprint
 
-irasa_mne
+IRASA MNE
 ---------
 :py:mod:`pyrasa.irasa_mne`
 
@@ -38,8 +38,9 @@ irasa_mne
    irasa_raw
    irasa_epochs
 
-aperiodic_utils
-----------------
+
+Aperiodic Utilities
+-------------------
 :py:mod:`pyrasa.utils.aperiodic_utils`
 
 .. automodule:: pyrasa.utils.aperiodic_utils
@@ -52,3 +53,40 @@ aperiodic_utils
    :toctree: _autoexamples/
 
    compute_aperiodic_model
+   compute_aperiodic_model_sprint
+
+
+Aperiodic Model Fitting
+-----------------------
+:py:mod:`pyrasa.utils.fit_funcs`
+
+.. automodule:: pyrasa.utils.fit_funcs
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyrasa.utils.fit_funcs
+
+.. autosummary::
+   :toctree: _autoexamples/
+
+   AbstractFitFun
+   FixedFitFun
+   KneeFitFun
+
+   
+Periodic Feature Extraction
+---------------------------
+:py:mod:`pyrasa.utils.peak_utils`
+
+.. automodule:: pyrasa.utils.peak_utils
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyrasa.utils.peak_utils
+
+.. autosummary::
+   :toctree: _autoexamples/
+
+   get_peak_params
+   get_peak_params_sprint
+   get_band_info

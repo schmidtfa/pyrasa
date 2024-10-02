@@ -6,8 +6,6 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-# import os
-# import sys
 
 from sphinx.config import is_serializable
 
@@ -21,11 +19,6 @@ author = 'Fabian Schmidt, Thomas Hartmann'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 
-# curdir = os.path.dirname(__file__)
-# sys.path.append(os.path.abspath(os.path.join(curdir, '../..', 'pyrasa')))
-# sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
-
-
 extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.autodoc',
@@ -34,6 +27,9 @@ extensions = [
     'sphinx.ext.intersphinx',
     'numpydoc',
     'sphinx_gallery.gen_gallery',
+    'sphinx.ext.mathjax',  # optional, if you need to render math
+    'sphinx.ext.viewcode',
+    'nbsphinx',
 ]
 
 
