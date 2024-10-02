@@ -51,6 +51,7 @@ sphinx = "*"
 pydata-sphinx-theme = "*"
 sphinx-autobuild = "*"
 numpydoc = "*"
+nbsphinx = "*"
 
 [tool.pixi.feature.doc.pypi-dependencies]
 sphinx_gallery = "*"
