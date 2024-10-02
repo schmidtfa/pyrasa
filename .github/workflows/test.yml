@@ -75,3 +75,23 @@ jobs:
         with:
           name: pyrasa_dist
           path: dist/
+
+  publish_to_testpypi:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.ref, 'dev') }}
+    needs: [build]
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/pyrasa
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution 📦 to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
