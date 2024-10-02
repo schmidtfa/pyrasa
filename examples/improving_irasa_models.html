@@ -393,7 +393,7 @@ document.write(`
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span> <span class="o">=</span> <span class="mi">500</span>
@@ -410,9 +410,9 @@ document.write(`
 </div>
 <section id="Case-#1:-Increase-your-frequency-resolution">
 <h2>Case #1: Increase your frequency resolution<a class="headerlink" href="#Case-#1:-Increase-your-frequency-resolution" title="Link to this heading">#</a></h2>
-<p>When the frequency resolution for your psd is “low” up/-downsampling is not enough to reliably get rid of peaks in the signal. Increasing the length of each segment (i.e. the “duration”) should help you out.</p>
+<p>When the frequency resolution for your psd is “low” up/-downsampling is not enough to reliably get rid of peaks in the signal. As can be seen below where a duration of 1s was not enough to obtain a “peak-free” spectrum.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#low segment length</span>
@@ -433,7 +433,7 @@ document.write(`
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -464,8 +464,8 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.227665</td>
-      <td>1.079729</td>
+      <td>-1.168134</td>
+      <td>1.037697</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -480,8 +480,9 @@ document.write(`
 <img alt="../_images/examples_improving_irasa_models_4_1.png" src="../_images/examples_improving_irasa_models_4_1.png" />
 </div>
 </div>
+<p>Increasing the length of each segment (i.e. the “duration”) should help you out.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Increased segment length</span>
@@ -502,7 +503,7 @@ document.write(`
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -533,8 +534,8 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.361501</td>
-      <td>1.012603</td>
+      <td>-1.25566</td>
+      <td>0.99467</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -546,7 +547,7 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_improving_irasa_models_5_1.png" src="../_images/examples_improving_irasa_models_5_1.png" />
+<img alt="../_images/examples_improving_irasa_models_6_1.png" src="../_images/examples_improving_irasa_models_6_1.png" />
 </div>
 </div>
 </section>
@@ -554,7 +555,7 @@ document.write(`
 <h2>Case #2: Increase your hmax<a class="headerlink" href="#Case-#2:-Increase-your-hmax" title="Link to this heading">#</a></h2>
 <p>Sometimes we either can’t or don’t want to increase our frequency resolution. In this case we can increase our maximal up/-downsampling factors to get rid of peaks in the signal. However, be aware that this can - depending on our filter settings and sampling rate - limit the frequency range that we can sensibly evaluate (see irasa_pitfalls.ipynb).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#low segment length, but high hset</span>
@@ -575,7 +576,7 @@ document.write(`
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -606,8 +607,8 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.296458</td>
-      <td>1.051648</td>
+      <td>-1.252254</td>
+      <td>0.991107</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -619,7 +620,7 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_improving_irasa_models_7_1.png" src="../_images/examples_improving_irasa_models_7_1.png" />
+<img alt="../_images/examples_improving_irasa_models_8_1.png" src="../_images/examples_improving_irasa_models_8_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">

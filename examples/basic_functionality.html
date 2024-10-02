@@ -504,9 +504,9 @@ document.write(`
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>9.75</td>
-      <td>1.187468</td>
-      <td>0.50145</td>
+      <td>10.0</td>
+      <td>1.18842</td>
+      <td>0.490839</td>
     </tr>
   </tbody>
 </table>
@@ -554,8 +554,8 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.309352</td>
-      <td>0.999959</td>
+      <td>-1.328678</td>
+      <td>0.984115</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -607,12 +607,12 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000435</td>
-      <td>0.997126</td>
-      <td>0.997112</td>
-      <td>-34.351241</td>
-      <td>-19.691029</td>
-      <td>-42.319114</td>
+      <td>0.000363</td>
+      <td>0.997522</td>
+      <td>0.997509</td>
+      <td>-35.430795</td>
+      <td>-41.776853</td>
+      <td>-43.398668</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -697,7 +697,7 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x158f67170&gt;
+&lt;matplotlib.legend.Legend at 0x111a35400&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -736,7 +736,7 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x1595e7170&gt;
+&lt;matplotlib.legend.Legend at 0x111e85820&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -772,7 +772,7 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x15a0f6960&gt;
+&lt;matplotlib.legend.Legend at 0x111dbd5e0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -803,7 +803,7 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x15a1162d0&gt;
+&lt;matplotlib.legend.Legend at 0x112ae2ff0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -870,10 +870,7 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;ticks&#39;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s1">&#39;talk&#39;</span><span class="p">)</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">irasa_out</span><span class="o">.</span><span class="n">freqs</span><span class="p">,</span> <span class="n">irasa_out</span><span class="o">.</span><span class="n">periodic</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Power (a.u.)&#39;</span><span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
@@ -887,7 +884,6 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Original + </span><span class="se">\n</span><span class="s1"> Aperiodic Spectrum&#39;</span><span class="p">)</span>
 
 <span class="n">f</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../simulations/example_knee.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -940,9 +936,9 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>10.0</td>
-      <td>1.18874</td>
-      <td>0.495031</td>
+      <td>9.75</td>
+      <td>1.188926</td>
+      <td>0.501843</td>
     </tr>
   </tbody>
 </table>
@@ -993,13 +989,13 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
   <tbody>
     <tr>
       <th>0</th>
-      <td>4.329884e-17</td>
-      <td>62.106047</td>
-      <td>0.055244</td>
-      <td>1.460235</td>
+      <td>3.610455e-15</td>
+      <td>62.715188</td>
+      <td>0.047433</td>
+      <td>1.469384</td>
       <td>knee</td>
-      <td>13.854732</td>
-      <td>0.011487</td>
+      <td>14.093899</td>
+      <td>0.011292</td>
       <td>0</td>
     </tr>
   </tbody>
@@ -1060,23 +1056,23 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.014136</td>
-      <td>0.889422</td>
-      <td>0.888865</td>
-      <td>-13.534742</td>
-      <td>-9.931232</td>
-      <td>-21.517671</td>
+      <td>0.014386</td>
+      <td>0.887723</td>
+      <td>0.887157</td>
+      <td>-13.429702</td>
+      <td>-19.775835</td>
+      <td>-21.412631</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
     <tr>
       <th>0</th>
-      <td>0.000079</td>
-      <td>0.999383</td>
-      <td>0.999376</td>
-      <td>-32.635077</td>
-      <td>-22.480531</td>
-      <td>-48.600936</td>
+      <td>0.000120</td>
+      <td>0.999062</td>
+      <td>0.999053</td>
+      <td>-30.116565</td>
+      <td>-42.808830</td>
+      <td>-46.082423</td>
       <td>knee</td>
       <td>0</td>
     </tr>
@@ -1085,10 +1081,11 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">ap_k</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;aperiodic_model&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
@@ -1101,44 +1098,6 @@ Text(0.5, 0, &#39;Frequency (Hz)&#39;)
 <div class="output_area docutils container">
 <img alt="../_images/examples_basic_functionality_28_0.png" src="../_images/examples_basic_functionality_28_0.png" />
 </div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ap_k</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-AperiodicFit(aperiodic_params=         Offset       Knee  Exponent_1  Exponent_2 fit_type  \
-0  4.329884e-17  62.106047    0.055244    1.460235     knee
-
-   Knee Frequency (Hz)       tau  ch_name
-0            13.854732  0.011487        0  , gof=        mse        R2   R2_adj.        BIC   BIC_adj.        AIC fit_type  \
-0  0.000079  0.999383  0.999376 -32.635077 -22.480531 -48.600936     knee
-
-   ch_name
-0        0  , model=     Frequency (Hz)  aperiodic_model  ch_name
-0              0.25         0.017346        0
-1              0.50         0.016633        0
-2              0.75         0.016188        0
-3              1.00         0.015846        0
-4              1.25         0.015557        0
-..              ...              ...      ...
-395           99.00         0.000879        0
-396           99.25         0.000876        0
-397           99.50         0.000873        0
-398           99.75         0.000870        0
-399          100.00         0.000867        0
-
-[400 rows x 3 columns])
-</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:

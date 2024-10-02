@@ -415,44 +415,29 @@ document.write(`
 using the Irregular Resampling Autocorrelation (IRASA) algorithm.</p>
 <p>This function is useful for analyzing how the aperiodic and periodic components of the power spectrum
 change over time, providing a time-frequency decomposition of the signal.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>data</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).</p>
-</dd>
-<dt><strong>fs</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></dt><dd><p>Sampling frequency of the data in Hz.</p>
-</dd>
-<dt><strong>ch_names</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code> | <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Channel names associated with the data, if available. Default is None.</p>
-</dd>
-<dt><strong>band</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).</p>
-</dd>
-<dt><strong>win_duration</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.</p>
-</dd>
-<dt><strong>overlap_fraction</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The overlap between the STFT sliding windows as fraction. Default is .99 of the windows.</p>
-</dd>
-<dt><strong>win_func</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Window function to be used in computing the time frequency spectrum. Default is <code class="xref py py-obj docutils literal notranslate"><span class="pre">dsp.windows.hann</span></code>.</p>
-</dd>
-<dt><strong>win_func_kwargs</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">python:dict</span></code> | <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Additional keyword arguments for the window function. Default is None.</p>
-</dd>
-<dt><strong>dpss_settings_time_bandwidth</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Time-bandwidth product for the DPSS windows if used. Default is 2.0.</p>
-</dd>
-<dt><strong>dpss_settings_low_bias</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Keep only tapers with eigenvalues &gt; 0.9. Default is True.</p>
-</dd>
-<dt><strong>dpss_eigenvalue_weighting</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by
-the concentration ratio of their respective tapers before combining. Default is True.</p>
-</dd>
-<dt><strong>filter_settings</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.
-Default is (None, None).</p>
-</dd>
-<dt><strong>hset_info</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).</p>
-</dd>
-<dt><strong>hset_accuracy</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Decimal precision for the resampling factors. Default is 4.</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).</p></li>
+<li><p><strong>fs</strong> (<em>int</em>) – Sampling frequency of the data in Hz.</p></li>
+<li><p><strong>ch_names</strong> (<em>np.ndarray</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Channel names associated with the data, if available. Default is None.</p></li>
+<li><p><strong>band</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).</p></li>
+<li><p><strong>win_duration</strong> (<em>float</em><em>, </em><em>optional</em>) – Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.</p></li>
+<li><p><strong>overlap_fraction</strong> (<em>int</em><em>, </em><em>optional</em>) – The overlap between the STFT sliding windows as fraction. Default is .99 of the windows.</p></li>
+<li><p><strong>win_func</strong> (<em>Callable</em><em>, </em><em>optional</em>) – Window function to be used in computing the time frequency spectrum. Default is <code class="xref py py-obj docutils literal notranslate"><span class="pre">dsp.windows.hann</span></code>.</p></li>
+<li><p><strong>win_func_kwargs</strong> (<em>dict</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Additional keyword arguments for the window function. Default is None.</p></li>
+<li><p><strong>dpss_settings_time_bandwidth</strong> (<em>float</em><em>, </em><em>optional</em>) – Time-bandwidth product for the DPSS windows if used. Default is 2.0.</p></li>
+<li><p><strong>dpss_settings_low_bias</strong> (<em>bool</em><em>, </em><em>optional</em>) – Keep only tapers with eigenvalues &gt; 0.9. Default is True.</p></li>
+<li><p><strong>dpss_eigenvalue_weighting</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by
+the concentration ratio of their respective tapers before combining. Default is True.</p></li>
+<li><p><strong>filter_settings</strong> (<em>tuple</em><em>[</em><em>float</em><em> | </em><em>None</em><em>, </em><em>float</em><em> | </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.
+Default is (None, None).</p></li>
+<li><p><strong>hset_info</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).</p></li>
+<li><p><strong>hset_accuracy</strong> (<em>int</em><em>, </em><em>optional</em>) – Decimal precision for the resampling factors. Default is 4.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">IrasaTfSpectrum</span></code></dt><dd><dl class="simple">
+<dd class="field-even"><p><dl class="simple">
 <dt>An object containing the following attributes:</dt><dd><ul class="simple">
 <li><dl class="simple">
 <dt>freqs: np.ndarray</dt><dd><p>Frequencies corresponding to the computed spectra.</p>
@@ -487,8 +472,10 @@ Default is (None, None).</p>
 </ul>
 </dd>
 </dl>
+</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IrasaTfSpectrum</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

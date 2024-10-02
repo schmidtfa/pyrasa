@@ -417,27 +417,23 @@ as described by Wen &amp; Liu (2016) to decompose the power spectrum of neurophy
 signals into aperiodic (fractal) and periodic (oscillatory) components. It is specifically
 designed for time-series data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">mne.Epochs</span></code> format, making it suitable for event-related
 EEG/MEG analyses.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>data</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mne.Epochs</span></code></span></dt><dd><p>The time-series data used to extract aperiodic and periodic power spectra.
-This should be an instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">mne.Epochs</span></code>.</p>
-</dd>
-<dt><strong>band</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>), <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, default: (1.0, 100.0)</span></dt><dd><p>A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
-for extracting the aperiodic and periodic spectra.</p>
-</dd>
-<dt><strong>hset_info</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>), <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, default: (1.05, 2.0, 0.05)</span></dt><dd><p>Contains the range of up/downsampling factors used in the IRASA algorithm.
-This should be a tuple specifying the (min, max, step) values for the resampling.</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>mne.Epochs</em>) – The time-series data used to extract aperiodic and periodic power spectra.
+This should be an instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">mne.Epochs</span></code>.</p></li>
+<li><p><strong>band</strong> (<em>tuple</em><em> of </em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default:</em><em> (</em><em>1.0</em><em>, </em><em>100.0</em><em>)</em>) – A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
+for extracting the aperiodic and periodic spectra.</p></li>
+<li><p><strong>hset_info</strong> (<em>tuple</em><em> of </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default:</em><em> (</em><em>1.05</em><em>, </em><em>2.0</em><em>, </em><em>0.05</em><em>)</em>) – Contains the range of up/downsampling factors used in the IRASA algorithm.
+This should be a tuple specifying the (min, max, step) values for the resampling.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt><strong>aperiodic</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AperiodicEpochsSpectrum</span></code></span></dt><dd><p>The aperiodic component of the data as an <em class="xref py py-obj">AperiodicEpochsSpectrum</em> object.</p>
-</dd>
-<dt><strong>periodic</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PeriodicEpochsSpectrum</span></code></span></dt><dd><p>The periodic component of the data as a <em class="xref py py-obj">PeriodicEpochsSpectrum</em> object.</p>
-</dd>
-</dl>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>aperiodic</strong> (<em>AperiodicEpochsSpectrum</em>) – The aperiodic component of the data as an <em class="xref py py-obj">AperiodicEpochsSpectrum</em> object.</p></li>
+<li><p><strong>periodic</strong> (<em>PeriodicEpochsSpectrum</em>) – The periodic component of the data as a <em class="xref py py-obj">PeriodicEpochsSpectrum</em> object.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">References</p>

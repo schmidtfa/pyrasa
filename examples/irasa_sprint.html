@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>&lt;no title&gt; &#8212; PyRASA dev documentation</title>
+    <title>Run IRASA timeresolved &#8212; PyRASA dev documentation</title>
   
   
   
@@ -233,10 +233,6 @@ document.write(`
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
 </div>
 
     </header>
@@ -358,7 +354,7 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">&lt;no title&gt;</li>
+    <li class="breadcrumb-item active" aria-current="page">Run IRASA...</li>
   </ul>
 </nav>
 </div>
@@ -375,7 +371,11 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="nbinput nblast docutils container">
+  <section id="Run-IRASA-timeresolved">
+<h1>Run IRASA timeresolved<a class="headerlink" href="#Run-IRASA-timeresolved" title="Link to this heading">#</a></h1>
+<p>One of the original features of IRASA was its applicability in the time-frequency domain (Wen &amp; Liu 2016). The authors used this to investigate changes periodic and aperiodic activity over time and even computed broadband correlations of aperiodic activity over channels across time (see <a class="reference external" href="https://doi.org/10.1523/JNEUROSCI.0187-16.2016">Wen &amp; Liu, 2016</a>). To make this form of analysis more accessible and track aperiodic and periodic changes over time we implemented the irasa_sprint function,
+that similarly to the SPRiNT package (<a class="reference external" href="https://doi.org/10.7554/eLife.77348">Wilson, da Silva Castanheira &amp; Baillet, 2022</a>), enables you to compute periodic and aperiodic spectrograms.</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -403,6 +403,7 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<p>Lets firs generate a signal with some alpha and beta bursts alongside a change in the spectral exponent</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -438,8 +439,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<p>Now we compute a time frequency spectrum using morlet wavelets and additionally decompose the data in the time frequency domain using pyrasa’s <code class="docutils literal notranslate"><span class="pre">irasa_sprint</span></code> function</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -449,17 +451,18 @@ document.write(`
                                 <span class="n">freqs</span><span class="o">=</span><span class="n">freqs</span><span class="p">,</span> <span class="n">n_cycles</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
                                 <span class="p">)</span>
 
-<span class="n">irasa_sprint_spectrum</span> <span class="o">=</span> <span class="n">irasa_sprint</span><span class="p">(</span><span class="n">sim_ts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-                                                       <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-                                                       <span class="n">overlap_fraction</span><span class="o">=</span><span class="mf">.95</span><span class="p">,</span>
-                                                       <span class="n">win_duration</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span>
-                                                       <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
-                                                       <span class="n">win_func</span><span class="o">=</span><span class="n">dsp</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">hann</span><span class="p">)</span>
+<span class="n">irasa_sprint_spectrum</span> <span class="o">=</span> <span class="n">irasa_sprint</span><span class="p">(</span><span class="n">sim_ts</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+                                        <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+                                        <span class="n">overlap_fraction</span><span class="o">=</span><span class="mf">.95</span><span class="p">,</span>
+                                        <span class="n">win_duration</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span>
+                                        <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+                                        <span class="n">win_func</span><span class="o">=</span><span class="n">dsp</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">hann</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<p>When we now plot the data we can see that we have nicely seperated our prediodic and aperiodic spectra in time</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#%%</span>
@@ -475,199 +478,21 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_irasa_sprint_3_0.png" src="../_images/examples_irasa_sprint_3_0.png" />
+<img alt="../_images/examples_irasa_sprint_7_0.png" src="../_images/examples_irasa_sprint_7_0.png" />
 </div>
 </div>
+<p>Now we can specify an aperiodic model and fit it to our aperiodic spectrogram</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ap_spec</span> <span class="o">=</span> <span class="n">irasa_sprint_spectrum</span><span class="o">.</span><span class="n">fit_aperiodic_model</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<p>We can visualize the aperiodic changes alongside the goodness of fit, to see whether its matching our expectations</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ap_spec</span><span class="o">.</span><span class="n">gof</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>mse</th>
-      <th>R2</th>
-      <th>R2_adj.</th>
-      <th>BIC</th>
-      <th>BIC_adj.</th>
-      <th>AIC</th>
-      <th>fit_type</th>
-      <th>ch_name</th>
-      <th>time</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0.015514</td>
-      <td>0.953981</td>
-      <td>0.953012</td>
-      <td>-9.931150</td>
-      <td>-16.246852</td>
-      <td>-15.101085</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>0.000</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.012203</td>
-      <td>0.960979</td>
-      <td>0.960157</td>
-      <td>-11.031624</td>
-      <td>-17.347327</td>
-      <td>-16.201559</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>0.024</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.008988</td>
-      <td>0.968400</td>
-      <td>0.967735</td>
-      <td>-12.433772</td>
-      <td>-18.749474</td>
-      <td>-17.603707</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>0.048</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.006437</td>
-      <td>0.974351</td>
-      <td>0.973811</td>
-      <td>-13.964397</td>
-      <td>-20.280099</td>
-      <td>-19.134332</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>0.072</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.004351</td>
-      <td>0.980156</td>
-      <td>0.979738</td>
-      <td>-15.760302</td>
-      <td>-22.076004</td>
-      <td>-20.930237</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>0.096</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.008244</td>
-      <td>0.980839</td>
-      <td>0.980435</td>
-      <td>-12.829907</td>
-      <td>-19.145609</td>
-      <td>-17.999842</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>14.880</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.008216</td>
-      <td>0.980993</td>
-      <td>0.980593</td>
-      <td>-12.845634</td>
-      <td>-19.161336</td>
-      <td>-18.015569</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>14.904</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.008778</td>
-      <td>0.979619</td>
-      <td>0.979190</td>
-      <td>-12.542240</td>
-      <td>-18.857942</td>
-      <td>-17.712175</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>14.928</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.008554</td>
-      <td>0.979376</td>
-      <td>0.978942</td>
-      <td>-12.660913</td>
-      <td>-18.976615</td>
-      <td>-17.830848</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>14.952</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.009013</td>
-      <td>0.978229</td>
-      <td>0.977771</td>
-      <td>-12.420829</td>
-      <td>-18.736531</td>
-      <td>-17.590764</td>
-      <td>fixed</td>
-      <td>0</td>
-      <td>14.976</td>
-    </tr>
-  </tbody>
-</table>
-<p>625 rows × 9 columns</p>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
@@ -690,11 +515,12 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_irasa_sprint_6_0.png" src="../_images/examples_irasa_sprint_6_0.png" />
+<img alt="../_images/examples_irasa_sprint_11_0.png" src="../_images/examples_irasa_sprint_11_0.png" />
 </div>
 </div>
+<p>Similarly we can extract our peaks or putatively oscillatory activity in time, by using the <code class="docutils literal notranslate"><span class="pre">get_peaks</span></code> method</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">peaks_spec</span> <span class="o">=</span> <span class="n">irasa_sprint_spectrum</span><span class="o">.</span><span class="n">get_peaks</span><span class="p">(</span><span class="n">cut_spectrum</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span>
@@ -707,7 +533,7 @@ document.write(`
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
@@ -727,11 +553,12 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_irasa_sprint_8_0.png" src="../_images/examples_irasa_sprint_8_0.png" />
+<img alt="../_images/examples_irasa_sprint_14_0.png" src="../_images/examples_irasa_sprint_14_0.png" />
 </div>
 </div>
+<p>We can further check whether the number of extracted peaks matches our expectations. Looks pretty good to me :)</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrasa.utils.peak_utils</span> <span class="kn">import</span> <span class="n">get_band_info</span>
@@ -788,7 +615,7 @@ document.write(`
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_irasa_sprint_9_0.png" src="../_images/examples_irasa_sprint_9_0.png" />
+<img alt="../_images/examples_irasa_sprint_16_0.png" src="../_images/examples_irasa_sprint_16_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -815,6 +642,7 @@ document.write(`
 </pre></div>
 </div>
 </div>
+</section>
 
 
                 </article>
@@ -832,23 +660,6 @@ document.write(`
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="simple visible nav section-nav flex-column">
-</ul>
-
-  </nav></div>
-
-</div></div>
               
             
           </div>

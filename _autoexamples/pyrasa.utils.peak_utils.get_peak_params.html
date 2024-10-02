@@ -415,50 +415,40 @@ document.write(`
 <p>This function identifies and extracts peak parameters such as center frequency (cf), bandwidth (bw),
 and peak height (pw) from a periodic spectrum using scipy’s find_peaks function.
 The spectrum can be optionally smoothed prior peak detection.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>periodic_spectrum</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>1D or 2D array containing power values of the periodic spectrum (shape: [Channels, Frequencies]
-or [Frequencies]).</p>
-</dd>
-<dt><strong>freqs</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>1D array containing frequency values corresponding to the periodic spectrum.</p>
-</dd>
-<dt><strong>ch_names</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code> or <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>List of channel names corresponding to the periodic spectrum. If None, channels are labeled numerically.
-Default is None.</p>
-</dd>
-<dt><strong>smooth</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
-better identifying peaks. Default is True.</p>
-</dd>
-<dt><strong>smoothing_window</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.</p>
-</dd>
-<dt><strong>polyorder</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
-less than the window length. Default is 1.</p>
-</dd>
-<dt><strong>cut_spectrum</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) <code class="xref py py-obj docutils literal notranslate"><span class="pre">or</span></code> <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
-before peak extraction. If None, peaks are detected across the full frequency range. Default is None.</p>
-</dd>
-<dt><strong>peak_threshold</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
-filtered spectrum. Default is 1.0.</p>
-</dd>
-<dt><strong>min_peak_height</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>periodic_spectrum</strong> (<em>np.ndarray</em>) – 1D or 2D array containing power values of the periodic spectrum (shape: [Channels, Frequencies]
+or [Frequencies]).</p></li>
+<li><p><strong>freqs</strong> (<em>np.ndarray</em>) – 1D array containing frequency values corresponding to the periodic spectrum.</p></li>
+<li><p><strong>ch_names</strong> (<em>Iterable</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – List of channel names corresponding to the periodic spectrum. If None, channels are labeled numerically.
+Default is None.</p></li>
+<li><p><strong>smooth</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
+better identifying peaks. Default is True.</p></li>
+<li><p><strong>smoothing_window</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>optional</em>) – The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.</p></li>
+<li><p><strong>polyorder</strong> (<em>int</em><em>, </em><em>optional</em>) – The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
+less than the window length. Default is 1.</p></li>
+<li><p><strong>cut_spectrum</strong> (<em>tuple</em><em> of </em><em>(</em><em>float</em><em>, </em><em>float</em><em>) or </em><em>None</em><em>, </em><em>optional</em>) – Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
+before peak extraction. If None, peaks are detected across the full frequency range. Default is None.</p></li>
+<li><p><strong>peak_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
+filtered spectrum. Default is 1.0.</p></li>
+<li><p><strong>min_peak_height</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
 This can be useful for filtering out noise or insignificant peaks, especially when a “knee” is present
-in the original data, which may persist in the periodic spectrum. Default is 0.01.</p>
-</dd>
-<dt><strong>peak_width_limits</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>), <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
-meaningful features. Default is (0.5, 12.0).</p>
-</dd>
-</dl>
+in the original data, which may persist in the periodic spectrum. Default is 0.01.</p></li>
+<li><p><strong>peak_width_limits</strong> (<em>tuple</em><em> of </em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em>) – The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
+meaningful features. Default is (0.5, 12.0).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pd.DataFrame</span></code></dt><dd><p>A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
+<dd class="field-even"><p>A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
 following columns:
 - ‘ch_name’: Channel name
 - ‘cf’: Center frequency of the peak
 - ‘bw’: Bandwidth of the peak
 - ‘pw’: Peak height (power)</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

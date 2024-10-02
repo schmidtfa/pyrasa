@@ -414,59 +414,148 @@ document.write(`
 <dd><p>Abstract base class for fitting functions used to model aperiodic spectra.</p>
 <p>This class provides a framework for defining and fitting models to aperiodic spectra.
 It handles common functionality required for fitting a model, such as scaling and goodness-of-fit
-computation. Subclasses should implement the <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> method to define the specific fitting function
+computation. Subclasses should implement the <a class="reference internal" href="#pyrasa.utils.fit_funcs.AbstractFitFun.func" title="pyrasa.utils.fit_funcs.AbstractFitFun.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code></a> method to define the specific fitting function
 used for curve fitting.</p>
-<dl class="field-list">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.freq">
+<span class="sig-name descname"><span class="pre">freq</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.freq" title="Link to this definition">#</a></dt>
+<dd><p>The frequency values associated with the aperiodic spectrum data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.aperiodic_spectrum">
+<span class="sig-name descname"><span class="pre">aperiodic_spectrum</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.aperiodic_spectrum" title="Link to this definition">#</a></dt>
+<dd><p>The aperiodic spectrum data to which the model will be fit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.scale_factor">
+<span class="sig-name descname"><span class="pre">scale_factor</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.scale_factor" title="Link to this definition">#</a></dt>
+<dd><p>A scaling factor used to adjust the fit results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.label" title="Link to this definition">#</a></dt>
+<dd><p>A label to identify the type of fit or model used. Default is ‘custom’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ClassVar[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.log10_aperiodic">
+<span class="sig-name descname"><span class="pre">log10_aperiodic</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.log10_aperiodic" title="Link to this definition">#</a></dt>
+<dd><p>If True, the aperiodic spectrum values will be transformed using log10. Default is False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ClassVar[bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.log10_freq">
+<span class="sig-name descname"><span class="pre">log10_freq</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.log10_freq" title="Link to this definition">#</a></dt>
+<dd><p>If True, the frequency values will be transformed using log10. Default is False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ClassVar[bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.__attrs_post_init__">
+<span class="sig-name descname"><span class="pre">__attrs_post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#AbstractFitFun.__attrs_post_init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.__attrs_post_init__" title="Link to this definition">#</a></dt>
+<dd><p>Post-initialization method to apply log10 transformations if specified.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.func">
+<span class="sig-name descname"><span class="pre">func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x:</span> <span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">\*args:</span> <span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#AbstractFitFun.func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.func" title="Link to this definition">#</a></dt>
+<dd><p>Abstract method to define the model function. Must be implemented by subclasses
+and should be applicable to scipy.optimize.curve_fit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.curve_kwargs">
+<span class="sig-name descname"><span class="pre">curve_kwargs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.curve_kwargs" title="Link to this definition">#</a></dt>
+<dd><p>Returns keyword arguments for the curve fitting process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.add_infos_to_df">
+<span class="sig-name descname"><span class="pre">add_infos_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#AbstractFitFun.add_infos_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.add_infos_to_df" title="Link to this definition">#</a></dt>
+<dd><p>Method to add additional information to the parameters DataFrame. Can be overridden by subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.handle_scaling">
+<span class="sig-name descname"><span class="pre">handle_scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#AbstractFitFun.handle_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.handle_scaling" title="Link to this definition">#</a></dt>
+<dd><p>Adjusts the parameters DataFrame based on the scaling factor. Can be overridden by subclasses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.fit_func">
+<span class="sig-name descname"><span class="pre">fit_func</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#AbstractFitFun.fit_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.fit_func" title="Link to this definition">#</a></dt>
+<dd><p>Fits the model to the data and returns DataFrames containing the model parameters and goodness-of-fit metrics.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Subclasses must implement the <a class="reference internal" href="#pyrasa.utils.fit_funcs.AbstractFitFun.func" title="pyrasa.utils.fit_funcs.AbstractFitFun.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code></a> method to define the model’s functional form.</p></li>
+<li><p>The <a class="reference internal" href="#pyrasa.utils.fit_funcs.AbstractFitFun.curve_kwargs" title="pyrasa.utils.fit_funcs.AbstractFitFun.curve_kwargs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_kwargs</span></code></a> method can be overridden to customize curve fitting options.</p></li>
+<li><p>The <a class="reference internal" href="#pyrasa.utils.fit_funcs.AbstractFitFun.add_infos_to_df" title="pyrasa.utils.fit_funcs.AbstractFitFun.add_infos_to_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_infos_to_df</span></code></a> and <a class="reference internal" href="#pyrasa.utils.fit_funcs.AbstractFitFun.handle_scaling" title="pyrasa.utils.fit_funcs.AbstractFitFun.handle_scaling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_scaling</span></code></a> methods are intended to be overridden if additional
+functionality or specific scaling behavior is required.</p></li>
+</ul>
+<p class="rubric">References</p>
+<p>For details on goodness-of-fit metrics and their calculations, see the documentation for <code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_gof</span></code>.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>freq</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>The frequency values associated with the aperiodic spectrum data.</p>
-</dd>
-<dt><strong>aperiodic_spectrum</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>The aperiodic spectrum data to which the model will be fit.</p>
-</dd>
-<dt><strong>scale_factor</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></dt><dd><p>A scaling factor used to adjust the fit results.</p>
-</dd>
-<dt><strong>label</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassVar</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">python:str</span></code>]</span></dt><dd><p>A label to identify the type of fit or model used. Default is ‘custom’.</p>
-</dd>
-<dt><strong>log10_aperiodic</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassVar</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</span></dt><dd><p>If True, the aperiodic spectrum values will be transformed using log10. Default is False.</p>
-</dd>
-<dt><strong>log10_freq</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassVar</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</span></dt><dd><p>If True, the frequency values will be transformed using log10. Default is False.</p>
-</dd>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>aperiodic_spectrum</strong></dt><dd></dd>
+<dt><strong>curve_kwargs</strong></dt><dd></dd>
+<dt><strong>freq</strong></dt><dd></dd>
+<dt><strong>scale_factor</strong></dt><dd></dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
-<tr class="row-odd"><td><p><strong>__attrs_post_init__()</strong></p></td>
-<td><p>Post-initialization method to apply log10 transformations if specified.</p></td>
+<tr class="row-odd"><td><p><strong>add_infos_to_df</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><strong>func(x: np.ndarray, *args: float) -&gt; np.ndarray</strong></p></td>
-<td><p>Abstract method to define the model function. Must be implemented by subclasses and should be applicable to scipy.optimize.curve_fit.</p></td>
+<tr class="row-even"><td><p><strong>fit_func</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>curve_kwargs() -&gt; dict[str, Any]</strong></p></td>
-<td><p>Returns keyword arguments for the curve fitting process.</p></td>
+<tr class="row-odd"><td><p><strong>func</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><strong>add_infos_to_df(df_params: pd.DataFrame) -&gt; pd.DataFrame</strong></p></td>
-<td><p>Method to add additional information to the parameters DataFrame. Can be overridden by subclasses.</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>handle_scaling(df_params: pd.DataFrame, scale_factor: float) -&gt; pd.DataFrame</strong></p></td>
-<td><p>Adjusts the parameters DataFrame based on the scaling factor. Can be overridden by subclasses.</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>fit_func() -&gt; tuple[pd.DataFrame, pd.DataFrame]</strong></p></td>
-<td><p>Fits the model to the data and returns DataFrames containing the model parameters and goodness-of-fit metrics.</p></td>
+<tr class="row-even"><td><p><strong>handle_scaling</strong></p></td>
+<td></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>Subclasses must implement the <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> method to define the model’s functional form.</p></li>
-<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_kwargs</span></code> method can be overridden to customize curve fitting options.</p></li>
-<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">add_infos_to_df</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">handle_scaling</span></code> methods are intended to be overridden if additional
-functionality or specific scaling behavior is required.</p></li>
-</ul>
-<p class="rubric">References</p>
-<p>For details on goodness-of-fit metrics and their calculations, see the documentation for <code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_gof</span></code>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.AbstractFitFun.__hash__">
 <span class="sig-name descname"><span class="pre">__hash__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyrasa.utils.fit_funcs.AbstractFitFun.__hash__" title="Link to this definition">#</a></dt>
@@ -523,6 +612,18 @@ functionality or specific scaling behavior is required.</p></li>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.freq"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.freq</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.aperiodic_spectrum"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.aperiodic_spectrum</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.scale_factor"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.scale_factor</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.label"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.label</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.log10_aperiodic"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.log10_aperiodic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.log10_freq"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.log10_freq</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.__attrs_post_init__"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.__attrs_post_init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.func"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.func()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.curve_kwargs"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.curve_kwargs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.add_infos_to_df"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.add_infos_to_df()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.handle_scaling"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.handle_scaling()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.fit_func"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.fit_func()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.AbstractFitFun.__hash__"><code class="docutils literal notranslate"><span class="pre">AbstractFitFun.__hash__</span></code></a></li>
 </ul>
 </li>

@@ -414,25 +414,21 @@ document.write(`
 <p>This function filters peaks found in the periodic spectrum or spectrogram to those within
 a specified frequency range.It ensures that every channel is represented in the output,
 filling in missing channels (i.e., channels without detected peaks in the specified range) with NaN values.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>df_peaks</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pd.DataFrame</span></code></span></dt><dd><p>DataFrame containing peak parameters obtained from the <a class="reference internal" href="pyrasa.utils.peak_utils.get_peak_params.html#pyrasa.utils.peak_utils.get_peak_params" title="pyrasa.utils.peak_utils.get_peak_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_peak_params</span></code></a> function.
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_peaks</strong> (<em>pd.DataFrame</em>) – DataFrame containing peak parameters obtained from the <a class="reference internal" href="pyrasa.utils.peak_utils.get_peak_params.html#pyrasa.utils.peak_utils.get_peak_params" title="pyrasa.utils.peak_utils.get_peak_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_peak_params</span></code></a> function.
 The DataFrame should include columns for ‘ch_name’ (channel name), ‘cf’ (center frequency),
-‘bw’ (bandwidth), and ‘pw’ (peak height).</p>
-</dd>
-<dt><strong>freq_range</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</span></dt><dd><p>Tuple specifying the lower and upper frequency bounds (in Hz) to filter peaks by. Only peaks
-with center frequencies (cf) within this range will be included in the output.</p>
-</dd>
-<dt><strong>ch_names</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span></dt><dd><p>List of channel names used in the computation of the periodic spectrum. This list ensures that
+‘bw’ (bandwidth), and ‘pw’ (peak height).</p></li>
+<li><p><strong>freq_range</strong> (<em>tuple</em><em> of </em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Tuple specifying the lower and upper frequency bounds (in Hz) to filter peaks by. Only peaks
+with center frequencies (cf) within this range will be included in the output.</p></li>
+<li><p><strong>ch_names</strong> (<em>list</em>) – List of channel names used in the computation of the periodic spectrum. This list ensures that
 every channel is accounted for in the output, even if no peaks were found in the specified range
-for certain channels.</p>
-</dd>
-</dl>
+for certain channels.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">pd.DataFrame</span></code></dt><dd><p>DataFrame containing the peak parameters (‘cf’, ‘bw’, ‘pw’) for each channel within the specified
+<dd class="field-even"><p>DataFrame containing the peak parameters (‘cf’, ‘bw’, ‘pw’) for each channel within the specified
 frequency range. Channels without detected peaks in this range will have NaN values for these parameters.
 The DataFrame includes:
 - ‘ch_name’: Channel name
@@ -440,7 +436,8 @@ The DataFrame includes:
 - ‘bw’: Bandwidth of the peak within the specified range
 - ‘pw’: Peak height (power) within the specified range</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

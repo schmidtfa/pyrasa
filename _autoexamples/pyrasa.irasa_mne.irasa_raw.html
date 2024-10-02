@@ -416,30 +416,24 @@ document.write(`
 as described by Wen &amp; Liu (2016) to decompose the power spectrum of neurophysiological
 signals into aperiodic (fractal) and periodic (oscillatory) components. This function is
 essentially a wrapper function for <a class="reference internal" href="../api.html#module-pyrasa.irasa" title="pyrasa.irasa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyrasa.irasa</span></code></a></p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>data</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mne.io.Raw</span></code></span></dt><dd><p>The time-series data from which the aperiodic and periodic power spectra are extracted.
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>mne.io.Raw</em>) – The time-series data from which the aperiodic and periodic power spectra are extracted.
 This should be an instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">mne.io.Raw</span></code>. The function will automatically extract
 relevant parameters such as sampling frequency (<em class="xref py py-obj">sfreq</em>) and filtering settings from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">mne</span></code> object
-to make sure the model is specified correctly.</p>
-</dd>
-<dt><strong>band</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>), <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, default: (1.0, 100.0)</span></dt><dd><p>A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
-for extracting the aperiodic and periodic spectra.</p>
-</dd>
-<dt><strong>duration</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">required</span></code></span></dt><dd><p>The duration (in seconds) of each segment used to calculate the power spectral density (PSD).
-This must be less than the total duration of the data.</p>
-</dd>
-<dt><strong>overlap</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, default: 50</span></dt><dd><p>The overlap between segments, specified as a percentage (0-100).</p>
-</dd>
-<dt><strong>hset_info</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> of (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>), <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code>, default: (1.05, 2.0, 0.05)</span></dt><dd><p>Contains the range of up/downsampling factors used in the IRASA algorithm.
-This should be a tuple specifying the (min, max, step) values for the resampling.</p>
-</dd>
-</dl>
+to make sure the model is specified correctly.</p></li>
+<li><p><strong>band</strong> (<em>tuple</em><em> of </em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default:</em><em> (</em><em>1.0</em><em>, </em><em>100.0</em><em>)</em>) – A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
+for extracting the aperiodic and periodic spectra.</p></li>
+<li><p><strong>duration</strong> (<em>float</em><em>, </em><em>required</em>) – The duration (in seconds) of each segment used to calculate the power spectral density (PSD).
+This must be less than the total duration of the data.</p></li>
+<li><p><strong>overlap</strong> (<em>float</em><em> or </em><em>int</em><em>, </em><em>optional</em><em>, </em><em>default: 50</em>) – The overlap between segments, specified as a percentage (0-100).</p></li>
+<li><p><strong>hset_info</strong> (<em>tuple</em><em> of </em><em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em><em>, </em><em>optional</em><em>, </em><em>default:</em><em> (</em><em>1.05</em><em>, </em><em>2.0</em><em>, </em><em>0.05</em><em>)</em>) – Contains the range of up/downsampling factors used in the IRASA algorithm.
+This should be a tuple specifying the (min, max, step) values for the resampling.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">IrasaRaw</span></code></dt><dd><p>A custom object containing the separated aperiodic and periodic components of the data:
+<dd class="field-even"><p><p>A custom object containing the separated aperiodic and periodic components of the data:
 - <em class="xref py py-obj">periodic</em>: An instance of <em class="xref py py-obj">PeriodicSpectrumArray</em>, which includes the periodic</p>
 <blockquote>
 <div><p>(oscillatory) component of the power spectrum.</p>
@@ -448,10 +442,16 @@ This should be a tuple specifying the (min, max, step) values for the resampling
 <li><p><em class="xref py py-obj">aperiodic</em>: An instance of <em class="xref py py-obj">AperiodicSpectrumArray</em>, which includes the aperiodic
 (fractal) component of the power spectrum.</p></li>
 </ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IrasaRaw</p>
 </dd>
 </dl>
-</dd>
-</dl>
+<p class="rubric">References</p>
+<p>Wen, H., &amp; Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
+of Neurophysiological Signal. Brain Topography, 29(1), 13–26.
+<a class="reference external" href="https://doi.org/10.1007/s10548-015-0448-0">https://doi.org/10.1007/s10548-015-0448-0</a></p>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>Ensure that <em class="xref py py-obj">data</em> does not contain any bad channels (<em class="xref py py-obj">data.info[‘bads’]</em> should be empty),
@@ -461,10 +461,6 @@ and sufficient data for analysis. A value between 0 and 100% is valid.</p></li>
 <li><p>The function will raise assertions if the input parameters are not consistent with the
 expected formats or if the provided <em class="xref py py-obj">duration</em> exceeds the length of the data.</p></li>
 </ul>
-<p class="rubric">References</p>
-<p>Wen, H., &amp; Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
-of Neurophysiological Signal. Brain Topography, 29(1), 13–26.
-<a class="reference external" href="https://doi.org/10.1007/s10548-015-0448-0">https://doi.org/10.1007/s10548-015-0448-0</a></p>
 </dd></dl>
 
 <span class="target" id="sphx-glr-backreferences-pyrasa-irasa-mne-irasa-raw"></span></section>

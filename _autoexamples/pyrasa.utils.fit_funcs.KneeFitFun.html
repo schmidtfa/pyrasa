@@ -416,27 +416,75 @@ document.write(`
 using a function that includes a spectral knee. This model is particularly useful for
 cases where the aperiodic component of the spectrum has a break or knee, representing
 a transition between two different spectral slopes.</p>
-<dl class="field-list">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.KneeFitFun.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.KneeFitFun.label" title="Link to this definition">#</a></dt>
+<dd><p>A label to identify this fitting model. Default is ‘knee’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.KneeFitFun.log10_aperiodic">
+<span class="sig-name descname"><span class="pre">log10_aperiodic</span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.KneeFitFun.log10_aperiodic" title="Link to this definition">#</a></dt>
+<dd><p>Indicates whether to log-transform the aperiodic spectrum. Default is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.KneeFitFun.func">
+<span class="sig-name descname"><span class="pre">func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Knee</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exponent_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exponent_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">np.ndarray</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#KneeFitFun.func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.KneeFitFun.func" title="Link to this definition">#</a></dt>
+<dd><p>Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.KneeFitFun.add_infos_to_df">
+<span class="sig-name descname"><span class="pre">add_infos_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#KneeFitFun.add_infos_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.KneeFitFun.add_infos_to_df" title="Link to this definition">#</a></dt>
+<dd><p>Adds calculated knee frequency to the DataFrame of fit parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.KneeFitFun.curve_kwargs">
+<span class="sig-name descname"><span class="pre">curve_kwargs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyrasa.utils.fit_funcs.KneeFitFun.curve_kwargs" title="Link to this definition">#</a></dt>
+<dd><p>Generates initial guess parameters and other keyword arguments for curve fitting.</p>
+</dd></dl>
+
+<dl class="field-list simple">
 <dt class="field-odd">Attributes<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>label</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">python:str</span></code></span></dt><dd><p>A label to identify this fitting model. Default is ‘knee’.</p>
-</dd>
-<dt><strong>log10_aperiodic</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></dt><dd><p>Indicates whether to log-transform the aperiodic spectrum. Default is True.</p>
-</dd>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>aperiodic_spectrum</strong></dt><dd></dd>
+<dt><strong>curve_kwargs</strong></dt><dd></dd>
+<dt><strong>freq</strong></dt><dd></dd>
+<dt><strong>scale_factor</strong></dt><dd></dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="pyrasa.utils.fit_funcs.KneeFitFun.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code></a>(x, Offset, Knee, Exponent_1, Exponent_2)</p></td>
+<td><p>Model aperiodic activity with a spectral knee and a pre-knee slope.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
-<tr class="row-odd"><td><p><strong>func(x: np.ndarray, Offset: float, Knee: float, Exponent_1: float, Exponent_2: float) -&gt; np.ndarray</strong></p></td>
-<td><p>Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.</p></td>
+<tr class="row-odd"><td><p><strong>add_infos_to_df</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><strong>add_infos_to_df(df_params: pd.DataFrame) -&gt; pd.DataFrame</strong></p></td>
-<td><p>Adds calculated knee frequency to the DataFrame of fit parameters.</p></td>
+<tr class="row-even"><td><p><strong>fit_func</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><strong>curve_kwargs() -&gt; dict[str, Any]</strong></p></td>
-<td><p>Generates initial guess parameters and other keyword arguments for curve fitting.</p></td>
+<tr class="row-odd"><td><p><strong>handle_scaling</strong></p></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -447,8 +495,8 @@ a transition between two different spectral slopes.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrasa.utils.fit_funcs.KneeFitFun.func">
-<span class="sig-name descname"><span class="pre">func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Knee</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exponent_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exponent_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#KneeFitFun.func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrasa.utils.fit_funcs.KneeFitFun.func" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Knee</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exponent_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exponent_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/pyrasa/utils/fit_funcs.html#KneeFitFun.func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Model aperiodic activity with a spectral knee and a pre-knee slope.
 Use this to model aperiodic activity with a spectral knee</p>
 </dd></dl>
@@ -504,8 +552,13 @@ Use this to model aperiodic activity with a spectral knee</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun"><code class="docutils literal notranslate"><span class="pre">KneeFitFun</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.__hash__"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.__hash__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.label"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.label</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.log10_aperiodic"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.log10_aperiodic</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.func"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.func()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.add_infos_to_df"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.add_infos_to_df()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.curve_kwargs"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.curve_kwargs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pyrasa.utils.fit_funcs.KneeFitFun.__hash__"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.__hash__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">KneeFitFun.func()</span></code></a></li>
 </ul>
 </li>
 </ul>

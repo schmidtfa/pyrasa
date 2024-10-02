@@ -377,7 +377,7 @@ document.write(`
 can also import the class <code class="docutils literal notranslate"><span class="pre">AbstractFitFun</span></code> from <code class="docutils literal notranslate"><span class="pre">pyrasa.utils.fit_funcs</span></code> and inherit from it. Below we will illustrate how this is done and how the resultant child class can be used as a Custom fit function to model aperiodic signals.</p>
 <p>First we simulated a signal with a spectral exponent of 1.5</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">dsp</span>
@@ -402,7 +402,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div>
 <p>Now we need to simply overwrite the func method and enter it as a fit_func to either the <code class="docutils literal notranslate"><span class="pre">compute_slope</span></code> function imported from<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">pyrasa.utils.aperiodic_utils</span></code>. Or we can use the method of the <code class="docutils literal notranslate"><span class="pre">IrasaSpectrum</span></code> returned by the <code class="docutils literal notranslate"><span class="pre">pyrasa.irasa</span></code> function.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="k">class</span> <span class="nc">CustomFitFun</span><span class="p">(</span><span class="n">AbstractFitFun</span><span class="p">):</span>
@@ -424,7 +424,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">slope_fit</span><span class="o">.</span><span class="n">aperiodic_params</span>
@@ -432,7 +432,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -463,8 +463,8 @@ can also import the class <code class="docutils literal notranslate"><span class
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.111201</td>
-      <td>1.510531</td>
+      <td>-1.246405</td>
+      <td>1.480257</td>
       <td>custom</td>
       <td>0</td>
     </tr>
@@ -473,7 +473,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">slope_fit_2</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">f_range</span><span class="p">,</span> <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">fs</span><span class="p">})</span><span class="o">.</span><span class="n">fit_aperiodic_model</span><span class="p">(</span><span class="n">fit_func</span><span class="o">=</span><span class="n">CustomFitFun</span><span class="p">)</span>
@@ -481,7 +481,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">slope_fit_2</span><span class="o">.</span><span class="n">aperiodic_params</span>
@@ -489,7 +489,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -520,8 +520,8 @@ can also import the class <code class="docutils literal notranslate"><span class
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.125121</td>
-      <td>1.500167</td>
+      <td>-1.237573</td>
+      <td>1.483932</td>
       <td>custom</td>
       <td>0</td>
     </tr>
@@ -530,7 +530,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">slope_fit</span><span class="o">.</span><span class="n">gof</span><span class="p">,</span>
@@ -539,7 +539,7 @@ can also import the class <code class="docutils literal notranslate"><span class
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -562,8 +562,10 @@ can also import the class <code class="docutils literal notranslate"><span class
     <tr style="text-align: right;">
       <th></th>
       <th>mse</th>
-      <th>r_squared</th>
+      <th>R2</th>
+      <th>R2_adj.</th>
       <th>BIC</th>
+      <th>BIC_adj.</th>
       <th>AIC</th>
       <th>fit_type</th>
       <th>ch_name</th>
@@ -572,19 +574,23 @@ can also import the class <code class="docutils literal notranslate"><span class
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.007469</td>
-      <td>0.978620</td>
-      <td>-2900.899570</td>
-      <td>-2909.676693</td>
+      <td>0.006865</td>
+      <td>0.979519</td>
+      <td>0.979450</td>
+      <td>-19.046324</td>
+      <td>-25.395720</td>
+      <td>-27.823447</td>
       <td>custom</td>
       <td>0</td>
     </tr>
     <tr>
       <th>0</th>
-      <td>0.000350</td>
-      <td>0.998963</td>
-      <td>-4721.685378</td>
-      <td>-4730.462501</td>
+      <td>0.000361</td>
+      <td>0.998907</td>
+      <td>0.998903</td>
+      <td>-37.861877</td>
+      <td>-44.211273</td>
+      <td>-46.638999</td>
       <td>custom</td>
       <td>0</td>
     </tr>

@@ -416,32 +416,25 @@ document.write(`
 choose between a fixed or knee model fit or specify their own fit method see examples custom_fit_functions.ipynb
 for an example. The function returns the fitted parameters for each channel along with some
 goodness of fit metrics.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>aperiodic_spectrum</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>A 1 or 2D array of power values for the aperiodic spectrum where the shape is
-expected to be either (Samples,) or (Channels, Samples).</p>
-</dd>
-<dt><strong>freqs</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></span></dt><dd><p>A 1D array of frequency values corresponding to the aperiodic spectrum.</p>
-</dd>
-<dt><strong>fit_func</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">python:str</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">AbstractFitFun</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The fitting function to use. Can be “fixed” for a linear fit or “knee” for a fit that includes a
-knee (bend) in the spectrum or a class that is inherited from AbstractFitFun. The default is ‘fixed’.</p>
-</dd>
-<dt><strong>ch_names</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code> or <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Channel names corresponding to the aperiodic spectrum. If None, channels will be named numerically
-in ascending order. Default is None.</p>
-</dd>
-<dt><strong>scale</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Whether to scale the data to improve fitting accuracy. This is useful in cases where
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aperiodic_spectrum</strong> (<em>np.ndarray</em>) – A 1 or 2D array of power values for the aperiodic spectrum where the shape is
+expected to be either (Samples,) or (Channels, Samples).</p></li>
+<li><p><strong>freqs</strong> (<em>np.ndarray</em>) – A 1D array of frequency values corresponding to the aperiodic spectrum.</p></li>
+<li><p><strong>fit_func</strong> (<em>str</em><em> or </em><em>type</em><em>[</em><a class="reference internal" href="pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun" title="pyrasa.utils.fit_funcs.AbstractFitFun"><em>AbstractFitFun</em></a><em>]</em><em>, </em><em>optional</em>) – The fitting function to use. Can be “fixed” for a linear fit or “knee” for a fit that includes a
+knee (bend) in the spectrum or a class that is inherited from AbstractFitFun. The default is ‘fixed’.</p></li>
+<li><p><strong>ch_names</strong> (<em>Iterable</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Channel names corresponding to the aperiodic spectrum. If None, channels will be named numerically
+in ascending order. Default is None.</p></li>
+<li><p><strong>scale</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to scale the data to improve fitting accuracy. This is useful in cases where
 power values are very small (e.g., 1e-28), which may lead to numerical precision issues during fitting.
-After fitting, the parameters are rescaled to match the original data scale. Default is False.</p>
-</dd>
-<dt><strong>fit_bounds</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] <code class="xref py py-obj docutils literal notranslate"><span class="pre">or</span></code> <code class="xref py py-data docutils literal notranslate"><span class="pre">python:None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Tuple specifying the lower and upper frequency bounds for the fit function. If None, the entire frequency
-range is used. Otherwise, the spectrum is cropped to the specified bounds. Default is None.</p>
-</dd>
-</dl>
+After fitting, the parameters are rescaled to match the original data scale. Default is False.</p></li>
+<li><p><strong>fit_bounds</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>] or </em><em>None</em><em>, </em><em>optional</em>) – Tuple specifying the lower and upper frequency bounds for the fit function. If None, the entire frequency
+range is used. Otherwise, the spectrum is cropped to the specified bounds. Default is None.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">AperiodicFit</span></code></dt><dd><dl class="simple">
+<dd class="field-even"><p><dl class="simple">
 <dt>An object containing three pandas DataFrames:</dt><dd><ul class="simple">
 <li><dl class="simple">
 <dt>aperiodic_params<span class="classifier">pd.DataFrame</span></dt><dd><p>A DataFrame containing the fitted aperiodic parameters for each channel.</p>
@@ -461,8 +454,10 @@ range is used. Otherwise, the spectrum is cropped to the specified bounds. Defau
 </ul>
 </dd>
 </dl>
+</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AperiodicFit</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

@@ -534,16 +534,22 @@ document.write(`
     <span class="n">log10_aperiodic</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">log10_freq</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
+<div class="viewcode-block" id="AbstractFitFun.__attrs_post_init__">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun.__attrs_post_init__">[docs]</a>
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_aperiodic</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_freq</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="AbstractFitFun.func">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun.func">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="nd">@no_type_check</span>
     <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curve_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -554,16 +560,24 @@ document.write(`
             <span class="s1">&#39;gtol&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
         <span class="p">}</span>
 
+<div class="viewcode-block" id="AbstractFitFun.add_infos_to_df">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun.add_infos_to_df">[docs]</a>
     <span class="k">def</span> <span class="nf">add_infos_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_params</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">df_params</span>
+        <span class="k">return</span> <span class="n">df_params</span></div>
 
+
+<div class="viewcode-block" id="AbstractFitFun.handle_scaling">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun.handle_scaling">[docs]</a>
     <span class="k">def</span> <span class="nf">handle_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_params</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;Offset&#39;</span> <span class="ow">in</span> <span class="n">df_params</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Offset&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">scale_factor</span>
         <span class="k">elif</span> <span class="n">scale_factor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Scale Factor not handled. You need to overwrite the handle_scaling method.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df_params</span>
+        <span class="k">return</span> <span class="n">df_params</span></div>
 
+
+<div class="viewcode-block" id="AbstractFitFun.fit_func">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.AbstractFitFun.html#pyrasa.utils.fit_funcs.AbstractFitFun.fit_func">[docs]</a>
     <span class="k">def</span> <span class="nf">fit_func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="n">curve_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curve_kwargs</span>
         <span class="n">p</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aperiodic_spectrum</span><span class="p">,</span> <span class="o">**</span><span class="n">curve_kwargs</span><span class="p">)</span>
@@ -587,6 +601,7 @@ document.write(`
         <span class="n">df_pred</span><span class="p">[</span><span class="s1">&#39;fit_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
 
         <span class="k">return</span> <span class="n">df_params</span><span class="p">,</span> <span class="n">df_gof</span><span class="p">,</span> <span class="n">df_pred</span></div>
+</div>
 
 
 
@@ -702,12 +717,15 @@ document.write(`
         <span class="k">return</span> <span class="n">y_hat</span></div>
 
 
+<div class="viewcode-block" id="KneeFitFun.add_infos_to_df">
+<a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.fit_funcs.KneeFitFun.html#pyrasa.utils.fit_funcs.KneeFitFun.add_infos_to_df">[docs]</a>
     <span class="k">def</span> <span class="nf">add_infos_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_params</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Knee Frequency (Hz)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Knee&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span>
             <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Exponent_1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Exponent_2&#39;</span><span class="p">])</span>
         <span class="p">)</span>
         <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">df_params</span><span class="p">[</span><span class="s1">&#39;Knee Frequency (Hz)&#39;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">df_params</span>
+        <span class="k">return</span> <span class="n">df_params</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curve_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
