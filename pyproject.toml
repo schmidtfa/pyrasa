@@ -51,6 +51,8 @@ test = "pytest --cov=pyrasa --cov-report=lcov"
 lint = "ruff format && ruff check --fix"
 lint_ci = "ruff check"
 check_types = "mypy pyrasa tests"
+version_minor = "hatch version minor && hatch version dev"
+version_fix = "hatch version fix && hatch version dev"
 
 [tool.pixi.dependencies]
 hatch = ">=1.12.0,<1.13"
