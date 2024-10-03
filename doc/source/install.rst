@@ -43,8 +43,8 @@ The required dependencies for installing PyRASA are:
 
 .. code::
 
- numpy 
- pandas 
+ numpy>=1.26, <3 
+ pandas>=2.1, <3 
  scipy>=1.12
  attrs 
  
