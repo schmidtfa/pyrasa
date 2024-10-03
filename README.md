@@ -102,7 +102,11 @@ irasa_out.fit_aperiodic_model(fit_func='knee').gof
 
 ### How to Contribute
 
-Contributions to PyRASA are welcome! Whether it's raising issues, improving documentation, fixing bugs, or adding new features, your help is appreciated. Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to get involved.
+Contributions to PyRASA are welcome! Whether it's raising issues, improving documentation, fixing bugs, or adding new features, your help is appreciated. 
+
+To file bug reports and/or ask questions about this project, please use the [Github issue tracker](https://github.com/schmidtfa/pyrasa/blob/main/issues).
+
+Please refer to the [CONTRIBUTING.md](https://github.com/schmidtfa/pyrasa/blob/main/CONTRIBUTING.md) file for more information on how to get involved.
 
 
 ### Reference
