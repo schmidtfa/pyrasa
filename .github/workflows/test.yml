@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test_environment: [testpy311, testpy312]
+        test_environment: [testpy311np1pd21, testpy311np1pd22, testpy311np1pd-latest, testpy311np2pd22, testpy311np2pd-latest, testpy312np1pd21, testpy312np1pd22, testpy312np1pd-latest, testpy312np2pd22, testpy312np2pd-latest]
     steps:
       - uses: actions/checkout@v4
         with:
