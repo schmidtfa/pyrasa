@@ -94,16 +94,16 @@ default = {features = [], solve-group = "default"}
 mne = {features = ["mne"], solve-group = "default"}
 jupyter = {features = ["jupyter"], solve-group = "default"}
 doc = {features = ["doc", "mne"], solve-group = "default"}
-testpy311np1pd21 = ['py311', 'np1', 'pd21']
-testpy311np1pd22 = ['py311', 'np1', 'pd22']
-testpy311np1pd-latest = ['py311', 'np1', 'pd_latest']
-testpy311np2pd22 = ['py311', 'np2', 'pd22']
-testpy311np2pd-latest = ['py311', 'np2', 'pd_latest']
-testpy312np1pd21 = ['py312', 'np1', 'pd21']
-testpy312np1pd22 = ['py312', 'np1', 'pd22']
-testpy312np1pd-latest = ['py312', 'np1', 'pd_latest']
-testpy312np2pd22 = ['py312', 'np2', 'pd22']
-testpy312np2pd-latest = ['py312', 'np2', 'pd_latest']
+testpy311np1pd21 = ['py311', 'np1', 'pd21', 'mne']
+testpy311np1pd22 = ['py311', 'np1', 'pd22', 'mne']
+testpy311np1pd-latest = ['py311', 'np1', 'pd_latest', 'mne']
+testpy311np2pd22 = ['py311', 'np2', 'pd22', 'mne']
+testpy311np2pd-latest = ['py311', 'np2', 'pd_latest', 'mne']
+testpy312np1pd21 = ['py312', 'np1', 'pd21', 'mne']
+testpy312np1pd22 = ['py312', 'np1', 'pd22', 'mne']
+testpy312np1pd-latest = ['py312', 'np1', 'pd_latest', 'mne']
+testpy312np2pd22 = ['py312', 'np2', 'pd22', 'mne']
+testpy312np2pd-latest = ['py312', 'np2', 'pd_latest', 'mne']
 
 [tool.hatch.version]
 source = "regex_commit"
