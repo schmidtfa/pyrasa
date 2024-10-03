@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+\.dev[0-9]+'
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
   pull_request:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -54,3 +57,59 @@ jobs:
           locked: false
           frozen: false
       - run: pixi run -e mne check_types
+
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type == 'tag' }}
+    needs: [test, lint, type_check]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          pixi-version: latest
+          cache: true
+          locked: false
+          frozen: false
+      - run: pixi run hatch build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pyrasa_dist
+          path: dist/
+
+  publish_to_testpypi:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.ref, 'dev') }}
+    needs: [build]
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/pyrasa
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: pyrasa_dist
+          path: dist/
+      - name: Publish distribution 📦 to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish_to_pypi:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.ref, 'dev') }}
+    needs: [build]
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pyrasa
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: pyrasa_dist
+          path: dist/
+      - name: Publish distribution 📦 to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

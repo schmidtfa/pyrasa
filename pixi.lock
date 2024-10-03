@@ -28852,9 +28852,9 @@ packages:
   timestamp: 1714681228438
 - kind: pypi
   name: pyrasa
-  version: 0.1.0.dev0
+  version: 0.2.1.dev0
   path: .
-  sha256: 9c910a0825df39bd81911a2f9504165130ce026f960e2795498ccc7007842744
+  sha256: 7fc8fb584c3677fad978d3ec31cf714098474de706e4595b05ef6491fe0160bc
   requires_dist:
   - attrs
   - numpy
