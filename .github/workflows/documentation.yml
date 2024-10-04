@@ -1,8 +1,8 @@
 name: documentation
 
 on: [push, pull_request, workflow_dispatch]
-   branches:
-      - main 
+  branches: 
+    - main 
       
 permissions:
   contents: write
