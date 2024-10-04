@@ -67,6 +67,7 @@ html_copy_source = False
 
 html_theme = 'pydata_sphinx_theme'
 
+
 templates_path = ['_templates']
 html_static_path = ['_static']
 # html_css_files = ["style.css"]
@@ -83,6 +84,8 @@ version = 'dev' if 'dev' in pyrasa.__version__ else pyrasa.__version__
 # The full version, including alpha/beta/rc tags.
 release = version
 
+html_title = 'PyRASA' + ' ' + release
+html_short_title = 'PyRASA'
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
