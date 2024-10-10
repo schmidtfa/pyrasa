@@ -43,28 +43,40 @@ The required dependencies for installing PyRASA are:
 
 .. code::
 
- numpy>=1.26, <3 
- pandas>=2.1, <3 
- scipy>=1.12
+ numpy >= 1.26
+ pandas >= 2.1 
+ scipy >= 1.12
  attrs 
  
 and
 
 .. code::
 
-    python>=3.11
+    python >= 3.11
 
 
 Optional dependencies
 =====================
 
 Optionally you can combine PyRASA with MNE Python to better integrate spectral parametrization in your
-M/EEG analysis workflow.
+M/EEG analysis workflow. If you already have an MNE Python installation running you can try to install PyRASA in the respective environment.
+If you don't already have MNE Python in your environment you can install PyRASA including its optional dependency 
+`mne <https://mne.tools/stable/index.html>` using either pip or conda-forge. 
 
-.. code::
+Using pip
+---------
+.. code:: bash
+    
+    pip install "pyrasa[mne]"
 
-    mne
+Using conda-forge
+-----------------
+.. code:: bash
+    
+    conda install -c conda-forge pyrasa mne
 
+
+For a more detailed instruction on how to configure your MNE Python installation please refer to the `mne installation guide <https://mne.tools/stable/install/manual_install.html#manual-install>`.
 
 
 
