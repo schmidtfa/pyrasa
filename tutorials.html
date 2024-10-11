@@ -383,7 +383,23 @@ document.write(`
                   
   <section id="tutorials">
 <h1>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading">#</a></h1>
-<p>This section contains a number of tutorials, to get you started with PyRASA.</p>
+<p>This section contains a number of tutorials, to get you started with PyRASA.
+In order to easily run the tutorials you need to add some additional python libraries to your current environment.
+You can do so using pip or conda-forge.</p>
+<section id="using-pip">
+<h2>Using pip<a class="headerlink" href="#using-pip" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>neurodsp<span class="w"> </span>seaborn
+</pre></div>
+</div>
+</section>
+<section id="using-conda-forge">
+<h2>Using conda-forge<a class="headerlink" href="#using-conda-forge" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>neurodsp<span class="w"> </span>seaborn
+</pre></div>
+</div>
+<p>If you want to use PyRASA together with MNE Python (see Tutorial 4. IRASA MNE).
+You also need MNE Python installed in your current enviroment (see <em class="xref py py-obj">install</em> for further instructions).</p>
+</section>
 <section id="introductory">
 <h2>Introductory<a class="headerlink" href="#introductory" title="Link to this heading">#</a></h2>
 <section id="getting-started">
@@ -492,6 +508,8 @@ This notebook shows you how its done.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-pip">Using pip</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-conda-forge">Using conda-forge</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introductory">Introductory</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">1. Getting Started</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#improving-your-irasa-models">2. Improving your IRASA models</a></li>

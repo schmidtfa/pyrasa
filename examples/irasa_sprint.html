@@ -379,8 +379,7 @@ and track aperiodic and periodic changes over time we implemented the irasa_spri
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">neurodsp.sim</span> <span class="kn">import</span> <span class="n">set_random_seed</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="kn">from</span> <span class="nn">neurodsp.sim</span> <span class="kn">import</span> <span class="n">set_random_seed</span>
 <span class="kn">from</span> <span class="nn">neurodsp.sim</span> <span class="kn">import</span> <span class="n">sim_powerlaw</span><span class="p">,</span> <span class="n">sim_oscillation</span>
 <span class="kn">from</span> <span class="nn">neurodsp.utils</span> <span class="kn">import</span> <span class="n">create_times</span>
 <span class="kn">from</span> <span class="nn">neurodsp.plts</span> <span class="kn">import</span> <span class="n">plot_timefrequency</span><span class="c1">#</span>
@@ -390,12 +389,6 @@ and track aperiodic and periodic changes over time we implemented the irasa_spri
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="c1">#import seaborn as sns</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="n">new_rc_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="s2">&quot;svg.fonttype&quot;</span><span class="p">:</span> <span class="s1">&#39;none&#39;</span>
-<span class="p">}</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_rc_params</span><span class="p">)</span>
 
 <span class="n">set_random_seed</span><span class="p">(</span><span class="mi">84</span><span class="p">)</span>
 
