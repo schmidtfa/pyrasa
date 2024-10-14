@@ -30,7 +30,7 @@ $ pip install pyrasa
 or conda
 
 ```bash
-$ conda install pyrasa 
+$ conda install -c conda-forge pyrasa 
 ```
 
 ### Dependencies
