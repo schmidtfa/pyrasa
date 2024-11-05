@@ -3,7 +3,25 @@
 Tutorials
 =========
 
-This section contains a number of tutorials, to get you started with PyRASA.
+This section contains a number of tutorials, to get you started with PyRASA. 
+In order to easily run the tutorials you need to add some additional python libraries to your current environment.
+You can do so using pip or conda-forge.
+
+Using pip
+---------
+.. code:: bash
+    
+    pip install neurodsp seaborn
+
+Using conda-forge
+-----------------
+.. code:: bash
+    
+    conda install -c conda-forge neurodsp seaborn 
+
+If you want to use PyRASA together with MNE Python (see Tutorial 4. IRASA MNE). 
+You also need MNE Python installed in your current enviroment (see `install <https://schmidtfa.github.io/pyrasa/install.html>` for further instructions).
+
 
 Introductory
 ------------

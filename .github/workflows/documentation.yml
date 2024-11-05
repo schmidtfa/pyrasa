@@ -1,8 +1,9 @@
 name: documentation
 
-on: [push, pull_request, workflow_dispatch]
-   branches:
-      - main 
+on:
+  push:
+    branches: 
+      - main
       
 permissions:
   contents: write
@@ -22,7 +23,7 @@ jobs:
           frozen: false
           environments: doc
       - run: pixi run -e doc build_docs
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc/build/html
