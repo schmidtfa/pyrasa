@@ -94,7 +94,7 @@ def test_irasa_sprint_settings(ts4sprint, fs):
         win_func=dsp.windows.dpss,
     )
 
-    # test too much bandwidht
+    # test too much bandwidth
     with pytest.raises(ValueError):
         irasa_sprint(
             ts4sprint[np.newaxis, :],
