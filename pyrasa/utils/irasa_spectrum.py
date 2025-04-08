@@ -18,6 +18,57 @@ class IrasaSpectrum:
     periodic: np.ndarray
     ch_names: np.ndarray | None
 
+    """
+    IrasaSpectrum: Output container for IRASA-derived spectral data.
+
+    This class encapsulates the output of the IRASA (Irregular Resampling Auto-Spectral Analysis) algorithm,
+    providing a structured interface to access and analyze power spectral data. It stores the original (raw)
+    power spectrum, as well as the decomposed aperiodic and periodic components for one or more channels.
+
+    The IrasaSpectrum object provides functionality to:
+    - Fit a model to the aperiodic spectrum to extract parameters (e.g., slope, offset, knee).
+    - Detect spectral peaks in the periodic spectrum.
+    - Quantify residual errors in the aperiodic spectrum after peak removal.
+
+    Attributes
+    ----------
+    freqs : np.ndarray
+        1D array of frequency bins corresponding to the power spectra.
+    raw_spectrum : np.ndarray
+        2D array (channels × frequencies) of the original power spectrum.
+    aperiodic : np.ndarray
+        2D array (channels × frequencies) of the estimated aperiodic (arrhythmic) component.
+    periodic : np.ndarray
+        2D array (channels × frequencies) of the residual periodic (oscillatory) component.
+    ch_names : np.ndarray or None
+        Array of channel names. If None, default channel identifiers may be used.
+
+    Methods
+    -------
+    fit_aperiodic_model(fit_func='fixed', scale=False, fit_bounds=None)
+        Fit a parametric model to the aperiodic component using a specified fitting method.
+    get_peaks(smoothing_window=1, cut_spectrum=None, peak_threshold=2.5, min_peak_height=0.0,
+              polyorder=1, peak_width_limits=(0.5, 12))
+        Extract peak features from the periodic spectrum, such as center frequency and bandwidth.
+    get_aperiodic_error(peak_kwargs=None)
+        Compute the residual error of the aperiodic component after removing detected periodic peaks.
+
+    Notes
+    -----
+    The IrasaSpectrum class is designed to provide downstream access and manipulation of the
+    results from the IRASA algorithm, enabling users to assess (neural)
+    time series by separating rhythmic from arrhythmic features in the frequency domain.
+
+    Example
+    -------
+    >>> from pyrasa import irasa
+    >>> irasa_spec = irasa(time_series_data, sfreq=1000)
+    >>> irasa_spec.fit_aperiodic_model(fit_func='knee')
+    >>> peaks = irasa_spec.get_peaks()
+    >>> error = irasa_spec.get_aperiodic_error(peak_kwargs={'min_peak_height': 0.05})
+
+    """
+
     def fit_aperiodic_model(
         self,
         fit_func: str | type[AbstractFitFun] = 'fixed',

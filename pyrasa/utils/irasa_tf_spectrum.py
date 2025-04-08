@@ -21,6 +21,63 @@ class IrasaTfSpectrum:
     periodic: np.ndarray
     ch_names: np.ndarray | None
 
+    """
+    IrasaTfSpectrum: Output container for time-resolved IRASA spectral decomposition.
+
+    This class encapsulates the output of the `irasa_sprint` algorithm, which performs IRASA-based spectral
+    parameterization on time-frequency data (e.g., spectrograms) instead of static power spectral densities.
+    It separates each time slice of the spectrogram into periodic and aperiodic components and provides methods
+    to further analyze their properties over time.
+
+    The `IrasaTfSpectrum` object offers functionality to:
+    - Parametrize the aperiodic component of the time-varying spectrum.
+    - Extract spectral peaks (periodic components) at each time point.
+    - Compute frequency-resolved error metrics for the aperiodic signal across time.
+
+    Attributes
+    ----------
+    freqs : np.ndarray
+        1D array of frequency bins corresponding to the spectral decomposition.
+    time : np.ndarray
+        1D array of time bins (center of windowed segments) for the spectrogram.
+    raw_spectrum : np.ndarray
+        3D array (channels × frequencies × time) of the original spectrogram.
+    aperiodic : np.ndarray
+        3D array (channels × frequencies × time) of the estimated aperiodic component.
+    periodic : np.ndarray
+        3D array (channels × frequencies × time) of the residual periodic (oscillatory) component.
+    ch_names : np.ndarray or None
+        Array of channel names. If None, channels may be indexed numerically.
+
+    Methods
+    -------
+    fit_aperiodic_model(fit_func='fixed', scale=False, fit_bounds=None)
+        Fit a model to the aperiodic spectrogram at each time point to extract parameter trajectories.
+    get_peaks(smooth=True, smoothing_window=1, cut_spectrum=None, peak_threshold=2.5, min_peak_height=0.0,
+              polyorder=1, peak_width_limits=(0.5, 12))
+        Extract peak features from the time-varying periodic spectrum across all time points.
+    get_aperiodic_error(peak_kwargs=None)
+        Compute residual error of the aperiodic component after removing detected periodic peaks for each time slice.
+
+    Notes
+    -----
+    The `IrasaTfSpectrum` class can be used to analyze dynamic changes in (neural) time series data,
+    such as EEG or MEG, where spectral content varies over time.
+
+    This class complements `IrasaSpectrum`, by allowing for a time-resolved analysis power spectral features.
+    The time dimension in this class adds a layer of complexity and opens the door
+    for temporally resolved peak detection and aperiodic model fitting.
+
+    Example
+    -------
+    >>> from pyrasa import irasa_sprint
+    >>> tf_spec = irasa_sprint(spectrogram_data, freqs=freqs, times=times, sfreq=1000)
+    >>> tf_spec.fit_aperiodic_model(fit_func='knee')
+    >>> peaks_df = tf_spec.get_peaks()
+    >>> ape_error = tf_spec.get_aperiodic_error(peak_kwargs={'min_peak_height': 0.05})
+
+    """
+
     def fit_aperiodic_model(
         self,
         fit_func: str | type[AbstractFitFun] = 'fixed',
