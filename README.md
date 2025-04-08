@@ -48,6 +48,7 @@ PyRASA has the following dependencies:
 ### Example Usage
 
 Decompose spectra in periodic and aperiodic ccomponents
+If you want to reproduce the example below checkout [example](https://github.com/schmidtfa/pyrasa/blob/main/examples/basic_functionality.ipynb)
 
 ```python
 from pyrasa.irasa import irasa
@@ -73,7 +74,7 @@ irasa_out.get_peaks()
 ```
 |   ch_name |   cf |      bw |     pw |
 |----------:|-----:|--------:|-------:|
-|         0 |  9.5 | 1.4426 | 0.4178 |
+|         0 |  10.0 | 1.1887 | 0.4950 |
 
 Extract aperiodic parameters
 
@@ -85,7 +86,7 @@ irasa_out.fit_aperiodic_model(fit_func='knee').aperiodic_params
 
 |   Offset |   Knee |   Exponent_1 |   Exponent_2 | fit_type   |   Knee Frequency (Hz) |   tau |   ch_name |
 |---------:|-------:|-------------:|-------------:|:-----------|----------------------:|----------:|----------:|
-|  	1.737402e-16 | 60.942144 |     0.039556 |      1.472746	 | knee       |               14.131277 |         0.011263 |         0 |
+|  	4.3299e-17 | 62.1060 |     0.0552 |      1.4602	 | knee       |               13.8547 |         0.0115 |         0 |
 
 And the goodness of fit
 
@@ -97,7 +98,7 @@ irasa_out.fit_aperiodic_model(fit_func='knee').gof
 
 |         mse |   r_squared |      BIC |      AIC | fit_type   |   ch_name |
 |------------:|------------:|---------:|---------:|:-----------|----------:|
-| 0.000051 |    0.999751 | -3931.840246 | -3947.806104 | knee       |         0 |
+| 0.000088 |    0.999303 | -31.9892 | -47.9550 | knee       |         0 |
 
 
 ### How to Contribute

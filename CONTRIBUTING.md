@@ -44,6 +44,10 @@ These rules are going to be enforced by CI in the future.
 
 If you want to check your code manually, just run `pixi run lint`.
 
+### Testing
+We use [pytest](https://docs.pytest.org/en/stable/) to run our unit tests and [Coveralls](https://coveralls.io/github/schmidtfa/pyrasa) to keep track of test coverage. 
+If you are adding new functionality to pyrasa we ask you to also write corresponding tests. You can find tests in the test folder. If you want to locally test everything you can run all tests by running `pixi run -e mne test`.
+
 ### Building and distributing the package
 We use [Hatch](https://hatch.pypa.io/) to build and distribute the package. It
 is also used to manage the versioning of the package.
