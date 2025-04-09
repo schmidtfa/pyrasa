@@ -128,6 +128,7 @@ def gen_mne_data_raw():
     raw = mne.io.read_raw_fif(raw_fname)
     picks = mne.pick_types(raw.info, meg='mag', eeg=False, stim=False, eog=False, exclude='bads')
     raw.pick(picks)
+    raw.resample(500)  # downsample to speed-up testing
 
     # % now lets check-out the events
     event_id = {

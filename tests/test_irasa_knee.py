@@ -86,8 +86,8 @@ def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     assert bool(np.isclose(np.round(pe_params['cf'], 0), osc_freq))
 
 
-@pytest.mark.parametrize('exponent, knee', [(-1.5, 1000)], scope='session')
-@pytest.mark.parametrize('fs', [1000], scope='session')
+@pytest.mark.parametrize('exponent, knee', [(-1.5, 58.0)], scope='session')
+@pytest.mark.parametrize('fs', [500], scope='session')
 @pytest.mark.parametrize('osc_freq', [10], scope='session')
 def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     duration = 4
@@ -105,13 +105,13 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
         fs=fs,
         band=(0.1, 50),
         psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
-        hset_info=(1, 8.0, 0.05),
+        hset_info=(1, 4.5, 0.1),
     )
 
     assert np.mean(irasa_out.get_aperiodic_error()) < np.mean(irasa_out_bad.get_aperiodic_error())
 
 
-@pytest.mark.parametrize('fs', [1000], scope='session')
+@pytest.mark.parametrize('fs', [500], scope='session')
 @pytest.mark.parametrize('exponent_1', [-0], scope='session')
 @pytest.mark.parametrize('exponent_2', [-2], scope='session')
 def test_aperiodic_error_tf(ts4sprint_knee, fs, exponent_1, exponent_2):
@@ -130,7 +130,7 @@ def test_aperiodic_error_tf(ts4sprint_knee, fs, exponent_1, exponent_2):
         band=(0.1, 50),
         overlap_fraction=0.95,
         win_duration=0.5,
-        hset_info=(1, 8.0, 0.05),
+        hset_info=(1, 4.5, 0.1),
     )
 
     kwargs = {

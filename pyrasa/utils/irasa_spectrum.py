@@ -1,5 +1,6 @@
 """Output Class of pyrasa.irasa"""
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from attrs import define
@@ -280,3 +281,77 @@ class IrasaSpectrum:
             aperiodic_errors.append(aperiodic_error)
 
         return np.array(aperiodic_errors)
+
+    def plot(
+        self,
+        freq_range: tuple[float, float] | None = None,
+        log_x: bool = True,
+        average_chs: bool = False,
+        units: str = 'a.u.',
+    ) -> None:
+        """
+        This function plots a raw power spectrum alongside the seperated periodic and aperiodic spectrum.
+        The main use of this function is for quality control of the IRASA settings that were used to
+        separate periodic and aperiodic spectra.
+
+        NOTE: The y-axis of the raw and aperiodic spectrum is always plotted in log-scale
+        and the y-axis of the periodic spectrum is always plotted in linear scale. The reason for this decision is
+        that the periodic spectrum is the result from subtracting the aperiodic spectrum from the raw powerspectrum.
+        This can induce negligible values below 0, very close to 0 or at 0 which creates a weird looking spectrum
+        as logging can result in nans, negative values or infs. The main purpose of the
+        plotting functionality is to allow you to visually inspect whether something went wrong during
+        the IRASA procedure and we feel this is best accomplished using the herein specified settings.
+
+        Parameters
+        ----------
+        freq_range: tuple of (float, float) or None, optional
+            Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be plotted.
+            If None the full frequency range returned from IRASA is plotted. Default is None.
+        log_x: bool, optional
+            Whether or not to plot the x-axis (Frequencies) log-scaled
+        average_chs: bool, optional
+            Whether or not the spectra should be averaged across channels
+        units: str, optional
+            A string that specifies the units in which the data are plotted. Defaults to (a.u.) i.e. arbitrary units.
+        """
+
+        if freq_range is not None:
+            freq_range_mask = np.logical_and(self.freqs > freq_range[0], self.freqs < freq_range[1])
+        else:
+            freq_range_mask = np.ones_like(self.freqs) == 1
+
+        f, axes = plt.subplots(ncols=3, figsize=(12, 4))
+
+        axes[0].plot(
+            self.freqs[freq_range_mask],
+            self.raw_spectrum[:, freq_range_mask].T.mean(axis=1)
+            if average_chs
+            else self.raw_spectrum[:, freq_range_mask].T,
+        )
+        axes[1].plot(
+            self.freqs[freq_range_mask],
+            self.aperiodic[:, freq_range_mask].T.mean(axis=1) if average_chs else self.aperiodic[:, freq_range_mask].T,
+        )
+        axes[2].plot(
+            self.freqs[freq_range_mask],
+            self.periodic[:, freq_range_mask].T.mean(axis=1) if average_chs else self.periodic[:, freq_range_mask].T,
+        )
+
+        axes[0].sharey(axes[1])
+
+        titles = ['Raw \n PowerSpectrum', 'Aperiodic \n PowerSpectrum', 'Periodic \n PowerSpectrum']
+        for ix, (ax, title) in enumerate(zip(axes, titles)):
+            ax.set_xlabel('Frequency (Hz)')
+            ax.set_ylabel(f'Power ({units})')
+            ax.set_title(title)
+
+            periodic_plot_ix = 2
+            if ix < periodic_plot_ix:  # we dont want to log the yscale of the periodic spectrum
+                ax.set_yscale('log')
+                ax.set_ylabel(f'Power ({units}; log)')
+
+            if log_x:
+                ax.set_xscale('log')
+                ax.set_xlabel('Frequency (Hz; log)')
+
+        f.tight_layout()

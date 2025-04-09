@@ -58,7 +58,7 @@ sphinx_gallery = "*"
 sphinxcontrib-serializinghtml = "*"
 
 [tool.pixi.tasks]
-test = "pytest --cov=pyrasa --cov-report=lcov"
+test = "pytest --cov=pyrasa --cov-report=lcov -n auto"
 lint = "ruff format && ruff check --fix"
 lint_ci = "ruff check"
 check_types = "mypy pyrasa tests"
@@ -79,6 +79,7 @@ neurodsp = ">=2.2.0,<2.3"
 mypy = ">=1.10.1,<2"
 pandas-stubs = ">=2.2.2.240603,<3"
 tabulate = ">=0.9.0,<0.10"
+pytest-xdist = ">=3.6.1,<4"
 
 [tool.pixi.feature]
 py311 = {dependencies = {python="3.11.*"}}
