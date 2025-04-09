@@ -78,6 +78,46 @@ class IrasaTfSpectrum:
 
     """
 
+    def __str__(self) -> str:
+        """
+        Summary of the IrasaTfSpectrum.
+        """
+        spec = self.raw_spectrum
+
+        # Determine if we have 2D (single channel) or 3D (multi-channel) input
+        arr_shape2d = 2
+        arr_shape3d = 3
+        if self.raw_spectrum.ndim == arr_shape2d:
+            n_channels = 1
+        elif self.raw_spectrum.ndim == arr_shape3d:
+            n_channels = spec.shape[0]
+        else:
+            raise ValueError('Invalid spectrum shape. Expected 2D or 3D array.')
+
+        ch_summary = (
+            f'{len(self.ch_names)} named channels'
+            if self.ch_names is not None
+            else f"{n_channels} unnamed channel{'s' if n_channels > 1 else ''}"
+        )
+
+        # Frequency info
+        freq_min, freq_max = self.freqs[0], self.freqs[-1]
+        freq_res = np.mean(np.diff(self.freqs)) if len(self.freqs) > 1 else float('nan')
+
+        # Time info
+        time_min, time_max = self.time[0], self.time[-1]
+        time_step = np.mean(np.diff(self.time))
+
+        return (
+            f'IrasaTfSpectrum Summary\n'
+            f'------------------------\n'
+            f'Channels      : {ch_summary}\n'
+            f'Frequency (Hz): {freq_min:.2f}–{freq_max:.2f} Hz, Δf ≈ {freq_res:.2f} Hz\n'
+            f'Time (s)      : {time_min:.2f}–{time_max:.2f} s, Δt ≈ {time_step:.2f} s\n'
+            f'Attributes    : raw_spectrum, aperiodic, periodic, freqs, ch_names, time\n'
+            f'Methods       : fit_aperiodic_model(), get_peaks(), get_aperiodic_error()\n'
+        )
+
     def fit_aperiodic_model(
         self,
         fit_func: str | type[AbstractFitFun] = 'fixed',

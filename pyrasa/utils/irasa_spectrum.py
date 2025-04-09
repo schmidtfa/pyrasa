@@ -69,6 +69,25 @@ class IrasaSpectrum:
 
     """
 
+    def __str__(self) -> str:
+        """
+        Summary of the IrasaSpectrum.
+        """
+
+        n_channels = len(self.ch_names) if self.ch_names is not None else self.raw_spectrum.shape[0]
+
+        freq_min, freq_max = self.freqs[0], self.freqs[-1]
+        freq_res = np.mean(np.diff(self.freqs))
+
+        return (
+            f'IrasaSpectrum Summary\n'
+            f'----------------------\n'
+            f'Channels      : {n_channels}\n'
+            f'Frequency (Hz): {freq_min:.2f}–{freq_max:.2f} Hz, Δf ≈ {freq_res:.2f} Hz\n'
+            f'Attributes    : raw_spectrum, aperiodic, periodic, freqs, ch_names\n'
+            f'Methods       : fit_aperiodic_model(), get_peaks(), get_aperiodic_error()\n'
+        )
+
     def fit_aperiodic_model(
         self,
         fit_func: str | type[AbstractFitFun] = 'fixed',

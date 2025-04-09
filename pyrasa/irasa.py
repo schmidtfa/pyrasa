@@ -323,6 +323,7 @@ def irasa_sprint(  # noqa PLR0915 C901
         sgramm_aperiodic[np.newaxis, :, :] if sgramm_aperiodic.ndim == single_ch_dim else sgramm_aperiodic
     )
     sgramm_periodic = sgramm_periodic[np.newaxis, :, :] if sgramm_periodic.ndim == single_ch_dim else sgramm_periodic
+    sgramm = sgramm[np.newaxis, :, :] if sgramm.ndim == single_ch_dim else sgramm
 
     freq, sgramm_aperiodic, sgramm_periodic, sgramm = _crop_data(
         band, freq, sgramm_aperiodic, sgramm_periodic, sgramm, axis=1
@@ -336,7 +337,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     return IrasaTfSpectrum(
         freqs=freq[freq_mask],
         time=time[t_mask],
-        raw_spectrum=sgramm,
+        raw_spectrum=sgramm[:, :, t_mask][:, freq_mask, :],
         periodic=sgramm_periodic[:, :, t_mask][:, freq_mask, :],
         aperiodic=sgramm_aperiodic[:, :, t_mask][:, freq_mask, :],
         ch_names=ch_names,
