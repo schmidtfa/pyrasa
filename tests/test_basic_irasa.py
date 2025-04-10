@@ -16,6 +16,7 @@ from .settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 def test_irasa(combined_signal, fs, osc_freq, exponent):
     f_range = [1, 100]
     irasa_spectrum = irasa(combined_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+    irasa_spectrum.__str__()
     # test the shape of the output
     assert irasa_spectrum.freqs.shape[0] == irasa_spectrum.aperiodic.shape[1] == irasa_spectrum.periodic.shape[1]
     # test the selected frequency range
@@ -32,3 +33,5 @@ def test_irasa(combined_signal, fs, osc_freq, exponent):
     # test whether we can reconstruct the peak frequency correctly
     pe_params = irasa_spectrum.get_peaks()
     assert bool(np.isclose(np.round(pe_params['cf'], 0), osc_freq))
+
+    irasa_spectrum.plot()
