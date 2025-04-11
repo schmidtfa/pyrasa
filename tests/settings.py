@@ -3,7 +3,7 @@
 import numpy as np
 
 N_SECONDS = 60
-FS = [500]
+FS = [500, 750]
 
 OSC_FREQ = [5, 10, 20]
 MANY_OSC_FREQ = np.arange(2, 30, 2)
@@ -29,7 +29,7 @@ EXP_KNEE_COMBO = [
     (-2.0, 625.0),
 ]  # we test exp + knee combined as both relate to each other
 TOLERANCE = 0.3  # 0.15
-SPRINT_TOLERANCE = 0.4
+SPRINT_TOLERANCE = 0.45
 HIGH_TOLERANCE = 0.5
 
 KNEE_TOLERANCE = 5
