@@ -294,11 +294,11 @@ class IrasaSpectrum:
         The main use of this function is for quality control of the IRASA settings that were used to
         separate periodic and aperiodic spectra.
 
-        NOTE: The y-axis of the raw and aperiodic spectrum is always plotted in log-scale
-        and the y-axis of the periodic spectrum is always plotted in linear scale. The reason for this decision is
+        NOTE: The y-axis of the aperiodic spectrum is plotted in log-scale
+        and the y-axis of the periodic spectrum is plotted in linear scale. The reason for this decision is
         that the periodic spectrum is the result from subtracting the aperiodic spectrum from the raw powerspectrum.
         This can induce negligible values below 0, very close to 0 or at 0 which creates a weird looking spectrum
-        as logging can result in nans, negative values or infs. The main purpose of the
+        as logarithms of these values can result in nans, negative values or infs. The main purpose of the
         plotting functionality is to allow you to visually inspect whether something went wrong during
         the IRASA procedure and we feel this is best accomplished using the herein specified settings.
 
@@ -320,38 +320,53 @@ class IrasaSpectrum:
         else:
             freq_range_mask = np.ones_like(self.freqs) == 1
 
-        f, axes = plt.subplots(ncols=3, figsize=(12, 4))
+        f, axes = plt.subplots(ncols=2, figsize=(8, 4))
 
         axes[0].plot(
             self.freqs[freq_range_mask],
             self.raw_spectrum[:, freq_range_mask].T.mean(axis=1)
             if average_chs
             else self.raw_spectrum[:, freq_range_mask].T,
+            label='original spectrum',
         )
-        axes[1].plot(
+        axes[0].plot(
             self.freqs[freq_range_mask],
             self.aperiodic[:, freq_range_mask].T.mean(axis=1) if average_chs else self.aperiodic[:, freq_range_mask].T,
+            label='aperiodic spectrum',
+            color='r',
+            alpha=0.7,
         )
-        axes[2].plot(
+        axes[0].legend()
+
+        axes[1].plot(
+            self.freqs[freq_range_mask],
+            self.raw_spectrum[:, freq_range_mask].T.mean(axis=1)
+            if average_chs
+            else self.raw_spectrum[:, freq_range_mask].T,
+            label='original spectrum',
+        )
+
+        axes[1].plot(
             self.freqs[freq_range_mask],
             self.periodic[:, freq_range_mask].T.mean(axis=1) if average_chs else self.periodic[:, freq_range_mask].T,
+            label='periodic spectrum',
+            color='g',
+            alpha=0.7,
         )
 
-        axes[0].sharey(axes[1])
+        axes[1].legend()
 
-        titles = ['Raw \n PowerSpectrum', 'Aperiodic \n PowerSpectrum', 'Periodic \n PowerSpectrum']
+        titles = ['Raw X Aperiodic \n PowerSpectrum', 'Raw X Periodic \n PowerSpectrum']  #'Raw \n PowerSpectrum',
         for ix, (ax, title) in enumerate(zip(axes, titles)):
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel(f'Power ({units})')
             ax.set_title(title)
 
-            periodic_plot_ix = 2
-            if ix < periodic_plot_ix:  # we dont want to log the yscale of the periodic spectrum
-                ax.set_yscale('log')
-                ax.set_ylabel(f'Power ({units}; log)')
-
             if log_x:
                 ax.set_xscale('log')
-                ax.set_xlabel('Frequency (Hz; log)')
+
+            periodic_plot_ix = 1
+            if ix < periodic_plot_ix:  # we dont want to log the yscale of the periodic spectrum
+                ax.set_yscale('log')
 
         f.tight_layout()
