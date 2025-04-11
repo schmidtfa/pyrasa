@@ -22,6 +22,9 @@ def test_irasa_sprint(ts4sprint, fs, exponent_1, exponent_2):
         band=(0.1, 50),
         hset_info=(1.05, 4.0, 0.05),
     )
+    irasa_tf.__str__()
+
+    irasa_tf.plot()
 
     # check basic aperiodic detection
     slope_fit = irasa_tf.fit_aperiodic_model(fit_func='fixed')

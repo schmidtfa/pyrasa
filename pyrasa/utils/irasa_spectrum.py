@@ -1,5 +1,6 @@
 """Output Class of pyrasa.irasa"""
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from attrs import define
@@ -17,6 +18,76 @@ class IrasaSpectrum:
     aperiodic: np.ndarray
     periodic: np.ndarray
     ch_names: np.ndarray | None
+
+    """
+    IrasaSpectrum: Output container for IRASA-derived spectral data.
+
+    This class encapsulates the output of the IRASA (Irregular Resampling Auto-Spectral Analysis) algorithm,
+    providing a structured interface to access and analyze power spectral data. It stores the original (raw)
+    power spectrum, as well as the decomposed aperiodic and periodic components for one or more channels.
+
+    The IrasaSpectrum object provides functionality to:
+    - Fit a model to the aperiodic spectrum to extract parameters (e.g., slope, offset, knee).
+    - Detect spectral peaks in the periodic spectrum.
+    - Quantify residual errors in the aperiodic spectrum after peak removal.
+
+    Attributes
+    ----------
+    freqs : np.ndarray
+        1D array of frequency bins corresponding to the power spectra.
+    raw_spectrum : np.ndarray
+        2D array (channels × frequencies) of the original power spectrum.
+    aperiodic : np.ndarray
+        2D array (channels × frequencies) of the estimated aperiodic (arrhythmic) component.
+    periodic : np.ndarray
+        2D array (channels × frequencies) of the residual periodic (oscillatory) component.
+    ch_names : np.ndarray or None
+        Array of channel names. If None, default channel identifiers may be used.
+
+    Methods
+    -------
+    fit_aperiodic_model(fit_func='fixed', scale=False, fit_bounds=None)
+        Fit a parametric model to the aperiodic component using a specified fitting method.
+    get_peaks(smoothing_window=1, cut_spectrum=None, peak_threshold=2.5, min_peak_height=0.0,
+              polyorder=1, peak_width_limits=(0.5, 12))
+        Extract peak features from the periodic spectrum, such as center frequency and bandwidth.
+    get_aperiodic_error(peak_kwargs=None)
+        Compute the residual error of the aperiodic component after removing detected periodic peaks.
+
+    Notes
+    -----
+    The IrasaSpectrum class is designed to provide downstream access and manipulation of the
+    results from the IRASA algorithm, enabling users to assess (neural)
+    time series by separating rhythmic from arrhythmic features in the frequency domain.
+
+    Example
+    -------
+    >>> from pyrasa import irasa
+    >>> irasa_spec = irasa(time_series_data, sfreq=1000)
+    >>> irasa_spec.fit_aperiodic_model(fit_func='knee')
+    >>> peaks = irasa_spec.get_peaks()
+    >>> error = irasa_spec.get_aperiodic_error(peak_kwargs={'min_peak_height': 0.05})
+
+    """
+
+    def __str__(self) -> str:
+        """
+        Summary of the IrasaSpectrum.
+        """
+
+        n_channels = len(self.ch_names) if self.ch_names is not None else self.raw_spectrum.shape[0]
+
+        freq_min, freq_max = self.freqs[0], self.freqs[-1]
+        freq_res = np.mean(np.diff(self.freqs))
+
+        return (
+            f'IrasaSpectrum Summary\n'
+            f'----------------------\n'
+            f'Channels      : {n_channels}\n'
+            f'Frequency (Hz): {freq_min:.2f}–{freq_max:.2f} Hz, Δf ≈ {freq_res:.2f} Hz\n'
+            f'Attributes    : raw_spectrum, aperiodic, periodic, freqs, ch_names\n'
+            f'Methods       : fit_aperiodic_model(), get_peaks(), get_aperiodic_error()\n'
+        )
 
     def fit_aperiodic_model(
         self,
@@ -210,3 +281,92 @@ class IrasaSpectrum:
             aperiodic_errors.append(aperiodic_error)
 
         return np.array(aperiodic_errors)
+
+    def plot(
+        self,
+        freq_range: tuple[float, float] | None = None,
+        log_x: bool = True,
+        average_chs: bool = False,
+        units: str = 'a.u.',
+    ) -> None:
+        """
+        This function plots a raw power spectrum alongside the seperated periodic and aperiodic spectrum.
+        The main use of this function is for quality control of the IRASA settings that were used to
+        separate periodic and aperiodic spectra.
+
+        NOTE: The y-axis of the aperiodic spectrum is plotted in log-scale
+        and the y-axis of the periodic spectrum is plotted in linear scale. The reason for this decision is
+        that the periodic spectrum is the result from subtracting the aperiodic spectrum from the raw powerspectrum.
+        This can induce negligible values below 0, very close to 0 or at 0 which creates a weird looking spectrum
+        as logarithms of these values can result in nans, negative values or infs. The main purpose of the
+        plotting functionality is to allow you to visually inspect whether something went wrong during
+        the IRASA procedure and we feel this is best accomplished using the herein specified settings.
+
+        Parameters
+        ----------
+        freq_range: tuple of (float, float) or None, optional
+            Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be plotted.
+            If None the full frequency range returned from IRASA is plotted. Default is None.
+        log_x: bool, optional
+            Whether or not to plot the x-axis (Frequencies) log-scaled
+        average_chs: bool, optional
+            Whether or not the spectra should be averaged across channels
+        units: str, optional
+            A string that specifies the units in which the data are plotted. Defaults to (a.u.) i.e. arbitrary units.
+        """
+
+        if freq_range is not None:
+            freq_range_mask = np.logical_and(self.freqs > freq_range[0], self.freqs < freq_range[1])
+        else:
+            freq_range_mask = np.ones_like(self.freqs) == 1
+
+        f, axes = plt.subplots(ncols=2, figsize=(8, 4))
+
+        axes[0].plot(
+            self.freqs[freq_range_mask],
+            self.raw_spectrum[:, freq_range_mask].T.mean(axis=1)
+            if average_chs
+            else self.raw_spectrum[:, freq_range_mask].T,
+            label='original spectrum',
+        )
+        axes[0].plot(
+            self.freqs[freq_range_mask],
+            self.aperiodic[:, freq_range_mask].T.mean(axis=1) if average_chs else self.aperiodic[:, freq_range_mask].T,
+            label='aperiodic spectrum',
+            color='r',
+            alpha=0.7,
+        )
+        axes[0].legend()
+
+        axes[1].plot(
+            self.freqs[freq_range_mask],
+            self.raw_spectrum[:, freq_range_mask].T.mean(axis=1)
+            if average_chs
+            else self.raw_spectrum[:, freq_range_mask].T,
+            label='original spectrum',
+        )
+
+        axes[1].plot(
+            self.freqs[freq_range_mask],
+            self.periodic[:, freq_range_mask].T.mean(axis=1) if average_chs else self.periodic[:, freq_range_mask].T,
+            label='periodic spectrum',
+            color='g',
+            alpha=0.7,
+        )
+
+        axes[1].legend()
+
+        titles = ['Raw X Aperiodic \n PowerSpectrum', 'Raw X Periodic \n PowerSpectrum']  #'Raw \n PowerSpectrum',
+        for ix, (ax, title) in enumerate(zip(axes, titles)):
+            ax.set_xlabel('Frequency (Hz)')
+            ax.set_ylabel(f'Power ({units})')
+            ax.set_title(title)
+
+            if log_x:
+                ax.set_xscale('log')
+
+            periodic_plot_ix = 1
+            if ix < periodic_plot_ix:  # we dont want to log the yscale of the periodic spectrum
+                ax.set_yscale('log')
+
+        f.tight_layout()

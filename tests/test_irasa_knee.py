@@ -105,7 +105,7 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
         fs=fs,
         band=(0.1, 50),
         psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
-        hset_info=(1, 8.0, 0.05),
+        hset_info=(1, 8, 0.05),
     )
 
     assert np.mean(irasa_out.get_aperiodic_error()) < np.mean(irasa_out_bad.get_aperiodic_error())
@@ -130,7 +130,7 @@ def test_aperiodic_error_tf(ts4sprint_knee, fs, exponent_1, exponent_2):
         band=(0.1, 50),
         overlap_fraction=0.95,
         win_duration=0.5,
-        hset_info=(1, 8.0, 0.05),
+        hset_info=(1, 8, 0.05),
     )
 
     kwargs = {
