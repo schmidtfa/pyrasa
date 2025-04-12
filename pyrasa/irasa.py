@@ -58,12 +58,22 @@ def irasa(
         Sampling frequency of the data in Hz.
     band : tuple[float, float]
         The frequency range (lower and upper bounds in Hz) over which to compute the spectra.
-    nperseg : None
-
-    noverlap : None
-    nfft: None,
-    detrend: 'constant',
-    scaling: 'density',
+    nperseg : int | None
+        Length of each segment. Defaults to None if window is array_like, is set to the length of the window.
+    noverlap : int | None
+        Number of points to overlap between segments. If None, noverlap = nperseg // 2. Defaults to None.
+    nfft : int | None
+        Length of the FFT used, if a zero padded FFT is desired. If None, the FFT length is nperseg. Defaults to None.
+    detrend : str | function | False
+        Specifies how to detrend each segment. If detrend is a string, it is passed as the type argument to the detrend
+        function. If it is a function, it takes a segment and returns a detrended segment.
+        If detrend is False, no detrending is done. Defaults to ‘constant’.
+    scaling : 'density'
+        Selects between computing the power spectral density (‘density’) where Pxx has units of V**2/Hz and computing
+        the squared magnitude spectrum (‘spectrum’) where Pxx has units of V**2,
+        if x is measured in V and fs is measured in Hz. Defaults to ‘density’
+    average : str
+        Method to use when averaging periodograms. Defaults to ‘mean’ can also be ‘median’.
     ch_names : np.ndarray | None, optional
         Channel names associated with the data, if available. Default is None.
     win_func : Callable, optional
