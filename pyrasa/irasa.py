@@ -1,7 +1,7 @@
 """Functions to compute IRASA."""
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 import scipy.signal as dsp
@@ -27,13 +27,18 @@ def irasa(
     data: np.ndarray,
     fs: int,
     band: tuple[float, float],
-    psd_kwargs: dict,
-    ch_names: np.ndarray | None = None,
+    nperseg: int | None = None,
+    noverlap: int | None = None,
+    nfft: int | None = None,
+    detrend: str | Callable | Literal[False] = 'constant',
+    scaling: str = 'density',
+    average: str = 'mean',
     win_func: Callable = dsp.windows.hann,
     win_func_kwargs: dict | None = None,
     dpss_settings_time_bandwidth: float = 2.0,
     dpss_settings_low_bias: bool = True,
     dpss_eigenvalue_weighting: bool = True,
+    ch_names: np.ndarray | None = None,
     filter_settings: tuple[float | None, float | None] = (None, None),
     hset_info: tuple[float, float, float] = (1.05, 2.0, 0.05),
     hset_accuracy: int = 4,
@@ -53,8 +58,12 @@ def irasa(
         Sampling frequency of the data in Hz.
     band : tuple[float, float]
         The frequency range (lower and upper bounds in Hz) over which to compute the spectra.
-    psd_kwargs : dict
-        Keyword arguments to be passed to the `scipy.signal.welch` function for PSD estimation.
+    nperseg : None
+
+    noverlap : None
+    nfft: None,
+    detrend: 'constant',
+    scaling: 'density',
     ch_names : np.ndarray | None, optional
         Channel names associated with the data, if available. Default is None.
     win_func : Callable, optional
@@ -141,21 +150,27 @@ def irasa(
         return _compute_psd_welch(
             data,
             fs=fs,
-            nperseg=psd_kwargs.get('nperseg'),
+            nperseg=nperseg,
+            noverlap=noverlap,
+            average=average,
+            nfft=nfft,
+            detrend=detrend,
+            scaling=scaling,
             win_kwargs=win_kwargs,
             dpss_settings=dpss_settings,
-            noverlap=psd_kwargs.get('noverlap'),
-            nfft=psd_kwargs.get('nfft'),
         )[1]
 
     freq, psd = _compute_psd_welch(
         data,
         fs=fs,
-        nperseg=psd_kwargs.get('nperseg'),
+        nperseg=nperseg,
+        noverlap=noverlap,
+        nfft=nfft,
+        detrend=detrend,
+        average=average,
+        scaling=scaling,
         win_kwargs=win_kwargs,
         dpss_settings=dpss_settings,
-        noverlap=psd_kwargs.get('noverlap'),
-        nfft=psd_kwargs.get('nfft'),
     )
 
     psd, psd_aperiodic, psd_periodic = _gen_irasa(

@@ -131,7 +131,7 @@ def test_custom_slope_fitting(
 
             return y_hat
 
-    irasa_spectrum = irasa(fixed_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+    irasa_spectrum = irasa(fixed_aperiodic_signal, fs, f_range, **{'nperseg': 4 * fs})
     aperiodic_fit = irasa_spectrum.fit_aperiodic_model(fit_func=CustomFitFun)
 
     # add a high tolerance

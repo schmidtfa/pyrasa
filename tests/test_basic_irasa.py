@@ -15,7 +15,7 @@ from .settings import EXPONENT, FS, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_irasa(combined_signal, fs, osc_freq, exponent):
     f_range = [1, 100]
-    irasa_spectrum = irasa(combined_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+    irasa_spectrum = irasa(combined_signal, fs, f_range, **{'nperseg': 4 * fs})
     irasa_spectrum.__str__()
     # test the shape of the output
     assert irasa_spectrum.freqs.shape[0] == irasa_spectrum.aperiodic.shape[1] == irasa_spectrum.periodic.shape[1]
