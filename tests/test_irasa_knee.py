@@ -15,7 +15,7 @@ from .settings import EXP_KNEE_COMBO, FS, KNEE_TOLERANCE, MIN_CORR_PSD_CMB, OSC_
 @pytest.mark.parametrize('fs', FS, scope='session')
 def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
     f_range = [0.1, 100]
-    irasa_out = irasa(load_knee_aperiodic_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+    irasa_out = irasa(load_knee_aperiodic_signal, fs, f_range, **{'nperseg': 4 * fs})
     # test the shape of the output
     assert irasa_out.freqs.shape[0] == irasa_out.aperiodic.shape[1] == irasa_out.periodic.shape[1]
     freqs_psd, psd = dsp.welch(load_knee_aperiodic_signal, fs, nperseg=int(4 * fs))
@@ -52,7 +52,7 @@ def test_irasa_knee_peakless(load_knee_aperiodic_signal, fs, exponent, knee):
 @pytest.mark.parametrize('osc_freq', OSC_FREQ, scope='session')
 def test_irasa_knee_cmb(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
     f_range = [0.1, 100]
-    irasa_out = irasa(load_knee_cmb_signal, fs, f_range, psd_kwargs={'nperseg': 4 * fs})
+    irasa_out = irasa(load_knee_cmb_signal, fs, f_range, **{'nperseg': 4 * fs})
     # test the shape of the output
     assert irasa_out.freqs.shape[0] == irasa_out.aperiodic.shape[1] == irasa_out.periodic.shape[1]
     freqs_psd, psd = dsp.welch(load_knee_cmb_signal, fs, nperseg=int(4 * fs))
@@ -96,7 +96,7 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
         load_knee_cmb_signal,
         fs=fs,
         band=(0.1, 50),
-        psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
+        **{'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
         hset_info=(1, 2.0, 0.05),
     )
 
@@ -104,7 +104,7 @@ def test_aperiodic_error(load_knee_cmb_signal, fs, exponent, knee, osc_freq):
         load_knee_cmb_signal,
         fs=fs,
         band=(0.1, 50),
-        psd_kwargs={'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
+        **{'nperseg': duration * fs, 'noverlap': duration * fs * overlap},
         hset_info=(1, 8, 0.05),
     )
 

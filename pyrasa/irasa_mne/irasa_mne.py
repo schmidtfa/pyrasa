@@ -95,7 +95,6 @@ def irasa_raw(
 
     nfft = 2 ** (np.ceil(np.log2(int(fs * duration * np.max(hset_info)))))
     kwargs_psd = {
-        'window': 'hann',
         'average': 'median',
         'nfft': nfft,
         'nperseg': int(fs * duration),
@@ -108,7 +107,7 @@ def irasa_raw(
         band=band,
         filter_settings=(data.info['highpass'], data.info['lowpass']),
         hset_info=hset_info,
-        psd_kwargs=kwargs_psd,
+        **kwargs_psd,
     )
 
     return IrasaRaw(
@@ -177,7 +176,6 @@ def irasa_epochs(
 
     # TODO: does zero padding make sense?
     kwargs_psd = {
-        'window': 'hann',
         'nperseg': None,
         'nfft': nfft,
         'noverlap': 0,
@@ -192,7 +190,7 @@ def irasa_epochs(
             band=band,
             filter_settings=(data.info['highpass'], data.info['lowpass']),
             hset_info=hset_info,
-            psd_kwargs=kwargs_psd,
+            **kwargs_psd,
         )
         psd_list_aperiodic.append(irasa_spectrum.aperiodic.copy())
         psd_list_periodic.append(irasa_spectrum.periodic.copy())

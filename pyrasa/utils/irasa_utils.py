@@ -3,6 +3,7 @@
 import fractions
 from collections.abc import Callable
 from copy import copy
+from typing import Literal
 
 import numpy as np
 import scipy.signal as dsp
@@ -193,7 +194,7 @@ def _compute_psd_welch(
     dpss_settings: dict,
     noverlap: int | None = None,
     nfft: int | None = None,
-    detrend: str = 'constant',
+    detrend: str | Callable | Literal[False] = 'constant',
     return_onesided: bool = True,
     scaling: str = 'density',
     axis: int = -1,
