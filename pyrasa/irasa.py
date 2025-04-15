@@ -47,16 +47,13 @@ def irasa(
     Computes the aperiodic and periodic components of the power spectrum from a time series using the
     Irregular Resampling Autocorrelation (IRASA) algorithm.
 
-    The IRASA algorithm isolates oscillatory (periodic) activity from fractal (aperiodic) structure in
-    time series data by leveraging the fact that periodic components shift in frequency under resampling,
-    while aperiodic components remain largely invariant.
+    The IRASA algorithm works by resampling the signal using non-integer factors (h and 1/h),
+    which causes narrowband oscillatory (periodic) peaks to shift in frequency, while leaving the
+    aperiodic structure largely unaffected. By averaging the resulting power spectra across resampling
+    pairs and computing the median across those averages, IRASA suppresses periodic components and
+    isolates the aperiodic spectrum. Subtracting the aperiodic spectrum from the original spectrum
+    recovers the periodic spectrum.
 
-    IRASA works by systematically resampling the signal using a set of non-integer scaling factors (h and 1/h),
-    computing power spectra for each resampled version, and then computing the geometric mean.
-    Finally the median across resampling factors is computed. This process effectively attenuates spectral peaks
-    caused by oscillations—since they shift inconsistently with h
-    while preserving the broadband, scale-free structure of the aperiodic component. Subtracting this estimate
-    from the original spectrum reveals the periodic component.
 
     Parameters
     ----------
@@ -237,11 +234,11 @@ def irasa_sprint(  # noqa PLR0915 C901
     aperiodic structure largely unaffected. By averaging the resulting power spectra across resampling
     pairs and computing the median across those averages, IRASA suppresses periodic components and
     isolates the aperiodic spectrum. Subtracting the aperiodic spectrum from the original spectrum
-    recovers the periodic activity.
+    recovers the periodic spectrum.
 
     In this time-resolved variant, IRASA is applied to overlapping short-time windows.
     This allows the algorithm to produce a full time-frequency representation of both the aperiodic
-    and periodic components, providing information in they both change over time.
+    and periodic components, providing information in how they both change over time.
 
     Parameters
     ----------
