@@ -1,4 +1,4 @@
-# PyRASA - Spectral parameterization in python based on IRASA
+# PyRASA - Spectral parametrization in python based on IRASA
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![License](https://img.shields.io/badge/License-BSD_2--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
@@ -118,4 +118,4 @@ Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the 
 
 If you are using PyRASA it would be nice, if you could additionally cite us (whenever the paper is finally ready):
 
-Schmidt F., Hartmann T., & Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. SOME JOURNAL THAT LIKES US
+Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parametrization in python based on IRASA. SOME JOURNAL THAT LIKES US
