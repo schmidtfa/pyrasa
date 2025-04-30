@@ -82,9 +82,9 @@ source_suffix = ['.rst', '.md']
 # The short X.Y version.
 version = 'dev' if 'dev' in pyrasa.__version__ else pyrasa.__version__
 # The full version, including alpha/beta/rc tags.
-release = version
+# release = version
 
-html_title = 'PyRASA' + ' ' + release
+html_title = 'PyRASA'  # + ' ' + release
 html_short_title = 'PyRASA'
 
 # -- Options for HTML output -------------------------------------------------

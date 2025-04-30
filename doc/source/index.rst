@@ -78,7 +78,7 @@ And the goodness of fit::
 |  0.000081  | 0.999303   | -31.9892   | -47.9550   | knee      |     0     |
 +------------+------------+------------+------------+-----------+-----------+
 
-If you want to reproduce the example above checkout [example](https://github.com/schmidtfa/pyrasa/blob/main/examples/basic_functionality.ipynb)
+If you want to reproduce the example above checkout `this example notebook <https://github.com/schmidtfa/pyrasa/blob/main/examples/basic_functionality.ipynb>`.
 
 How to Contribute
 -----------------
@@ -98,7 +98,7 @@ Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the 
 
 If you are using PyRASA, it would be nice if you could additionally cite us (whenever the paper is finally ready):
 
-Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parameterization in python based on IRASA. *SOME JOURNAL THAT LIKES US*
+Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parameterization in python based on IRASA.
 
 
 
