@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Pitfalls in IRASA and how to avoid them &#8212; PyRASA dev documentation</title>
+    <title>Pitfalls in IRASA and how to avoid them &#8212; PyRASA dev</title>
   
   
   
@@ -16,36 +16,37 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../_static/documentation_options.js?v=81f007b9"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/irasa_pitfalls';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -54,6 +55,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
 
   </head>
   
@@ -70,19 +72,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../search.html"
       method="get">
@@ -90,7 +81,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -98,8 +88,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +118,7 @@
   
   
   
-    <p class="title logo__title">PyRASA dev documentation</p>
+    <p class="title logo__title">PyRASA dev</p>
   
 </a></div>
     
@@ -173,29 +163,21 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -220,15 +202,11 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
@@ -249,7 +227,8 @@ document.write(`
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -296,15 +275,11 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -328,9 +303,14 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -348,8 +328,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -358,7 +336,7 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">Pitfalls in...</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Pitfalls in IRASA and how to avoid them</span></li>
   </ul>
 </nav>
 </div>
@@ -383,13 +361,13 @@ taken, when setting this parameter. In this notebook I show what happens when yo
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurodsp.sim</span> <span class="kn">import</span> <span class="n">sim_combined</span>
-<span class="kn">from</span> <span class="nn">neurodsp.utils</span> <span class="kn">import</span> <span class="n">create_times</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">dsp</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pyrasa.irasa</span> <span class="kn">import</span> <span class="n">irasa</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_combined</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_times</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dsp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.irasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">irasa</span>
 </pre></div>
 </div>
 </div>
@@ -441,9 +419,8 @@ taken, when setting this parameter. In this notebook I show what happens when yo
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 <br/></pre></div>
 </div>
@@ -459,33 +436,32 @@ Cell <span class="ansi-green-fg">In[3], line 1</span>
 <span class="ansi-green-fg">----&gt; 1</span> irasa_out <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">irasa</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sig</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">band</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">150</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">psd_kwargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">nperseg</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">                                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">noverlap</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">overlap</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">                            </span><span class="ansi-yellow-bg">}</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">2</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.05</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">nperseg</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">noverlap</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">overlap</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">2</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.05</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
 
-File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/irasa.py:123</span>, in <span class="ansi-cyan-fg">irasa</span><span class="ansi-blue-fg">(data, fs, band, psd_kwargs, ch_names, win_func, win_func_kwargs, dpss_settings_time_bandwidth, dpss_settings_low_bias, dpss_eigenvalue_weighting, filter_settings, hset_info, hset_accuracy)</span>
-<span class="ansi-green-intense-fg ansi-bold">    113</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> data<span style="color: rgb(98,98,98)">.</span>ndim <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">2</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Data shape needs to be either of shape (Channels, Samples) or (Samples, ).</span><span style="color: rgb(175,0,0)">&#39;</span>  <span style="color: rgb(95,135,135)"># noqa PLR2004</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span> irasa_params <span style="color: rgb(98,98,98)">=</span> {
-<span class="ansi-green-intense-fg ansi-bold">    116</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">data</span><span style="color: rgb(175,0,0)">&#39;</span>: data,
-<span class="ansi-green-intense-fg ansi-bold">    117</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">fs</span><span style="color: rgb(175,0,0)">&#39;</span>: fs,
+File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/irasa.py:142</span>, in <span class="ansi-cyan-fg">irasa</span><span class="ansi-blue-fg">(data, fs, band, nperseg, noverlap, nfft, detrend, scaling, average, win_func, win_func_kwargs, dpss_settings_time_bandwidth, dpss_settings_low_bias, dpss_eigenvalue_weighting, ch_names, filter_settings, hset_info, hset_accuracy)</span>
+<span class="ansi-green-intense-fg ansi-bold">    132</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> data<span style="color: rgb(98,98,98)">.</span>ndim <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">2</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Data shape needs to be either of shape (Channels, Samples) or (Samples, ).</span><span style="color: rgb(175,0,0)">&#39;</span>  <span style="color: rgb(95,135,135)"># noqa PLR2004</span>
+<span class="ansi-green-intense-fg ansi-bold">    134</span> irasa_params <span style="color: rgb(98,98,98)">=</span> {
+<span class="ansi-green-intense-fg ansi-bold">    135</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">data</span><span style="color: rgb(175,0,0)">&#39;</span>: data,
+<span class="ansi-green-intense-fg ansi-bold">    136</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">fs</span><span style="color: rgb(175,0,0)">&#39;</span>: fs,
 <span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    120</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#39;</span>: hset_accuracy,
-<span class="ansi-green-intense-fg ansi-bold">    121</span> }
-<span class="ansi-green-fg">--&gt; 123</span> <span class="ansi-yellow-bg">_check_irasa_settings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span> hset <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>round(np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">*</span>hset_info), hset_accuracy)
-<span class="ansi-green-intense-fg ansi-bold">    126</span> hset <span style="color: rgb(98,98,98)">=</span> [h <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> h <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> hset <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> h <span style="color: rgb(98,98,98)">%</span> <span style="color: rgb(98,98,98)">1</span> <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>]  <span style="color: rgb(95,135,135)"># filter integers</span>
+<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#39;</span>: hset_accuracy,
+<span class="ansi-green-intense-fg ansi-bold">    140</span> }
+<span class="ansi-green-fg">--&gt; 142</span> <span class="ansi-yellow-bg">_check_irasa_settings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    144</span> hset <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>round(np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">*</span>hset_info), hset_accuracy)
+<span class="ansi-green-intense-fg ansi-bold">    145</span> hset <span style="color: rgb(98,98,98)">=</span> [h <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> h <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> hset <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> h <span style="color: rgb(98,98,98)">%</span> <span style="color: rgb(98,98,98)">1</span> <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>]  <span style="color: rgb(95,135,135)"># filter integers</span>
 
-File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/utils/irasa_utils.py:159</span>, in <span class="ansi-cyan-fg">_check_irasa_settings</span><span class="ansi-blue-fg">(irasa_params, hset_info)</span>
-<span class="ansi-green-intense-fg ansi-bold">    157</span> band_evaluated: <span style="color: rgb(0,135,0)">tuple</span>[<span style="color: rgb(0,135,0)">float</span>, <span style="color: rgb(0,135,0)">float</span>] <span style="color: rgb(98,98,98)">=</span> (irasa_params[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#39;</span>][<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">/</span> hmax, irasa_params[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#39;</span>][<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">*</span> hmax)
-<span class="ansi-green-intense-fg ansi-bold">    158</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> band_evaluated[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">The evaluated frequency range is 0 or lower this makes no sense</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-fg">--&gt; 159</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> band_evaluated[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">&lt;</span> nyquist, (
-<span class="ansi-green-intense-fg ansi-bold">    160</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">The evaluated frequency range goes up to </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span><span style="color: rgb(98,98,98)">2</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    161</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">which is higher than the Nyquist frequency for your data of </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>nyquist<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz, </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    162</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">try to either lower the upper bound for the hset or decrease the upper band limit, when running IRASA.</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    163</span> )
-<span class="ansi-green-intense-fg ansi-bold">    165</span> filter_settings: <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>] <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">list</span>(irasa_params[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">filter_settings</span><span style="color: rgb(175,0,0)">&#39;</span>])
-<span class="ansi-green-intense-fg ansi-bold">    166</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filter_settings[<span style="color: rgb(98,98,98)">0</span>] <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/utils/irasa_utils.py:160</span>, in <span class="ansi-cyan-fg">_check_irasa_settings</span><span class="ansi-blue-fg">(irasa_params, hset_info)</span>
+<span class="ansi-green-intense-fg ansi-bold">    158</span> band_evaluated: <span style="color: rgb(0,135,0)">tuple</span>[<span style="color: rgb(0,135,0)">float</span>, <span style="color: rgb(0,135,0)">float</span>] <span style="color: rgb(98,98,98)">=</span> (irasa_params[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#39;</span>][<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">/</span> hmax, irasa_params[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#39;</span>][<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">*</span> hmax)
+<span class="ansi-green-intense-fg ansi-bold">    159</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> band_evaluated[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">The evaluated frequency range is 0 or lower this makes no sense</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-fg">--&gt; 160</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> band_evaluated[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">&lt;</span> nyquist, (
+<span class="ansi-green-intense-fg ansi-bold">    161</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">The evaluated frequency range goes up to </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span><span style="color: rgb(98,98,98)">2</span>)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    162</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">which is higher than the Nyquist frequency for your data of </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>nyquist<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz, </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    163</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">try to either lower the upper bound for the hset or decrease the upper band limit, when running IRASA.</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    164</span> )
+<span class="ansi-green-intense-fg ansi-bold">    166</span> filter_settings: <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>] <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">list</span>(irasa_params[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">filter_settings</span><span style="color: rgb(175,0,0)">&#39;</span>])
+<span class="ansi-green-intense-fg ansi-bold">    167</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filter_settings[<span style="color: rgb(98,98,98)">0</span>] <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
 
 <span class="ansi-red-fg">AssertionError</span>: The evaluated frequency range goes up to 300.0Hz which is higher than the Nyquist frequency for your data of 250.0Hz,
 try to either lower the upper bound for the hset or decrease the upper band limit, when running IRASA.
@@ -500,9 +476,8 @@ try to either lower the upper bound for the hset or decrease the upper band limi
 <span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.66</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 
@@ -516,7 +491,7 @@ try to either lower the upper bound for the hset or decrease the upper band limi
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x116dcbbf0&gt;]
+[&lt;matplotlib.lines.Line2D at 0x1748f1760&gt;]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -550,7 +525,7 @@ try to either lower the upper bound for the hset or decrease the upper band limi
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x117173cb0&gt;]
+[&lt;matplotlib.lines.Line2D at 0x135e46330&gt;]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -566,10 +541,10 @@ try to either lower the upper bound for the hset or decrease the upper band limi
 <p>In the case that our model evaluations includes the nyquist frequency, pyrasa actually throws an error as long as you specify your sampling frequency correctly (labeled as fs in pyrasa.irasa). However, another Issue is generated by fitting your model inside your high-pass or lowpass filters. As how their data is handled is up to every researcher before applying IRASA, exact filter specifications are not always available, hence pyrasa does not per default recognize whether your data has been
 filtered or not. If you use the <code class="docutils literal notranslate"><span class="pre">pyrasa.irasa_mne</span></code> this is taken into account as mne stores filter information in the raw or epoched object. In order to illustrate what happens when you accidently fit in your filters see below.. what happens to our aperiodic spectrum in high and low pass filtered signals..</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurodsp.filt</span> <span class="kn">import</span> <span class="n">filter_signal</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.filt</span><span class="w"> </span><span class="kn">import</span> <span class="n">filter_signal</span>
 
 <span class="n">sig_hp</span> <span class="o">=</span> <span class="n">filter_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">pass_type</span><span class="o">=</span><span class="s1">&#39;highpass&#39;</span><span class="p">,</span> <span class="n">f_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 <span class="n">sig_hp</span> <span class="o">=</span> <span class="n">sig_hp</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sig_hp</span><span class="p">)]</span>
@@ -577,9 +552,8 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 <span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig_hp</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">irasa_out</span><span class="o">.</span><span class="n">freqs</span><span class="p">,</span> <span class="n">irasa_out</span><span class="o">.</span><span class="n">aperiodic</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -588,7 +562,7 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -619,8 +593,8 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
   <tbody>
     <tr>
       <th>0</th>
-      <td>-3.555643</td>
-      <td>-0.291665</td>
+      <td>-3.470763</td>
+      <td>-0.272755</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -637,15 +611,14 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 <p>This looks clearly wrong and illustrates why our lower evaluated frequency range should never go below the high-pass filter. In this case our hmax is 2 so taking 2 * the highpass filter edge is giving us the lowest point that we can sensibly evaluate (i.e. 8Hz)</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig_hp</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">irasa_out</span><span class="o">.</span><span class="n">freqs</span><span class="p">,</span> <span class="n">irasa_out</span><span class="o">.</span><span class="n">aperiodic</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -655,7 +628,7 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -686,8 +659,8 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.385029</td>
-      <td>0.990062</td>
+      <td>-1.281976</td>
+      <td>1.019193</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -704,7 +677,7 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 <p>The same applies to lowpass filters. Here the upper-most evaluated frequency also depends on the lowpass edge. I.e. we want to stay below lowpass / hmax.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sig_lp</span> <span class="o">=</span> <span class="n">filter_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">pass_type</span><span class="o">=</span><span class="s1">&#39;lowpass&#39;</span><span class="p">,</span> <span class="n">f_range</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
@@ -713,9 +686,8 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 <span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig_lp</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">irasa_out</span><span class="o">.</span><span class="n">freqs</span><span class="p">,</span> <span class="n">irasa_out</span><span class="o">.</span><span class="n">aperiodic</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -724,7 +696,7 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -755,8 +727,8 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
   <tbody>
     <tr>
       <th>0</th>
-      <td>1.655552</td>
-      <td>4.197068</td>
+      <td>1.741544</td>
+      <td>4.215911</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -772,15 +744,14 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig_lp</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">irasa_out</span><span class="o">.</span><span class="n">freqs</span><span class="p">,</span> <span class="n">irasa_out</span><span class="o">.</span><span class="n">aperiodic</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -789,7 +760,7 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -820,8 +791,8 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
   <tbody>
     <tr>
       <th>0</th>
-      <td>-1.359771</td>
-      <td>1.018573</td>
+      <td>-1.279485</td>
+      <td>1.027562</td>
       <td>fixed</td>
       <td>0</td>
     </tr>
@@ -838,15 +809,14 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 </div>
 <p>A good way of accidently misspecifying your model is to pass the filter bounds to <code class="docutils literal notranslate"><span class="pre">pyrasa.irasa</span></code>. Model misspecifications will result in informative error messages. That will tell you how to improve your irasa fit.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig_lp</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">filter_settings</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 </pre></div>
@@ -859,45 +829,44 @@ filtered or not. If you use the <code class="docutils literal notranslate"><span
 <div class="highlight"><pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">AssertionError</span>                            Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[10], line 1</span>
+Cell <span class="ansi-green-fg">In[9], line 1</span>
 <span class="ansi-green-fg">----&gt; 1</span> irasa_out <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">irasa</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sig_lp</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">band</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">100</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">psd_kwargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">nperseg</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">                                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">noverlap</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">overlap</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">                            </span><span class="ansi-yellow-bg">}</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">filter_settings</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">50</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">2</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.05</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">nperseg</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">noverlap</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">overlap</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">filter_settings</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">50</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">2</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.05</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
 
-File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/irasa.py:123</span>, in <span class="ansi-cyan-fg">irasa</span><span class="ansi-blue-fg">(data, fs, band, psd_kwargs, ch_names, win_func, win_func_kwargs, dpss_settings_time_bandwidth, dpss_settings_low_bias, dpss_eigenvalue_weighting, filter_settings, hset_info, hset_accuracy)</span>
-<span class="ansi-green-intense-fg ansi-bold">    113</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> data<span style="color: rgb(98,98,98)">.</span>ndim <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">2</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Data shape needs to be either of shape (Channels, Samples) or (Samples, ).</span><span style="color: rgb(175,0,0)">&#39;</span>  <span style="color: rgb(95,135,135)"># noqa PLR2004</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span> irasa_params <span style="color: rgb(98,98,98)">=</span> {
-<span class="ansi-green-intense-fg ansi-bold">    116</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">data</span><span style="color: rgb(175,0,0)">&#39;</span>: data,
-<span class="ansi-green-intense-fg ansi-bold">    117</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">fs</span><span style="color: rgb(175,0,0)">&#39;</span>: fs,
+File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/irasa.py:142</span>, in <span class="ansi-cyan-fg">irasa</span><span class="ansi-blue-fg">(data, fs, band, nperseg, noverlap, nfft, detrend, scaling, average, win_func, win_func_kwargs, dpss_settings_time_bandwidth, dpss_settings_low_bias, dpss_eigenvalue_weighting, ch_names, filter_settings, hset_info, hset_accuracy)</span>
+<span class="ansi-green-intense-fg ansi-bold">    132</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> data<span style="color: rgb(98,98,98)">.</span>ndim <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">2</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Data shape needs to be either of shape (Channels, Samples) or (Samples, ).</span><span style="color: rgb(175,0,0)">&#39;</span>  <span style="color: rgb(95,135,135)"># noqa PLR2004</span>
+<span class="ansi-green-intense-fg ansi-bold">    134</span> irasa_params <span style="color: rgb(98,98,98)">=</span> {
+<span class="ansi-green-intense-fg ansi-bold">    135</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">data</span><span style="color: rgb(175,0,0)">&#39;</span>: data,
+<span class="ansi-green-intense-fg ansi-bold">    136</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">fs</span><span style="color: rgb(175,0,0)">&#39;</span>: fs,
 <span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    120</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#39;</span>: hset_accuracy,
-<span class="ansi-green-intense-fg ansi-bold">    121</span> }
-<span class="ansi-green-fg">--&gt; 123</span> <span class="ansi-yellow-bg">_check_irasa_settings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span> hset <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>round(np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">*</span>hset_info), hset_accuracy)
-<span class="ansi-green-intense-fg ansi-bold">    126</span> hset <span style="color: rgb(98,98,98)">=</span> [h <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> h <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> hset <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> h <span style="color: rgb(98,98,98)">%</span> <span style="color: rgb(98,98,98)">1</span> <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>]  <span style="color: rgb(95,135,135)"># filter integers</span>
+<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#39;</span>: hset_accuracy,
+<span class="ansi-green-intense-fg ansi-bold">    140</span> }
+<span class="ansi-green-fg">--&gt; 142</span> <span class="ansi-yellow-bg">_check_irasa_settings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    144</span> hset <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>round(np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">*</span>hset_info), hset_accuracy)
+<span class="ansi-green-intense-fg ansi-bold">    145</span> hset <span style="color: rgb(98,98,98)">=</span> [h <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> h <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> hset <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> h <span style="color: rgb(98,98,98)">%</span> <span style="color: rgb(98,98,98)">1</span> <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>]  <span style="color: rgb(95,135,135)"># filter integers</span>
 
-File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/utils/irasa_utils.py:171</span>, in <span class="ansi-cyan-fg">_check_irasa_settings</span><span class="ansi-blue-fg">(irasa_params, hset_info)</span>
-<span class="ansi-green-intense-fg ansi-bold">    168</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-intense-fg ansi-bold">    169</span>     filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">=</span> band_evaluated[<span style="color: rgb(98,98,98)">1</span>]
-<span class="ansi-green-fg">--&gt; 171</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> np<span style="color: rgb(98,98,98)">.</span>logical_and(band_evaluated[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">&gt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">0</span>], band_evaluated[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">&lt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>]), (
-<span class="ansi-green-intense-fg ansi-bold">    172</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You run IRASA in a frequency range from </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    173</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    174</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    175</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Your settings specified in </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">filter_settings</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> indicate that you have a pass band from </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    176</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    177</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    178</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">This means that your evaluated range likely contains filter artifacts. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    179</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Either change your filter settings, adjust hset or the parameter </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> accordingly. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    180</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You want to make sure that the lower band limit divided by the upper bound of the hset </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&gt; </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    182</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">and that upper band limit times the upper bound of the hset &lt; </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    183</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    184</span> )
+File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/utils/irasa_utils.py:172</span>, in <span class="ansi-cyan-fg">_check_irasa_settings</span><span class="ansi-blue-fg">(irasa_params, hset_info)</span>
+<span class="ansi-green-intense-fg ansi-bold">    169</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-intense-fg ansi-bold">    170</span>     filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">=</span> band_evaluated[<span style="color: rgb(98,98,98)">1</span>]
+<span class="ansi-green-fg">--&gt; 172</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> np<span style="color: rgb(98,98,98)">.</span>logical_and(band_evaluated[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">&gt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">0</span>], band_evaluated[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">&lt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>]), (
+<span class="ansi-green-intense-fg ansi-bold">    173</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You run IRASA in a frequency range from </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    174</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    175</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    176</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Your settings specified in </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">filter_settings</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> indicate that you have a pass band from </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    177</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    178</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    179</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">This means that your evaluated range likely contains filter artifacts. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    180</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Either change your filter settings, adjust hset or the parameter </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> accordingly. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You want to make sure that the lower band limit divided by the upper bound of the hset </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    182</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&gt; </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    183</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">and that upper band limit times the upper bound of the hset &lt; </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    184</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    185</span> )
 
 <span class="ansi-red-fg">AssertionError</span>: You run IRASA in a frequency range from 0.05 - 200.0Hz.
 Your settings specified in &#34;filter_settings&#34; indicate that you have a pass band from 0.05 - 50Hz.
@@ -908,15 +877,14 @@ and that upper band limit times the upper bound of the hset &lt; 50
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig_hp</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">filter_settings</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 </pre></div>
@@ -929,45 +897,44 @@ and that upper band limit times the upper bound of the hset &lt; 50
 <div class="highlight"><pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">AssertionError</span>                            Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[11], line 1</span>
+Cell <span class="ansi-green-fg">In[10], line 1</span>
 <span class="ansi-green-fg">----&gt; 1</span> irasa_out <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">irasa</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sig_hp</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">band</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">100</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">psd_kwargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">nperseg</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">                                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">noverlap</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">overlap</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">                            </span><span class="ansi-yellow-bg">}</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">filter_settings</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">4</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">2</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.05</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">nperseg</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">noverlap</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">duration</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">fs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">overlap</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">filter_settings</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">4</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">                    </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">2</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0.05</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
 
-File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/irasa.py:123</span>, in <span class="ansi-cyan-fg">irasa</span><span class="ansi-blue-fg">(data, fs, band, psd_kwargs, ch_names, win_func, win_func_kwargs, dpss_settings_time_bandwidth, dpss_settings_low_bias, dpss_eigenvalue_weighting, filter_settings, hset_info, hset_accuracy)</span>
-<span class="ansi-green-intense-fg ansi-bold">    113</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> data<span style="color: rgb(98,98,98)">.</span>ndim <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">2</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Data shape needs to be either of shape (Channels, Samples) or (Samples, ).</span><span style="color: rgb(175,0,0)">&#39;</span>  <span style="color: rgb(95,135,135)"># noqa PLR2004</span>
-<span class="ansi-green-intense-fg ansi-bold">    115</span> irasa_params <span style="color: rgb(98,98,98)">=</span> {
-<span class="ansi-green-intense-fg ansi-bold">    116</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">data</span><span style="color: rgb(175,0,0)">&#39;</span>: data,
-<span class="ansi-green-intense-fg ansi-bold">    117</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">fs</span><span style="color: rgb(175,0,0)">&#39;</span>: fs,
+File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/irasa.py:142</span>, in <span class="ansi-cyan-fg">irasa</span><span class="ansi-blue-fg">(data, fs, band, nperseg, noverlap, nfft, detrend, scaling, average, win_func, win_func_kwargs, dpss_settings_time_bandwidth, dpss_settings_low_bias, dpss_eigenvalue_weighting, ch_names, filter_settings, hset_info, hset_accuracy)</span>
+<span class="ansi-green-intense-fg ansi-bold">    132</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> data<span style="color: rgb(98,98,98)">.</span>ndim <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">2</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Data shape needs to be either of shape (Channels, Samples) or (Samples, ).</span><span style="color: rgb(175,0,0)">&#39;</span>  <span style="color: rgb(95,135,135)"># noqa PLR2004</span>
+<span class="ansi-green-intense-fg ansi-bold">    134</span> irasa_params <span style="color: rgb(98,98,98)">=</span> {
+<span class="ansi-green-intense-fg ansi-bold">    135</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">data</span><span style="color: rgb(175,0,0)">&#39;</span>: data,
+<span class="ansi-green-intense-fg ansi-bold">    136</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">fs</span><span style="color: rgb(175,0,0)">&#39;</span>: fs,
 <span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    120</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#39;</span>: hset_accuracy,
-<span class="ansi-green-intense-fg ansi-bold">    121</span> }
-<span class="ansi-green-fg">--&gt; 123</span> <span class="ansi-yellow-bg">_check_irasa_settings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    125</span> hset <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>round(np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">*</span>hset_info), hset_accuracy)
-<span class="ansi-green-intense-fg ansi-bold">    126</span> hset <span style="color: rgb(98,98,98)">=</span> [h <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> h <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> hset <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> h <span style="color: rgb(98,98,98)">%</span> <span style="color: rgb(98,98,98)">1</span> <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>]  <span style="color: rgb(95,135,135)"># filter integers</span>
+<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#39;</span>: hset_accuracy,
+<span class="ansi-green-intense-fg ansi-bold">    140</span> }
+<span class="ansi-green-fg">--&gt; 142</span> <span class="ansi-yellow-bg">_check_irasa_settings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">irasa_params</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">hset_info</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    144</span> hset <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>round(np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">*</span>hset_info), hset_accuracy)
+<span class="ansi-green-intense-fg ansi-bold">    145</span> hset <span style="color: rgb(98,98,98)">=</span> [h <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> h <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> hset <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> h <span style="color: rgb(98,98,98)">%</span> <span style="color: rgb(98,98,98)">1</span> <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(98,98,98)">0</span>]  <span style="color: rgb(95,135,135)"># filter integers</span>
 
-File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/utils/irasa_utils.py:171</span>, in <span class="ansi-cyan-fg">_check_irasa_settings</span><span class="ansi-blue-fg">(irasa_params, hset_info)</span>
-<span class="ansi-green-intense-fg ansi-bold">    168</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-intense-fg ansi-bold">    169</span>     filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">=</span> band_evaluated[<span style="color: rgb(98,98,98)">1</span>]
-<span class="ansi-green-fg">--&gt; 171</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> np<span style="color: rgb(98,98,98)">.</span>logical_and(band_evaluated[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">&gt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">0</span>], band_evaluated[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">&lt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>]), (
-<span class="ansi-green-intense-fg ansi-bold">    172</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You run IRASA in a frequency range from </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    173</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    174</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    175</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Your settings specified in </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">filter_settings</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> indicate that you have a pass band from </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    176</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    177</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    178</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">This means that your evaluated range likely contains filter artifacts. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    179</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Either change your filter settings, adjust hset or the parameter </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> accordingly. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    180</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You want to make sure that the lower band limit divided by the upper bound of the hset </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&gt; </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    182</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">and that upper band limit times the upper bound of the hset &lt; </span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    183</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">&#39;</span>
-<span class="ansi-green-intense-fg ansi-bold">    184</span> )
+File <span class="ansi-green-fg">~/git/pyrasa/pyrasa/utils/irasa_utils.py:172</span>, in <span class="ansi-cyan-fg">_check_irasa_settings</span><span class="ansi-blue-fg">(irasa_params, hset_info)</span>
+<span class="ansi-green-intense-fg ansi-bold">    169</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-intense-fg ansi-bold">    170</span>     filter_settings[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">=</span> band_evaluated[<span style="color: rgb(98,98,98)">1</span>]
+<span class="ansi-green-fg">--&gt; 172</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> np<span style="color: rgb(98,98,98)">.</span>logical_and(band_evaluated[<span style="color: rgb(98,98,98)">0</span>] <span style="color: rgb(98,98,98)">&gt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">0</span>], band_evaluated[<span style="color: rgb(98,98,98)">1</span>] <span style="color: rgb(98,98,98)">&lt;</span><span style="color: rgb(98,98,98)">=</span> filter_settings[<span style="color: rgb(98,98,98)">1</span>]), (
+<span class="ansi-green-intense-fg ansi-bold">    173</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You run IRASA in a frequency range from </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    174</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    175</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(band_evaluated[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    176</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Your settings specified in </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">filter_settings</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> indicate that you have a pass band from </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    177</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> - </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    178</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">Hz. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    179</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">This means that your evaluated range likely contains filter artifacts. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    180</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Either change your filter settings, adjust hset or the parameter </span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">band</span><span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)"> accordingly. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">You want to make sure that the lower band limit divided by the upper bound of the hset </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    182</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&gt; </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">0</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    183</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">and that upper band limit times the upper bound of the hset &lt; </span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    184</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#39;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>np<span style="color: rgb(98,98,98)">.</span>round(filter_settings[<span style="color: rgb(98,98,98)">1</span>],<span style="color: rgb(188,188,188)"> </span>irasa_params[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">hset_accuracy</span><span style="color: rgb(175,0,0)">&#34;</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    185</span> )
 
 <span class="ansi-red-fg">AssertionError</span>: You run IRASA in a frequency range from 0.05 - 200.0Hz.
 Your settings specified in &#34;filter_settings&#34; indicate that you have a pass band from 4 - 200.0Hz.
@@ -1005,7 +972,8 @@ and that upper band limit times the upper bound of the hset &lt; 200.0
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1034,8 +1002,8 @@ and that upper band limit times the upper bound of the hset &lt; 200.0
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1055,7 +1023,7 @@ and that upper band limit times the upper bound of the hset &lt; 200.0
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>
@@ -1068,7 +1036,8 @@ and that upper band limit times the upper bound of the hset &lt; 200.0
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>

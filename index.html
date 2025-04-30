@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PyRASA - Spectral parameterization in python based on IRASA &#8212; PyRASA dev documentation</title>
+    <title>PyRASA - Spectral parameterization in python based on IRASA &#8212; PyRASA dev</title>
   
   
   
@@ -16,31 +16,34 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=81f007b9"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
@@ -52,6 +55,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
 
   </head>
   
@@ -68,19 +72,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -88,7 +81,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -96,8 +88,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -126,7 +118,7 @@
   
   
   
-    <p class="title logo__title">PyRASA dev documentation</p>
+    <p class="title logo__title">PyRASA dev</p>
   
 </a></div>
     
@@ -171,29 +163,21 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -218,15 +202,11 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
@@ -247,7 +227,8 @@ document.write(`
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -294,15 +275,11 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -326,9 +303,14 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -349,7 +331,7 @@ document.write(`
                   
   <section id="pyrasa-spectral-parameterization-in-python-based-on-irasa">
 <h1>PyRASA - Spectral parameterization in python based on IRASA<a class="headerlink" href="#pyrasa-spectral-parameterization-in-python-based-on-irasa" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://www.repostatus.org/#wip"><img alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." src="https://www.repostatus.org/badges/latest/wip.svg" />
+<a class="reference external image-reference" href="https://www.repostatus.org/#active"><img alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed." src="https://www.repostatus.org/badges/latest/active.svg" />
 </a>
 <a class="reference external image-reference" href="https://opensource.org/licenses/BSD-2-Clause"><img alt="License" src="https://img.shields.io/badge/License-BSD_2--Clause-orange.svg" />
 </a>
@@ -371,7 +353,7 @@ document.write(`
 <section id="example-usage">
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
 <p>Decompose spectra into periodic and aperiodic components:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrasa.irasa</span> <span class="kn">import</span> <span class="n">irasa</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.irasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">irasa</span>
 
 <span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
                   <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
@@ -397,9 +379,7 @@ document.write(`
 </thead>
 <tbody>
 <tr class="row-even"><td><p>0</p></td>
-<td><p>9.5</p></td>
-<td><p>1.4426</p></td>
-<td><p>0.4178</p></td>
+<td colspan="3"><p>10.0 | 1.1887 | 0.495</p></td>
 </tr>
 </tbody>
 </table>
@@ -421,13 +401,13 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>1.737e-16</p></td>
-<td><p>60.94</p></td>
-<td><p>0.0396</p></td>
-<td><p>1.4727</p></td>
+<tr class="row-even"><td><p>4.329e-17</p></td>
+<td><p>62.11</p></td>
+<td><p>0.0552</p></td>
+<td><p>1.4602</p></td>
 <td><p>knee</p></td>
-<td><p>14.131</p></td>
-<td><p>0.0113</p></td>
+<td><p>13.855</p></td>
+<td><p>0.0115</p></td>
 <td><p>0</p></td>
 </tr>
 </tbody>
@@ -448,27 +428,30 @@ document.write(`
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>0.000051</p></td>
-<td><p>0.999751</p></td>
-<td><p>-3931.840</p></td>
-<td><p>-3947.806</p></td>
+<tr class="row-even"><td><p>0.000081</p></td>
+<td><p>0.999303</p></td>
+<td><p>-31.9892</p></td>
+<td><p>-47.9550</p></td>
 <td><p>knee</p></td>
 <td><p>0</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>If you want to reproduce the example above checkout [example](<a class="github reference external" href="https://github.com/schmidtfa/pyrasa/blob/main/examples/basic_functionality.ipynb">schmidtfa/pyrasa</a>)</p>
 </section>
 <section id="how-to-contribute">
 <h2>How to Contribute<a class="headerlink" href="#how-to-contribute" title="Link to this heading">#</a></h2>
-<p>Contributions to PyRASA are welcome! Whether it’s raising issues, improving documentation, fixing bugs, or adding new features, your help is appreciated. Please refer to the <a class="reference external" href="CONTRIBUTING.md">CONTRIBUTING.md</a> file for more information on how to get involved.</p>
+<p>Contributions to PyRASA are welcome! Whether it’s raising issues, improving documentation, fixing bugs, or adding new features, your help is appreciated.</p>
+<p>To file bug reports and/or ask questions about this project, please use the <a class="reference external" href="https://github.com/schmidtfa/pyrasa/issues">Github issue tracker</a>.</p>
+<p>Please refer to the <a class="reference external" href="https://github.com/schmidtfa/pyrasa/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> file for more information on how to get involved.</p>
 </section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
 <p>If you are using IRASA, please cite the smart people who came up with the algorithm:</p>
 <p>Wen, H., &amp; Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. <em>Brain Topography</em>, 29, 13-26. <a class="reference external" href="https://doi.org/10.1007/s10548-015-0448-0">https://doi.org/10.1007/s10548-015-0448-0</a></p>
 <p>If you are using PyRASA, it would be nice if you could additionally cite us (whenever the paper is finally ready):</p>
-<p>Schmidt F., Hartmann T., &amp; Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. <em>SOME JOURNAL THAT LIKES US</em></p>
+<p>Schmidt F., Hartmann T., &amp; Weisz, N. (2025). PyRASA - Spectral parameterization in python based on IRASA. <em>SOME JOURNAL THAT LIKES US</em></p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -500,7 +483,8 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -531,8 +515,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -552,7 +536,7 @@ document.write(`
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>
@@ -565,7 +549,8 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>

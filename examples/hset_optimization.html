@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Optimize your hset &#8212; PyRASA dev documentation</title>
+    <title>Optimize your hset &#8212; PyRASA dev</title>
   
   
   
@@ -16,36 +16,37 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../_static/documentation_options.js?v=81f007b9"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/hset_optimization';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -54,6 +55,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
 
   </head>
   
@@ -70,19 +72,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../search.html"
       method="get">
@@ -90,7 +81,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -98,8 +88,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +118,7 @@
   
   
   
-    <p class="title logo__title">PyRASA dev documentation</p>
+    <p class="title logo__title">PyRASA dev</p>
   
 </a></div>
     
@@ -173,29 +163,21 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -220,15 +202,11 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
@@ -245,7 +223,8 @@ document.write(`
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -292,15 +271,11 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -324,9 +299,14 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -344,8 +324,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -354,7 +332,7 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">Optimize your hset</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Optimize your hset</span></li>
   </ul>
 </nav>
 </div>
@@ -376,17 +354,18 @@ document.write(`
 <p>IRASA - as an algoritm - is very appealing, because its so simple. In the end we are just up/downsampling signals, computing psd’s and averaging them. This means that we only have a single hyperparameter to set when running a model, the set of up- and downsampling factors. Correctly specifying the hset is very important to avoid poorly specified models (see also irasa_pitfalls.ipynb and improving_irasa_models.ipynb). In both examples we looked at rather simple spectra, where power decreases with
 the same exponent across the whole spectrum. Here we consider also spectra that contain a spectral knee and introduce an approach to improve your hset specification. In the presence of spectral knees.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurodsp.sim</span> <span class="kn">import</span> <span class="n">sim_combined</span>
-<span class="kn">from</span> <span class="nn">neurodsp.utils</span> <span class="kn">import</span> <span class="n">create_times</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">dsp</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pyrasa.irasa</span> <span class="kn">import</span> <span class="n">irasa</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_combined</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_times</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dsp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.irasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">irasa</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
 <span class="c1"># %% Lets check the knee</span>
 <span class="n">fs</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -428,15 +407,14 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 </div>
 <p>When things are specified correctly we can rather unproblematically regenerate our simulated aperiodic model parameters.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
@@ -453,7 +431,7 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -488,13 +466,13 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
   <tbody>
     <tr>
       <th>0</th>
-      <td>4.481576e-16</td>
-      <td>63.175767</td>
-      <td>0.009849</td>
-      <td>1.516753</td>
+      <td>7.294614e-08</td>
+      <td>62.74698</td>
+      <td>0.013331</td>
+      <td>1.510223</td>
       <td>knee</td>
-      <td>14.855539</td>
-      <td>0.010714</td>
+      <td>14.778644</td>
+      <td>0.010769</td>
       <td>0</td>
     </tr>
   </tbody>
@@ -509,7 +487,7 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out</span><span class="o">.</span><span class="n">fit_aperiodic_model</span><span class="p">(</span><span class="n">fit_func</span><span class="o">=</span><span class="s1">&#39;knee&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gof</span>
@@ -517,7 +495,7 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -552,12 +530,12 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.000152</td>
-      <td>0.997741</td>
-      <td>0.99771</td>
-      <td>-27.333955</td>
-      <td>-40.019592</td>
-      <td>-42.149085</td>
+      <td>0.000128</td>
+      <td>0.998095</td>
+      <td>0.998069</td>
+      <td>-28.327254</td>
+      <td>-41.012891</td>
+      <td>-43.142384</td>
       <td>knee</td>
       <td>0</td>
     </tr>
@@ -567,15 +545,14 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 </div>
 <p>However, sometimes we might feel the need to drastically increase our hmax, because we have a very broad oscillation that we want to remove from our signal. In this case we start running into problems when trying to recover our simulated Knee Frequency. This comes from the matter that the exponent before and after the knee get mixed up when up-/downsampling the signal.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">irasa_out_bad</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
                     <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                     <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-                    <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span>
-                            <span class="p">},</span>
+                    <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                    <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                     <span class="n">hset_info</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
 
 
@@ -593,7 +570,7 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -628,13 +605,13 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
   <tbody>
     <tr>
       <th>0</th>
-      <td>1.958207e-14</td>
-      <td>67.992202</td>
-      <td>0.210813</td>
-      <td>1.347045</td>
+      <td>4.796011e-10</td>
+      <td>60.560137</td>
+      <td>0.293954</td>
+      <td>1.245288</td>
       <td>knee</td>
-      <td>10.865906</td>
-      <td>0.014647</td>
+      <td>9.379387</td>
+      <td>0.016969</td>
       <td>0</td>
     </tr>
   </tbody>
@@ -651,10 +628,10 @@ the same exponent across the whole spectrum. Here we consider also spectra that 
 <p>So how do we set the hset to avoid this issue. Here I am introducing a way to optimize the hset. For this we can take the absolute periodic spectrum, which contains apart from the oscillations also in a way the model error, as we get the periodic spectrum by subtracting the “aperiodic spectrum” from the original psd. So we first need to get rid of the putative oscillations to get a good estimate of the model error. We do this by simply zeroeing oscillations or “peaks” in the periodic spectrum.
 The residual absolute spectrum is then averaged and the resultant mean squared error can be used reduce the overall error between the original spectrum (blue line) and modeled aperiodic spectrum (orange line). Below we can see that the good model has a much lower “error” than the bad model.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="k">def</span> <span class="nf">get_aperiodic_error</span><span class="p">(</span><span class="n">irasa_out</span><span class="p">,</span> <span class="n">peak_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_aperiodic_error</span><span class="p">(</span><span class="n">irasa_out</span><span class="p">,</span> <span class="n">peak_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">peak_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">peak_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -678,7 +655,7 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -690,10 +667,11 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 <span class="n">df2plot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;good&#39;</span><span class="p">:</span> <span class="n">get_aperiodic_error</span><span class="p">(</span><span class="n">irasa_out</span><span class="p">),</span>
                         <span class="s1">&#39;bad&#39;</span><span class="p">:</span> <span class="n">get_aperiodic_error</span><span class="p">(</span><span class="n">irasa_out_bad</span><span class="p">)})</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">pointplot</span><span class="p">(</span><span class="n">df2plot</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;kind&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">pointplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df2plot</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
+<span class="n">f</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -701,17 +679,17 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/var/folders/6x/k2wvgw51691cj5qd77pzcrfw0000gn/T/ipykernel_99188/150655870.py:12: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+/var/folders/6x/k2wvgw51691cj5qd77pzcrfw0000gn/T/ipykernel_55906/1418524547.py:13: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
   plt.legend()
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x12ae33a10&gt;
+&lt;matplotlib.legend.Legend at 0x1471ecb00&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -723,10 +701,10 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 </div>
 <p>However, you don’t need to calculate it by hand. The IrasaSpectrum object that gets returned by irasa has a method called <code class="docutils literal notranslate"><span class="pre">get_aperiodic_error</span></code>. That is taking your model specifications alongside some information for the peak fitting to compute the error of your aperiodic spectrum. You just need to specify your kernel size and are good to go :)</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neurodsp.sim</span> <span class="kn">import</span> <span class="n">sim_peak_oscillation</span><span class="p">,</span> <span class="n">sim_powerlaw</span><span class="p">,</span> <span class="n">sim_knee</span><span class="p">,</span> <span class="n">sim_oscillation</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">neurodsp.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_peak_oscillation</span><span class="p">,</span> <span class="n">sim_knee</span>
 <span class="n">height</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">freq</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">exp</span> <span class="o">=</span> <span class="mf">2.5</span>
@@ -740,7 +718,7 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duration</span><span class="o">=</span><span class="mi">4</span>
@@ -754,9 +732,8 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
     <span class="n">irasa_out</span> <span class="o">=</span> <span class="n">irasa</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span>
                         <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
                         <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-                        <span class="n">psd_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nperseg&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
-                                    <span class="s1">&#39;noverlap&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
-                                <span class="p">},</span>
+                        <span class="n">nperseg</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="p">,</span>
+                        <span class="n">noverlap</span><span class="o">=</span><span class="n">duration</span><span class="o">*</span><span class="n">fs</span><span class="o">*</span><span class="n">overlap</span><span class="p">,</span>
                         <span class="n">hset_info</span><span class="o">=</span><span class="n">hset_info</span><span class="p">)</span>
 
     <span class="n">irasas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">irasa_out</span><span class="p">)</span>
@@ -764,7 +741,7 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
@@ -788,22 +765,20 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-
-<span class="n">peak_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;min_peak_height&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">peak_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;min_peak_height&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
                <span class="s1">&#39;peak_threshold&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 
 <span class="n">data2plot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">hmax_list</span><span class="p">,</span> <span class="p">[</span><span class="n">get_aperiodic_error</span><span class="p">(</span><span class="n">cur_irasa</span><span class="p">,</span> <span class="n">peak_params</span><span class="p">)</span> <span class="k">for</span> <span class="n">cur_irasa</span> <span class="ow">in</span> <span class="n">irasas</span><span class="p">])))</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">pointplot</span><span class="p">(</span><span class="n">data2plot</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;hmax&#39;</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;hmax&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">errorbar</span><span class="o">=</span><span class="s1">&#39;se&#39;</span><span class="p">)</span>
-</pre></div>
+<span class="n">sns</span><span class="o">.</span><span class="n">pointplot</span><span class="p">(</span><span class="n">data2plot</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;hmax&#39;</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;hmax&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -857,8 +832,8 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -878,7 +853,7 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>
@@ -891,7 +866,8 @@ The residual absolute spectrum is then averaged and the resultant mean squared e
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>

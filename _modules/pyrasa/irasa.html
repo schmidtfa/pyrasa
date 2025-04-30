@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pyrasa.irasa &#8212; PyRASA dev documentation</title>
+    <title>pyrasa.irasa &#8212; PyRASA dev</title>
   
   
   
@@ -15,31 +15,34 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=81f007b9"></script>
-    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pyrasa/irasa';</script>
@@ -50,6 +53,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
 
   </head>
   
@@ -66,19 +70,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -86,7 +79,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -94,8 +86,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -124,7 +116,7 @@
   
   
   
-    <p class="title logo__title">PyRASA dev documentation</p>
+    <p class="title logo__title">PyRASA dev</p>
   
 </a></div>
     
@@ -169,29 +161,21 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -216,15 +200,11 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
@@ -241,7 +221,8 @@ document.write(`
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -288,15 +269,11 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script></div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Quick Links">
@@ -320,9 +297,14 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -340,8 +322,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -353,7 +333,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">pyrasa.irasa</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pyrasa.irasa</span></li>
   </ul>
 </nav>
 </div>
@@ -373,17 +353,17 @@ document.write(`
   <h1>Source code for pyrasa.irasa</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions to compute IRASA.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">dsp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dsp</span>
 
-<span class="kn">from</span> <span class="nn">pyrasa.utils.irasa_spectrum</span> <span class="kn">import</span> <span class="n">IrasaSpectrum</span>
-<span class="kn">from</span> <span class="nn">pyrasa.utils.irasa_tf_spectrum</span> <span class="kn">import</span> <span class="n">IrasaTfSpectrum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.utils.irasa_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IrasaSpectrum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.utils.irasa_tf_spectrum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IrasaTfSpectrum</span>
 
 <span class="c1"># from scipy.stats.mstats import gmean</span>
-<span class="kn">from</span> <span class="nn">pyrasa.utils.irasa_utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.utils.irasa_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_check_irasa_settings</span><span class="p">,</span>
     <span class="n">_compute_psd_welch</span><span class="p">,</span>
     <span class="n">_compute_sgramm</span><span class="p">,</span>
@@ -392,23 +372,28 @@ document.write(`
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyrasa.utils.types</span> <span class="kn">import</span> <span class="n">IrasaSprintKwargsTyped</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyrasa.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">IrasaSprintKwargsTyped</span>
 
 
 <span class="c1"># %% irasa</span>
 <div class="viewcode-block" id="irasa">
 <a class="viewcode-back" href="../../_autoexamples/pyrasa.irasa.irasa.html#pyrasa.irasa.irasa">[docs]</a>
-<span class="k">def</span> <span class="nf">irasa</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">irasa</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">band</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">psd_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-    <span class="n">ch_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">nperseg</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">noverlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">nfft</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">detrend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+    <span class="n">scaling</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;density&#39;</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
     <span class="n">win_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">hann</span><span class="p">,</span>
     <span class="n">win_func_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dpss_settings_time_bandwidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
     <span class="n">dpss_settings_low_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dpss_eigenvalue_weighting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">ch_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">filter_settings</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="n">hset_info</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
     <span class="n">hset_accuracy</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -417,8 +402,13 @@ document.write(`
 <span class="sd">    Computes the aperiodic and periodic components of the power spectrum from a time series using the</span>
 <span class="sd">    Irregular Resampling Autocorrelation (IRASA) algorithm.</span>
 
-<span class="sd">    The IRASA algorithm allows for the decomposition of neural signals into fractal (aperiodic) and</span>
-<span class="sd">    oscillatory (periodic) components, providing insight into the underlying dynamics of the data.</span>
+<span class="sd">    The IRASA algorithm works by resampling the signal using non-integer factors (h and 1/h),</span>
+<span class="sd">    which causes narrowband oscillatory (periodic) peaks to shift in frequency, while leaving the</span>
+<span class="sd">    aperiodic structure largely unaffected. By averaging the resulting power spectra across resampling</span>
+<span class="sd">    pairs and computing the median across those averages, IRASA suppresses periodic components and</span>
+<span class="sd">    isolates the aperiodic spectrum. Subtracting the aperiodic spectrum from the original spectrum</span>
+<span class="sd">    recovers the periodic spectrum.</span>
+
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -428,8 +418,22 @@ document.write(`
 <span class="sd">        Sampling frequency of the data in Hz.</span>
 <span class="sd">    band : tuple[float, float]</span>
 <span class="sd">        The frequency range (lower and upper bounds in Hz) over which to compute the spectra.</span>
-<span class="sd">    psd_kwargs : dict</span>
-<span class="sd">        Keyword arguments to be passed to the `scipy.signal.welch` function for PSD estimation.</span>
+<span class="sd">    nperseg : int | None</span>
+<span class="sd">        Length of each segment. Defaults to None if window is array_like, is set to the length of the window.</span>
+<span class="sd">    noverlap : int | None</span>
+<span class="sd">        Number of points to overlap between segments. If None, noverlap = nperseg // 2. Defaults to None.</span>
+<span class="sd">    nfft : int | None</span>
+<span class="sd">        Length of the FFT used, if a zero padded FFT is desired. If None, the FFT length is nperseg. Defaults to None.</span>
+<span class="sd">    detrend : str | function | False</span>
+<span class="sd">        Specifies how to detrend each segment. If detrend is a string, it is passed as the type argument to the detrend</span>
+<span class="sd">        function. If it is a function, it takes a segment and returns a detrended segment.</span>
+<span class="sd">        If detrend is False, no detrending is done. Defaults to ‘constant’.</span>
+<span class="sd">    scaling : &#39;density&#39;</span>
+<span class="sd">        Selects between computing the power spectral density (‘density’) where Pxx has units of V**2/Hz and computing</span>
+<span class="sd">        the squared magnitude spectrum (‘spectrum’) where Pxx has units of V**2,</span>
+<span class="sd">        if x is measured in V and fs is measured in Hz. Defaults to ‘density’</span>
+<span class="sd">    average : str</span>
+<span class="sd">        Method to use when averaging periodograms. Defaults to ‘mean’ can also be ‘median’.</span>
 <span class="sd">    ch_names : np.ndarray | None, optional</span>
 <span class="sd">        Channel names associated with the data, if available. Default is None.</span>
 <span class="sd">    win_func : Callable, optional</span>
@@ -498,7 +502,7 @@ document.write(`
     <span class="n">_check_irasa_settings</span><span class="p">(</span><span class="n">irasa_params</span><span class="o">=</span><span class="n">irasa_params</span><span class="p">,</span> <span class="n">hset_info</span><span class="o">=</span><span class="n">hset_info</span><span class="p">)</span>
 
     <span class="n">hset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">hset_info</span><span class="p">),</span> <span class="n">hset_accuracy</span><span class="p">)</span>
-    <span class="n">hset</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hset</span> <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># filter integers</span>
+    <span class="n">hset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hset</span> <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># filter integers</span>
 
     <span class="n">win_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;win_func&#39;</span><span class="p">:</span> <span class="n">win_func</span><span class="p">,</span> <span class="s1">&#39;win_func_kwargs&#39;</span><span class="p">:</span> <span class="n">win_func_kwargs</span><span class="p">}</span>
     <span class="n">dpss_settings</span> <span class="o">=</span> <span class="p">{</span>
@@ -507,7 +511,7 @@ document.write(`
         <span class="s1">&#39;eigenvalue_weighting&#39;</span><span class="p">:</span> <span class="n">dpss_eigenvalue_weighting</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_local_irasa_fun</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_local_irasa_fun</span><span class="p">(</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -516,21 +520,27 @@ document.write(`
         <span class="k">return</span> <span class="n">_compute_psd_welch</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-            <span class="n">nperseg</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nperseg&#39;</span><span class="p">),</span>
+            <span class="n">nperseg</span><span class="o">=</span><span class="n">nperseg</span><span class="p">,</span>
+            <span class="n">noverlap</span><span class="o">=</span><span class="n">noverlap</span><span class="p">,</span>
+            <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
+            <span class="n">nfft</span><span class="o">=</span><span class="n">nfft</span><span class="p">,</span>
+            <span class="n">detrend</span><span class="o">=</span><span class="n">detrend</span><span class="p">,</span>
+            <span class="n">scaling</span><span class="o">=</span><span class="n">scaling</span><span class="p">,</span>
             <span class="n">win_kwargs</span><span class="o">=</span><span class="n">win_kwargs</span><span class="p">,</span>
             <span class="n">dpss_settings</span><span class="o">=</span><span class="n">dpss_settings</span><span class="p">,</span>
-            <span class="n">noverlap</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;noverlap&#39;</span><span class="p">),</span>
-            <span class="n">nfft</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nfft&#39;</span><span class="p">),</span>
         <span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="n">freq</span><span class="p">,</span> <span class="n">psd</span> <span class="o">=</span> <span class="n">_compute_psd_welch</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span>
         <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-        <span class="n">nperseg</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nperseg&#39;</span><span class="p">),</span>
+        <span class="n">nperseg</span><span class="o">=</span><span class="n">nperseg</span><span class="p">,</span>
+        <span class="n">noverlap</span><span class="o">=</span><span class="n">noverlap</span><span class="p">,</span>
+        <span class="n">nfft</span><span class="o">=</span><span class="n">nfft</span><span class="p">,</span>
+        <span class="n">detrend</span><span class="o">=</span><span class="n">detrend</span><span class="p">,</span>
+        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
+        <span class="n">scaling</span><span class="o">=</span><span class="n">scaling</span><span class="p">,</span>
         <span class="n">win_kwargs</span><span class="o">=</span><span class="n">win_kwargs</span><span class="p">,</span>
         <span class="n">dpss_settings</span><span class="o">=</span><span class="n">dpss_settings</span><span class="p">,</span>
-        <span class="n">noverlap</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;noverlap&#39;</span><span class="p">),</span>
-        <span class="n">nfft</span><span class="o">=</span><span class="n">psd_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nfft&#39;</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="n">psd</span><span class="p">,</span> <span class="n">psd_aperiodic</span><span class="p">,</span> <span class="n">psd_periodic</span> <span class="o">=</span> <span class="n">_gen_irasa</span><span class="p">(</span>
@@ -552,7 +562,7 @@ document.write(`
 <span class="c1"># irasa sprint</span>
 <div class="viewcode-block" id="irasa_sprint">
 <a class="viewcode-back" href="../../_autoexamples/pyrasa.irasa.irasa_sprint.html#pyrasa.irasa.irasa_sprint">[docs]</a>
-<span class="k">def</span> <span class="nf">irasa_sprint</span><span class="p">(</span>  <span class="c1"># noqa PLR0915 C901</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">irasa_sprint</span><span class="p">(</span>  <span class="c1"># noqa PLR0915 C901</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">ch_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -570,10 +580,23 @@ document.write(`
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IrasaTfSpectrum</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes time-resolved aperiodic and periodic components of the power spectrum from a time series</span>
-<span class="sd">    using the Irregular Resampling Autocorrelation (IRASA) algorithm.</span>
+<span class="sd">    using the Irregular Resampling Auto-Spectral Analysis (IRASA) algorithm.</span>
 
-<span class="sd">    This function is useful for analyzing how the aperiodic and periodic components of the power spectrum</span>
-<span class="sd">    change over time, providing a time-frequency decomposition of the signal.</span>
+<span class="sd">    This implementation extends the core IRASA method into the time-frequency domain, enabling the</span>
+<span class="sd">    decomposition of power spectra into fractal (aperiodic) and oscillatory (periodic) components</span>
+<span class="sd">    across time. This is particularly useful for studying non-stationary (neural) signals where spectral</span>
+<span class="sd">    dynamics evolve rapidly (e.g., during cognitive tasks or state transitions).</span>
+
+<span class="sd">    The IRASA algorithm operates by resampling the signal using non-integer factors (h and 1/h),</span>
+<span class="sd">    which causes narrowband oscillatory (periodic) peaks to shift in frequency, while leaving the</span>
+<span class="sd">    aperiodic structure largely unaffected. By averaging the resulting power spectra across resampling</span>
+<span class="sd">    pairs and computing the median across those averages, IRASA suppresses periodic components and</span>
+<span class="sd">    isolates the aperiodic spectrum. Subtracting the aperiodic spectrum from the original spectrum</span>
+<span class="sd">    recovers the periodic spectrum.</span>
+
+<span class="sd">    In this time-resolved variant, IRASA is applied to overlapping short-time windows.</span>
+<span class="sd">    This allows the algorithm to produce a full time-frequency representation of both the aperiodic</span>
+<span class="sd">    and periodic components, providing information in how they both change over time.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -656,7 +679,7 @@ document.write(`
     <span class="n">_check_irasa_settings</span><span class="p">(</span><span class="n">irasa_params</span><span class="o">=</span><span class="n">irasa_params</span><span class="p">,</span> <span class="n">hset_info</span><span class="o">=</span><span class="n">hset_info</span><span class="p">)</span>
 
     <span class="n">hset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">hset_info</span><span class="p">),</span> <span class="n">hset_accuracy</span><span class="p">)</span>
-    <span class="n">hset</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hset</span> <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># filter integers</span>
+    <span class="n">hset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hset</span> <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># filter integers</span>
 
     <span class="n">win_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;win_func&#39;</span><span class="p">:</span> <span class="n">win_func</span><span class="p">,</span> <span class="s1">&#39;win_func_kwargs&#39;</span><span class="p">:</span> <span class="n">win_func_kwargs</span><span class="p">}</span>
     <span class="n">dpss_settings</span> <span class="o">=</span> <span class="p">{</span>
@@ -676,7 +699,7 @@ document.write(`
         <span class="s1">&#39;win_kwargs&#39;</span><span class="p">:</span> <span class="n">win_kwargs</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_local_irasa_fun</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_local_irasa_fun</span><span class="p">(</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -701,6 +724,7 @@ document.write(`
         <span class="n">sgramm_aperiodic</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">sgramm_aperiodic</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">single_ch_dim</span> <span class="k">else</span> <span class="n">sgramm_aperiodic</span>
     <span class="p">)</span>
     <span class="n">sgramm_periodic</span> <span class="o">=</span> <span class="n">sgramm_periodic</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">sgramm_periodic</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">single_ch_dim</span> <span class="k">else</span> <span class="n">sgramm_periodic</span>
+    <span class="n">sgramm</span> <span class="o">=</span> <span class="n">sgramm</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">sgramm</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">single_ch_dim</span> <span class="k">else</span> <span class="n">sgramm</span>
 
     <span class="n">freq</span><span class="p">,</span> <span class="n">sgramm_aperiodic</span><span class="p">,</span> <span class="n">sgramm_periodic</span><span class="p">,</span> <span class="n">sgramm</span> <span class="o">=</span> <span class="n">_crop_data</span><span class="p">(</span>
         <span class="n">band</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">sgramm_aperiodic</span><span class="p">,</span> <span class="n">sgramm_periodic</span><span class="p">,</span> <span class="n">sgramm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
@@ -714,7 +738,7 @@ document.write(`
     <span class="k">return</span> <span class="n">IrasaTfSpectrum</span><span class="p">(</span>
         <span class="n">freqs</span><span class="o">=</span><span class="n">freq</span><span class="p">[</span><span class="n">freq_mask</span><span class="p">],</span>
         <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">[</span><span class="n">t_mask</span><span class="p">],</span>
-        <span class="n">raw_spectrum</span><span class="o">=</span><span class="n">sgramm</span><span class="p">,</span>
+        <span class="n">raw_spectrum</span><span class="o">=</span><span class="n">sgramm</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">t_mask</span><span class="p">][:,</span> <span class="n">freq_mask</span><span class="p">,</span> <span class="p">:],</span>
         <span class="n">periodic</span><span class="o">=</span><span class="n">sgramm_periodic</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">t_mask</span><span class="p">][:,</span> <span class="n">freq_mask</span><span class="p">,</span> <span class="p">:],</span>
         <span class="n">aperiodic</span><span class="o">=</span><span class="n">sgramm_aperiodic</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">t_mask</span><span class="p">][:,</span> <span class="n">freq_mask</span><span class="p">,</span> <span class="p">:],</span>
         <span class="n">ch_names</span><span class="o">=</span><span class="n">ch_names</span><span class="p">,</span>
@@ -749,8 +773,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -770,7 +794,7 @@ document.write(`
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>
@@ -783,7 +807,8 @@ document.write(`
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>
