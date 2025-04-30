@@ -147,7 +147,7 @@ def irasa(
     _check_irasa_settings(irasa_params=irasa_params, hset_info=hset_info)
 
     hset = np.round(np.arange(*hset_info), hset_accuracy)
-    hset = [h for h in hset if h % 1 != 0]  # filter integers
+    hset = np.array([h for h in hset if h % 1 != 0])  # filter integers
 
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
@@ -321,7 +321,7 @@ def irasa_sprint(  # noqa PLR0915 C901
     _check_irasa_settings(irasa_params=irasa_params, hset_info=hset_info)
 
     hset = np.round(np.arange(*hset_info), hset_accuracy)
-    hset = [h for h in hset if h % 1 != 0]  # filter integers
+    hset = np.array([h for h in hset if h % 1 != 0])  # filter integers
 
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
