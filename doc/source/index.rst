@@ -55,7 +55,7 @@ Extract periodic parameters::
 +-----------+-----+--------+--------+
 |  ch_name  |  cf |   bw   |   pw   |
 +===========+=====+========+========+
-|     0     | 9.5 | 1.4426 | 0.4178 |
+|     0     | 10.0 | 1.1887 | 0.495 |
 +-----------+-----+--------+--------+
 
 Extract aperiodic parameters::
@@ -65,7 +65,7 @@ Extract aperiodic parameters::
 +-----------+--------+--------------+--------------+-----------+--------------------+--------+-----------+
 |  Offset   |  Knee  | Exponent_1   | Exponent_2   | fit_type  | Knee Frequency (Hz)|   tau  |  ch_name  |
 +===========+========+==============+==============+===========+====================+========+===========+
-| 1.737e-16 | 60.94  | 0.0396       | 1.4727       | knee      | 14.131             | 0.0113 |     0     |
+| 4.329e-17 | 62.11  | 0.0552       | 1.4602       | knee      | 13.855             | 0.0115 |     0     |
 +-----------+--------+--------------+--------------+-----------+--------------------+--------+-----------+
 
 And the goodness of fit::
@@ -75,8 +75,10 @@ And the goodness of fit::
 +------------+------------+------------+------------+-----------+-----------+
 |     mse    | r_squared  |     BIC    |     AIC    | fit_type  |  ch_name  |
 +============+============+============+============+===========+===========+
-|  0.000051  | 0.999751   | -3931.840  | -3947.806  | knee      |     0     |
+|  0.000081  | 0.999303   | -31.9892   | -47.9550   | knee      |     0     |
 +------------+------------+------------+------------+-----------+-----------+
+
+If you want to reproduce the example above checkout [example](https://github.com/schmidtfa/pyrasa/blob/main/examples/basic_functionality.ipynb)
 
 How to Contribute
 -----------------
@@ -96,7 +98,7 @@ Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the 
 
 If you are using PyRASA, it would be nice if you could additionally cite us (whenever the paper is finally ready):
 
-Schmidt F., Hartmann T., & Weisz, N. (2049). PyRASA - Spectral parameterization in python based on IRASA. *SOME JOURNAL THAT LIKES US*
+Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parameterization in python based on IRASA. *SOME JOURNAL THAT LIKES US*
 
 
 
