@@ -47,7 +47,7 @@ PyRASA has the following dependencies:
 
 ### Example Usage
 
-Decompose spectra in periodic and aperiodic ccomponents
+Decompose spectra in periodic and aperiodic components
 If you want to reproduce the example below checkout [example](https://github.com/schmidtfa/pyrasa/blob/main/examples/basic_functionality.ipynb)
 
 ```python
