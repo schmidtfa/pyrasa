@@ -56,9 +56,8 @@ from pyrasa.irasa import irasa
 irasa_out = irasa(sig, 
                     fs=fs, 
                     band=(.1, 200), 
-                    psd_kwargs={'nperseg': duration*fs, 
-                                'noverlap': duration*fs*overlap
-                                },
+                    nperseg=duration*fs, 
+                    noverlap=duration*fs*overlap,
                     hset_info=(1, 2, 0.05))
 
 ```
