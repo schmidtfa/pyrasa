@@ -56,9 +56,8 @@ from pyrasa.irasa import irasa
 irasa_out = irasa(sig, 
                     fs=fs, 
                     band=(.1, 200), 
-                    psd_kwargs={'nperseg': duration*fs, 
-                                'noverlap': duration*fs*overlap
-                                },
+                    nperseg=duration*fs, 
+                    noverlap=duration*fs*overlap,
                     hset_info=(1, 2, 0.05))
 
 ```
@@ -118,4 +117,4 @@ Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the 
 
 If you are using PyRASA it would be nice, if you could additionally cite us (whenever the paper is finally ready):
 
-Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parametrization in python based on IRASA. SOME JOURNAL THAT LIKES US
+Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parametrization in python based on IRASA.

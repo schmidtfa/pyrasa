@@ -39,9 +39,8 @@ Decompose spectra into periodic and aperiodic components::
    irasa_out = irasa(sig, 
                      fs=fs, 
                      band=(.1, 200), 
-                     psd_kwargs={'nperseg': duration*fs, 
-                                 'noverlap': duration*fs*overlap
-                                },
+                     nperseg=duration*fs, 
+                     noverlap=duration*fs*overlap,
                      hset_info=(1, 2, 0.05))
 
 .. image:: https://raw.githubusercontent.com/schmidtfa/pyrasa/main/simulations/example_knee.png
