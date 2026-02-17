@@ -373,6 +373,7 @@
     <span class="n">cut_spectrum</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">peak_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="n">min_peak_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">min_peak_distance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">peak_width_limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -410,6 +411,8 @@
 <span class="sd">        The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.</span>
 <span class="sd">        This can be useful for filtering out noise or insignificant peaks, especially when a &quot;knee&quot; is present</span>
 <span class="sd">        in the original data, which may persist in the periodic spectrum. Default is 0.01.</span>
+<span class="sd">    min_peak_distance_hz : float, optional</span>
+<span class="sd">        The minimum distance between two peaks in Hz to avoid fitting too many peaks in close proximity.</span>
 <span class="sd">    peak_width_limits : tuple of (float, float), optional</span>
 <span class="sd">        The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to</span>
 <span class="sd">        meaningful features. Default is (0.5, 12.0).</span>
@@ -472,10 +475,11 @@
     <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">ch_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ch_names</span><span class="p">):</span>
         <span class="n">peaks</span><span class="p">,</span> <span class="n">peak_dict</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span>
             <span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span>
-            <span class="n">height</span><span class="o">=</span><span class="p">[</span><span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
+            <span class="n">distance</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">min_peak_distance_hz</span> <span class="o">/</span> <span class="n">freq_step</span><span class="p">)),</span>
+            <span class="c1"># height=[filtered_spectrum[ix].min(), filtered_spectrum[ix].max()],</span>
             <span class="n">width</span><span class="o">=</span><span class="n">peak_width_limits</span> <span class="o">/</span> <span class="n">freq_step</span><span class="p">,</span>  <span class="c1"># in frequency in hz</span>
             <span class="n">prominence</span><span class="o">=</span><span class="n">peak_threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">]),</span>  <span class="c1"># threshold in sd</span>
-            <span class="n">rel_height</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># relative peak height based on width</span>
+            <span class="n">rel_height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># relative peak height based on full width half maximum</span>
         <span class="p">)</span>
 
         <span class="n">peak_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -484,7 +488,7 @@
                     <span class="s1">&#39;ch_name&#39;</span><span class="p">:</span> <span class="n">ch_name</span><span class="p">,</span>
                     <span class="s1">&#39;cf&#39;</span><span class="p">:</span> <span class="n">freqs</span><span class="p">[</span><span class="n">peaks</span><span class="p">],</span>
                     <span class="s1">&#39;bw&#39;</span><span class="p">:</span> <span class="n">peak_dict</span><span class="p">[</span><span class="s1">&#39;widths&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">freq_step</span><span class="p">,</span>
-                    <span class="s1">&#39;pw&#39;</span><span class="p">:</span> <span class="n">peak_dict</span><span class="p">[</span><span class="s1">&#39;peak_heights&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;pw&#39;</span><span class="p">:</span> <span class="n">peak_dict</span><span class="p">[</span><span class="s1">&#39;prominences&#39;</span><span class="p">],</span>
                 <span class="p">}</span>
             <span class="p">)</span>
         <span class="p">)</span>
