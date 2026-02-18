@@ -353,6 +353,7 @@
   <h1>Source code for pyrasa.utils.peak_utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utilities for extracting peak parameters.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -363,18 +364,18 @@
 <span class="c1"># %% find peaks irasa style</span>
 <div class="viewcode-block" id="get_peak_params">
 <a class="viewcode-back" href="../../../_autoexamples/pyrasa.utils.peak_utils.get_peak_params.html#pyrasa.utils.peak_utils.get_peak_params">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_peak_params</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_peak_params</span><span class="p">(</span>  <span class="c1"># noqa C901</span>
     <span class="n">periodic_spectrum</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">freqs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">ch_names</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">smooth</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">smoothing_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">polyorder</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">smoothing_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
     <span class="n">cut_spectrum</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">polyorder</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">peak_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="n">min_peak_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-    <span class="n">min_peak_distance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">peak_width_limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">),</span>
+    <span class="n">min_peak_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">min_peak_distance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">peak_width_limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts peak parameters from the periodic spectrum obtained via IRASA.</span>
@@ -398,9 +399,6 @@
 <span class="sd">        better identifying peaks. Default is True.</span>
 <span class="sd">    smoothing_window : int or float, optional</span>
 <span class="sd">        The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.</span>
-<span class="sd">    polyorder : int, optional</span>
-<span class="sd">        The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be</span>
-<span class="sd">        less than the window length. Default is 1.</span>
 <span class="sd">    cut_spectrum : tuple of (float, float) or None, optional</span>
 <span class="sd">        Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut</span>
 <span class="sd">        before peak extraction. If None, peaks are detected across the full frequency range. Default is None.</span>
@@ -440,6 +438,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># constants</span>
+    <span class="n">min_n_bins</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">max_polyorder</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">min_winlen</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># odd; typical minimum for SG in this use</span>
+    <span class="n">poly_margin</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># ensure polyorder &lt;= winlen - POLY_MARGIN</span>
+
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">periodic_spectrum</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;peak width detection does not work properly with nans&#39;</span><span class="p">)</span>
 
@@ -457,29 +461,69 @@
 
     <span class="c1"># filter signal to get a smoother spectrum for peak extraction</span>
     <span class="k">if</span> <span class="n">smooth</span><span class="p">:</span>
-        <span class="n">window_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">smoothing_window</span> <span class="o">//</span> <span class="n">freq_step</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">window_length</span> <span class="o">&gt;</span> <span class="n">polyorder</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s1">&#39;The smoothing window is too small you either need to increase </span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="s1">&#39;`smoothing_window` or decrease the `polyorder`.&#39;</span>
-        <span class="p">)</span>
 
-        <span class="n">filtered_spectrum</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">savgol_filter</span><span class="p">(</span><span class="n">periodic_spectrum</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">window_length</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="n">polyorder</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_choose_savgol</span><span class="p">(</span>
+            <span class="n">freq_step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">smoothing_window_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">polyorder</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_pick_polyorder</span><span class="p">(</span><span class="n">winlen</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="c1"># largest safe order, capped for stability</span>
+                <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_polyorder</span><span class="p">,</span> <span class="n">winlen</span> <span class="o">-</span> <span class="n">poly_margin</span><span class="p">))</span>
+
+            <span class="n">winlen</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">smoothing_window_hz</span> <span class="o">/</span> <span class="n">freq_step</span><span class="p">))</span>
+            <span class="n">winlen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">winlen</span><span class="p">,</span> <span class="n">min_winlen</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">winlen</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">winlen</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">polyorder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">poly</span> <span class="o">=</span> <span class="n">_pick_polyorder</span><span class="p">(</span><span class="n">winlen</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">poly</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">polyorder</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">poly</span> <span class="o">&gt;=</span> <span class="n">winlen</span><span class="p">:</span>
+                    <span class="n">poly</span> <span class="o">=</span> <span class="n">winlen</span> <span class="o">-</span> <span class="n">poly_margin</span>
+                    <span class="n">poly</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;polyorder adjusted to </span><span class="si">{</span><span class="n">poly</span><span class="si">}</span><span class="s1"> for window_length=</span><span class="si">{</span><span class="n">winlen</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">winlen</span><span class="p">,</span> <span class="n">poly</span>
+
+        <span class="n">win</span><span class="p">,</span> <span class="n">poly</span> <span class="o">=</span> <span class="n">_choose_savgol</span><span class="p">(</span><span class="n">freq_step</span><span class="p">,</span> <span class="n">smoothing_window</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="n">polyorder</span><span class="p">)</span>
+
+        <span class="n">filtered_spectrum</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">savgol_filter</span><span class="p">(</span><span class="n">periodic_spectrum</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;interp&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">filtered_spectrum</span> <span class="o">=</span> <span class="n">periodic_spectrum</span>
-    <span class="c1"># zero out negative values</span>
-    <span class="c1"># filtered_spectrum[filtered_spectrum &lt; 0] = 0</span>
-    <span class="c1"># filtered_spectrum = np.log10(np.abs(filtered_spectrum.min()) + filtered_spectrum + 1e-1)</span>
-    <span class="c1"># filtered_spectrum += np.abs(filtered_spectrum.min())</span>
-    <span class="c1"># do peak finding on a channel by channel basis</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hz_to_bins</span><span class="p">(</span><span class="n">val_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">freq_step</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">min_bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;param&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">val_hz</span> <span class="o">/</span> <span class="n">freq_step</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">val_hz</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">bins</span> <span class="o">&lt;</span> <span class="n">min_bins</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">val_hz</span><span class="si">}</span><span class="s1"> Hz with freq_step=</span><span class="si">{</span><span class="n">freq_step</span><span class="si">}</span><span class="s1"> Hz gives </span><span class="si">{</span><span class="n">bins</span><span class="si">}</span><span class="s1"> bin(s); &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;using </span><span class="si">{</span><span class="n">min_bins</span><span class="si">}</span><span class="s1"> bin(s) instead.&#39;</span><span class="p">,</span>
+                <span class="ne">RuntimeWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">min_bins</span>
+        <span class="k">return</span> <span class="n">bins</span>
+
+    <span class="n">dist_bins</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">min_peak_distance_hz</span> <span class="ow">and</span> <span class="n">min_peak_distance_hz</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dist_bins</span> <span class="o">=</span> <span class="n">_hz_to_bins</span><span class="p">(</span><span class="n">min_peak_distance_hz</span><span class="p">,</span> <span class="n">freq_step</span><span class="p">,</span> <span class="n">min_bins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;min_peak_distance_hz&#39;</span><span class="p">)</span>
+
+    <span class="n">width_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">peak_width_limits</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">freq_step</span>  <span class="c1"># in frequency in hz</span>
+    <span class="c1"># require &gt;=2 bins min width</span>
+    <span class="k">if</span> <span class="n">width_bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_n_bins</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;peak_width_limits min (</span><span class="si">{</span><span class="n">peak_width_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> Hz) is &lt; 2 bins at freq_step=</span><span class="si">{</span><span class="n">freq_step</span><span class="si">}</span><span class="s1">. &#39;</span>
+            <span class="s1">&#39;Width estimates may be unstable as you are trying to find peaks with a width of 1 bin.&#39;</span><span class="p">,</span>
+            <span class="ne">RuntimeWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="n">peak_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">ch_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ch_names</span><span class="p">):</span>
+        <span class="n">x_det</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">peaks</span><span class="p">,</span> <span class="n">peak_dict</span> <span class="o">=</span> <span class="n">dsp</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span>
-            <span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span>
-            <span class="n">distance</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">min_peak_distance_hz</span> <span class="o">/</span> <span class="n">freq_step</span><span class="p">)),</span>
-            <span class="c1"># height=[filtered_spectrum[ix].min(), filtered_spectrum[ix].max()],</span>
-            <span class="n">width</span><span class="o">=</span><span class="n">peak_width_limits</span> <span class="o">/</span> <span class="n">freq_step</span><span class="p">,</span>  <span class="c1"># in frequency in hz</span>
-            <span class="n">prominence</span><span class="o">=</span><span class="n">peak_threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">filtered_spectrum</span><span class="p">[</span><span class="n">ix</span><span class="p">]),</span>  <span class="c1"># threshold in sd</span>
-            <span class="n">rel_height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># relative peak height based on full width half maximum</span>
+            <span class="n">x_det</span><span class="p">,</span>
+            <span class="n">distance</span><span class="o">=</span><span class="n">dist_bins</span> <span class="k">if</span> <span class="n">dist_bins</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width_bins</span><span class="p">,</span>
+            <span class="n">prominence</span><span class="o">=</span><span class="n">peak_threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x_det</span><span class="p">),</span>  <span class="c1"># threshold in sd</span>
+            <span class="n">rel_height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># relative peak height based on full width half prominence</span>
         <span class="p">)</span>
 
         <span class="n">peak_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -518,11 +562,12 @@
     <span class="n">ch_names</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">smooth</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">smoothing_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">polyorder</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">polyorder</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cut_spectrum</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">peak_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">peak_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
     <span class="n">min_peak_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-    <span class="n">peak_width_limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+    <span class="n">min_peak_distance_hz</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">peak_width_limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts peak parameters from a periodic spectrogram obtained via IRASA.</span>
@@ -561,6 +606,8 @@
 <span class="sd">        The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.</span>
 <span class="sd">        This can be useful for filtering out noise or insignificant peaks, especially when a &quot;knee&quot; is present</span>
 <span class="sd">        in the data. Default is 0.01.</span>
+<span class="sd">    min_peak_distance_hz : float, optional</span>
+<span class="sd">        The minimum distance between two peaks in Hz to avoid fitting too many peaks in close proximity.</span>
 <span class="sd">    peak_width_limits : tuple of (float, float), optional</span>
 <span class="sd">        The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to</span>
 <span class="sd">        meaningful features. Default is (0.5, 12).</span>
@@ -600,6 +647,7 @@
             <span class="n">cut_spectrum</span><span class="o">=</span><span class="n">cut_spectrum</span><span class="p">,</span>
             <span class="n">peak_threshold</span><span class="o">=</span><span class="n">peak_threshold</span><span class="p">,</span>
             <span class="n">min_peak_height</span><span class="o">=</span><span class="n">min_peak_height</span><span class="p">,</span>
+            <span class="n">min_peak_distance_hz</span><span class="o">=</span><span class="n">min_peak_distance_hz</span><span class="p">,</span>
             <span class="n">peak_width_limits</span><span class="o">=</span><span class="n">peak_width_limits</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">cur_df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
