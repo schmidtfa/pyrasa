@@ -100,7 +100,7 @@ irasa_out.fit_aperiodic_model(fit_func='knee').gof
 | 0.000088 |    0.999303 | -31.9892 | -47.9550 | knee       |         0 |
 
 
-### How to Contribute
+## How to Contribute
 
 Contributions to PyRASA are welcome! Whether it's raising issues, improving documentation, fixing bugs, or adding new features, your help is appreciated. 
 
@@ -109,12 +109,18 @@ To file bug reports and/or ask questions about this project, please use the [Git
 Please refer to the [CONTRIBUTING.md](https://github.com/schmidtfa/pyrasa/blob/main/CONTRIBUTING.md) file for more information on how to get involved.
 
 
-### Reference
+## Reference
 
 If you are using IRASA please cite the smart people who came up with the algorithm:
 
 Wen, H., & Liu, Z. (2016). Separating fractal and oscillatory components in the power spectrum of neurophysiological signal. Brain topography, 29, 13-26. https://doi.org/10.1007/s10548-015-0448-0
 
-If you are using PyRASA it would be nice, if you could additionally cite us (whenever the paper is finally ready):
+If you are using PyRASA it would be nice, if you could additionally cite us:
 
-Schmidt F., Hartmann T., & Weisz, N. (2025). PyRASA - Spectral parametrization in python based on IRASA.
+Schmidt et al., (2025). PyRASA - Spectral parametrization in python based on IRASA. Journal of Open Source Software, 10(109), 7852, https://doi.org/10.21105/joss.07852
+
+
+### Bibtex
+```bibtex
+@article{Schmidt2025, doi = {10.21105/joss.07852}, url = {https://doi.org/10.21105/joss.07852}, year = {2025}, publisher = {The Open Journal}, volume = {10}, number = {109}, pages = {7852}, author = {Schmidt, Fabian and Weisz, Nathan and Hartmann, Thomas}, title = {PyRASA - Spectral parametrization in python based on IRASA}, journal = {Journal of Open Source Software} }
+```
