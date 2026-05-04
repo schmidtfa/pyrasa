@@ -294,6 +294,7 @@ class IrasaSpectrum:
         log_x: bool = True,
         average_chs: bool = False,
         units: str = 'a.u.',
+        legend: bool = True,
     ) -> None:
         """
         This function plots a raw power spectrum alongside the seperated periodic and aperiodic spectrum.
@@ -319,6 +320,8 @@ class IrasaSpectrum:
             Whether or not the spectra should be averaged across channels
         units: str, optional
             A string that specifies the units in which the data are plotted. Defaults to (a.u.) i.e. arbitrary units.
+        legend: bool, optional
+            Whether or not a legend should be plotted
         """
 
         if freq_range is not None:
@@ -342,7 +345,8 @@ class IrasaSpectrum:
             color='r',
             alpha=0.7,
         )
-        axes[0].legend()
+        if legend:
+            axes[0].legend()
 
         axes[1].plot(
             self.freqs[freq_range_mask],
@@ -359,8 +363,8 @@ class IrasaSpectrum:
             color='g',
             alpha=0.7,
         )
-
-        axes[1].legend()
+        if legend:
+            axes[1].legend()
 
         titles = ['Raw X Aperiodic \n PowerSpectrum', 'Raw X Periodic \n PowerSpectrum']  #'Raw \n PowerSpectrum',
         for ix, (ax, title) in enumerate(zip(axes, titles)):
