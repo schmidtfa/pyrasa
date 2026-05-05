@@ -133,7 +133,7 @@ def compute_aperiodic_model(
         def num_zeros(decimal: int) -> float:
             return np.inf if decimal == 0 else -np.floor(np.log10(abs(decimal))) - 1
 
-        scale_factor = 10 ** num_zeros(aperiodic_spectrum.min())
+        scale_factor = 10 ** (num_zeros(aperiodic_spectrum.min())-3)
         aperiodic_spectrum = aperiodic_spectrum * scale_factor
     else:
         scale_factor = 1
