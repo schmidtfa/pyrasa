@@ -193,11 +193,13 @@ class AbstractFitFun(abc.ABC):
         return df_params
 
     def handle_scaling(self, df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame:
-        if 'Offset' in df_params.columns:
-            df_params['Offset'] /= scale_factor
-        elif scale_factor != 1.0:
-            raise ValueError('Scale Factor not handled. You need to overwrite the handle_scaling method.')
-        return df_params
+        if scale_factor == 1.0:
+            return df_params
+
+        raise NotImplementedError(
+            'Scaling is not implemented for this fitting function. '
+            'Please override handle_scaling() or disable scaling.'
+        )
 
     def fit_func(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         curve_kwargs = self.curve_kwargs
@@ -218,6 +220,9 @@ class AbstractFitFun(abc.ABC):
             pred = 10**pred
         if self.log10_freq:
             freq = 10**freq
+
+        pred /= self.scale_factor
+
         df_pred = pd.DataFrame({'Frequency (Hz)': freq, 'aperiodic_model': pred})
         df_pred['fit_type'] = self.label
 
@@ -260,6 +265,12 @@ class FixedFitFun(AbstractFitFun):
         y_hat = Offset - np.log10(x**Exponent)
 
         return y_hat
+
+    def handle_scaling(self, df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame:
+        if scale_factor != 1.0:
+            df_params['Offset'] -= np.log10(scale_factor)
+
+        return df_params
 
     @property
     def curve_kwargs(self) -> dict[str, Any]:
@@ -324,6 +335,12 @@ class KneeFitFun(AbstractFitFun):
         y_hat = Offset - np.log10(x**Exponent_1 * (Knee + x**Exponent_2))
 
         return y_hat
+
+    def handle_scaling(self, df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame:
+        if scale_factor != 1.0:
+            df_params['Offset'] -= np.log10(scale_factor)
+
+        return df_params
 
     def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
         df_params['Knee Frequency (Hz)'] = df_params['Knee'] ** (
