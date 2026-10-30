@@ -32,12 +32,13 @@ def _compute_aperiodic_model(
     return params, gof, pred
 
 
-def compute_aperiodic_model(
+def compute_aperiodic_model(  # noqa: C901
     aperiodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     fit_func: str | type[AbstractFitFun] = 'fixed',
     ch_names: Iterable | None = None,
     scale: bool = False,
+    scale_percentile: float = 5.0,
     fit_bounds: tuple[float, float] | None = None,
 ) -> AperiodicFit:
     """
@@ -65,6 +66,11 @@ def compute_aperiodic_model(
         Whether to scale the data to improve fitting accuracy. This is useful in cases where
         power values are very small (e.g., 1e-28), which may lead to numerical precision issues during fitting.
         After fitting, the parameters are rescaled to match the original data scale. Default is False.
+    scale_percentile : float, default 5.0
+        Percentile of the aperiodic power spectrum used to determine the scaling factor when scale=True.
+        The percentile is computed across all channels and frequencies, ensuring a common scaling factor.
+        A value of 0 reproduces the original minimum-based scaling implemented until (v1.1.1),
+        while higher percentiles reduce sensitivity to exceptionally small spectral values. Only used when scale=True.
     fit_bounds : tuple[float, float] or None, optional
         Tuple specifying the lower and upper frequency bounds for the fit function. If None, the entire frequency
         range is used. Otherwise, the spectrum is cropped to the specified bounds. Default is None.
@@ -109,6 +115,9 @@ def compute_aperiodic_model(
         ch_names, list | tuple | np.ndarray | None
     ), 'Channel names should be of type list, tuple or numpy.ndarray or None'
 
+    if not 0 <= scale_percentile <= 100:  # noqa: PLR2004
+        raise ValueError('scale_percentile must be between 0 and 100.')
+
     if fit_bounds is not None:
         fmin, fmax = freqs.min(), freqs.max()
         assert fit_bounds[0] > fmin, f'The selected lower bound is lower than the lowest frequency of {fmin}Hz'
@@ -133,8 +142,18 @@ def compute_aperiodic_model(
         def num_zeros(decimal: int) -> float:
             return np.inf if decimal == 0 else -np.floor(np.log10(abs(decimal))) - 1
 
-        scale_factor = 10 ** num_zeros(aperiodic_spectrum.min())
-        aperiodic_spectrum = aperiodic_spectrum * scale_factor
+        reference_power = np.percentile(aperiodic_spectrum, scale_percentile)
+        scale_factor = 10.0 ** num_zeros(reference_power)
+
+        if not np.isfinite(scale_factor):
+            raise ValueError('Scaling factor is not finite.')
+
+        scaled_spectrum = aperiodic_spectrum * scale_factor
+
+        if not np.all(np.isfinite(scaled_spectrum)):
+            raise ValueError('Scaling produced non-finite values.')
+
+        aperiodic_spectrum = scaled_spectrum
     else:
         scale_factor = 1
 
