@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from attrs import define
 
+from pyrasa.utils.acf_utils import IrasaACF, psd_to_acf
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
 from pyrasa.utils.fit_funcs import AbstractFitFun
 from pyrasa.utils.peak_utils import get_peak_params
@@ -151,6 +152,41 @@ class IrasaSpectrum:
             scale=scale,
             fit_func=fit_func,
             fit_bounds=fit_bounds,
+        )
+
+    def to_acf(
+        self,
+        source: str = 'aperiodic',
+        max_lag: float = 0.2,
+        lag_step: float = 0.001,
+    ) -> IrasaACF:
+        """Compute a normalized, band-limited ACF from an IRASA spectrum.
+
+        Parameters
+        ----------
+        source : {'aperiodic', 'raw'}, default 'aperiodic'
+            Spectrum to convert. Can either be 'aperiodic' or 'raw' the 'periodic' difference
+            spectrum is not a valid target.
+        max_lag : float, default 0.2
+            Maximum ACF lag, in seconds.
+        lag_step : float, default 0.001
+            Maximum ACF lag spacing, in seconds.
+
+        Returns
+        -------
+        IrasaACF
+            ACF with channel labels and methods ``half_life`` and ``at_lag``.
+        """
+        if source not in ('aperiodic', 'raw'):
+            raise ValueError("source must be 'aperiodic' or 'raw'.")
+
+        powers = self.aperiodic if source == 'aperiodic' else self.raw_spectrum
+        lags, corrs = psd_to_acf(self.freqs, powers, max_lag=max_lag, lag_step=lag_step)
+        return IrasaACF(
+            lags=lags,
+            corrs=np.atleast_2d(corrs),
+            ch_names=self.ch_names,
+            source=source,
         )
 
     def get_peaks(
