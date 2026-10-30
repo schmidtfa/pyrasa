@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from attrs import define
 
+from pyrasa.utils.acf_utils import IrasaACF, psd_to_acf
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model_sprint
 from pyrasa.utils.fit_funcs import AbstractFitFun
 from pyrasa.utils.peak_utils import get_peak_params_sprint
@@ -178,6 +179,41 @@ class IrasaTfSpectrum:
             scale=scale,
             fit_func=fit_func,
             fit_bounds=fit_bounds,
+        )
+
+    def to_acf(
+        self,
+        source: str = 'aperiodic',
+        max_lag: float = 0.2,
+        lag_step: float = 0.001,
+    ) -> IrasaACF:
+        """Compute the band-limited ACF for each time window."""
+        if source not in ('aperiodic', 'raw'):
+            raise ValueError("source must be 'aperiodic' or 'raw'.")
+
+        powers = self.aperiodic if source == 'aperiodic' else self.raw_spectrum
+
+        is2d = 2
+        if powers.ndim == is2d:
+            powers = powers[np.newaxis, :, :]
+
+        acf_list = []
+
+        for ix in range(powers.shape[-1]):
+            lags, corrs = psd_to_acf(
+                self.freqs,
+                powers[:, :, ix],
+                max_lag=max_lag,
+                lag_step=lag_step,
+            )
+            acf_list.append(corrs)
+
+        return IrasaACF(
+            lags=lags,
+            corrs=np.stack(acf_list, axis=1),
+            ch_names=self.ch_names,
+            source=source,
+            time=self.time,
         )
 
     def get_peaks(

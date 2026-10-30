@@ -86,22 +86,31 @@ class IrasaACF:
     corrs: np.ndarray
     ch_names: np.ndarray | None = None
     source: str = 'aperiodic'
+    time: np.ndarray | None = None
 
     def half_life(self) -> np.ndarray:
-        """First crossing of 0.5, in seconds; NaN if no crossing exists."""
-        half_life = 0.5
-        result = np.full(self.corrs.shape[0], np.nan, dtype=float)
-        for ch, corr in enumerate(self.corrs):
-            crossings = np.flatnonzero((corr[:-1] >= half_life) & (corr[1:] < half_life))
+        """Return the first ACF half-life in seconds."""
+        half = 0.5
+        half_lives = np.full(self.corrs.shape[:-1], np.nan)
+
+        for i, acf in enumerate(self.corrs.reshape(-1, self.corrs.shape[-1])):
+            crossings = np.flatnonzero((acf[:-1] > half) & (acf[1:] <= half))
+
             if crossings.size:
-                i = int(crossings[0])
-                result[ch] = self.lags[i] + (
-                    (half_life - corr[i]) * (self.lags[i + 1] - self.lags[i]) / (corr[i + 1] - corr[i])
+                j = crossings[0]
+                half_lives.flat[i] = np.interp(
+                    half,
+                    acf[j : j + 2][::-1],
+                    self.lags[j : j + 2][::-1],
                 )
-        return result
+
+        return half_lives
 
     def at_lag(self, delay: float) -> np.ndarray:
-        """Interpolated ACF at a delay in seconds, one value per channel."""
-        if not np.isfinite(delay) or not self.lags[0] <= delay <= self.lags[-1]:
-            raise ValueError('delay must be within the computed lag interval.')
-        return np.array([np.interp(delay, self.lags, corr) for corr in self.corrs])
+        """Return autocorrelation at a specified delay in seconds."""
+        if not self.lags[0] <= delay <= self.lags[-1]:
+            raise ValueError('delay outside the available lag range.')
+
+        return np.array(
+            [np.interp(delay, self.lags, acf) for acf in self.corrs.reshape(-1, self.corrs.shape[-1])]
+        ).reshape(self.corrs.shape[:-1])
