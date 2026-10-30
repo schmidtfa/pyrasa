@@ -262,7 +262,7 @@ class FixedFitFun(AbstractFitFun):
         Specparams fixed fitting function.
         Use this to model aperiodic activity without a spectral knee
         """
-        y_hat = Offset - np.log10(x**Exponent)
+        y_hat = Offset - Exponent * np.log10(x)
 
         return y_hat
 
@@ -272,20 +272,31 @@ class FixedFitFun(AbstractFitFun):
 
         return df_params
 
+    def jacobian(self, x: np.ndarray, offset: float, exponent: float) -> np.ndarray:
+        """Derivatives with respect to Offset and Exponent."""
+        return np.column_stack(
+            (
+                np.ones_like(x),
+                -np.log10(x),
+            )
+        )
+
     @property
     def curve_kwargs(self) -> dict[str, Any]:
-        aperiodic_nolog = 10**self.aperiodic_spectrum
-        off_guess = [aperiodic_nolog[0]]
-        exp_guess = [
-            np.abs(np.log10(aperiodic_nolog[0] / aperiodic_nolog[-1]) / np.log10(self.freq[-1] / self.freq[0]))
-        ]
+        slope, intercept = np.polyfit(
+            np.log10(self.freq),
+            self.aperiodic_spectrum,
+            deg=1,
+        )  # we could prob also do this instead of the subsequent curve_fit but we want to be consistent
+
         return {
-            'maxfev': 10_000,
-            'ftol': 1e-5,
-            'xtol': 1e-5,
-            'gtol': 1e-5,
-            'p0': np.array(off_guess + exp_guess),
-            'bounds': ((-np.inf, -np.inf), (np.inf, np.inf)),
+            **super().curve_kwargs,
+            'p0': np.array([intercept, -slope]),
+            'method': 'lm',
+            'jac': self.jacobian,
+            'ftol': 1e-8,
+            'xtol': 1e-8,
+            'gtol': 1e-8,
         }
 
 
@@ -332,7 +343,177 @@ class KneeFitFun(AbstractFitFun):
         Model aperiodic activity with a spectral knee and a pre-knee slope.
         Use this to model aperiodic activity with a spectral knee
         """
-        y_hat = Offset - np.log10(x**Exponent_1 * (Knee + x**Exponent_2))
+        # y_hat = Offset - np.log10(x**Exponent_1 * (Knee + x**Exponent_2))
+        # equivalent yet more stable solution
+        y_hat = Offset - Exponent_1 * np.log10(x) - np.log10(Knee + x**Exponent_2)
+
+        return y_hat
+
+    def handle_scaling(self, df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame:
+        if scale_factor != 1.0:
+            df_params['Offset'] -= np.log10(scale_factor)
+
+        return df_params
+
+    def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
+        df_params['Knee Frequency (Hz)'] = df_params['Knee'] ** (1.0 / df_params['Exponent_2'])
+        df_params['tau'] = 1.0 / (2 * np.pi * df_params['Knee Frequency (Hz)'])
+        return df_params
+
+    def jacobian(
+        self,
+        x: np.ndarray,
+        offset: float,
+        knee: float,
+        exponent_1: float,
+        exponent_2: float,
+    ) -> np.ndarray:
+        """Derivatives in the same order as the model parameters."""
+        log_freq = np.log10(x)
+        power = x**exponent_2
+        denominator = knee + power
+
+        return np.column_stack(
+            (
+                np.ones_like(x),
+                -1.0 / (np.log(10.0) * denominator),
+                -log_freq,
+                -(power / denominator) * log_freq,
+            )
+        )
+
+    @property
+    def curve_kwargs(self) -> dict[str, Any]:
+        log_freq = np.log10(self.freq)
+        log_power = self.aperiodic_spectrum
+
+        mean_freq = log_freq.mean()
+        centered_freq = log_freq - mean_freq
+        spread = centered_freq @ centered_freq
+
+        if not np.isfinite(spread) or spread <= 0:
+            raise ValueError('Fitting requires finite positive, distinct frequencies.')
+
+        # Candidate crossover locations, expressed in log10 Hz.
+        log_knee_freqs = np.linspace(log_freq.min(), log_freq.max(), 13)
+
+        # Starting candidates only, not bounds on the final fit.
+        exponent_candidates = (0.1, 0.25, 0.5, 1.0, 2.0, 4.0)
+
+        best_error = np.inf
+        p0 = None
+
+        min_log = np.log10(np.finfo(float).tiny)
+        max_log = np.log10(np.finfo(float).max)
+
+        for exponent_2 in exponent_candidates:
+            for log_knee_freq in log_knee_freqs:
+                # Knee = crossover_frequency ** Exponent_2
+                log_knee = exponent_2 * log_knee_freq
+
+                if not min_log < log_knee < max_log:
+                    continue
+
+                # log10(Knee + f**Exponent_2), evaluated stably.
+                log_denominator = np.logaddexp(
+                    np.log(10.0) * log_knee,
+                    np.log(10.0) * exponent_2 * log_freq,
+                ) / np.log(10.0)
+
+                adjusted_power = log_power + log_denominator
+                mean_power = adjusted_power.mean()
+
+                # Conditional least-squares estimate, with Exponent_1 >= 0.
+                exponent_1 = max(
+                    0.0,
+                    -np.dot(
+                        centered_freq,
+                        adjusted_power - mean_power,
+                    )
+                    / spread,
+                )
+
+                offset = mean_power + exponent_1 * mean_freq
+
+                residual = mean_power - exponent_1 * centered_freq - adjusted_power
+                error = residual @ residual
+
+                if error < best_error:
+                    best_error = error
+                    p0 = np.array(
+                        [
+                            offset,
+                            10.0**log_knee,
+                            exponent_1,
+                            exponent_2,
+                        ]
+                    )
+
+        if p0 is None:
+            raise ValueError('No finite initial guess found.')
+
+        return {
+            **super().curve_kwargs,
+            'p0': p0,
+            'bounds': (
+                (-np.inf, 0.0, 0.0, 0.0),
+                (np.inf, np.inf, np.inf, np.inf),
+            ),
+            'method': 'trf',
+            'jac': self.jacobian,
+            'x_scale': 'jac',
+            'ftol': 1e-8,
+            'xtol': 1e-8,
+            'gtol': 1e-8,
+        }
+
+
+class OldKneeFitFun(AbstractFitFun):
+    """
+    A model for fitting aperiodic activity in power spectra with a spectral knee.
+
+    The `KneeFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra
+    using a function that includes a spectral knee. This model is particularly useful for
+    cases where the aperiodic component of the spectrum has a break or knee, representing
+    a transition between two different spectral slopes.
+
+    Attributes
+    ----------
+    label : str
+        A label to identify this fitting model. Default is 'knee'.
+    log10_aperiodic : bool
+        Indicates whether to log-transform the aperiodic spectrum. Default is True.
+
+    Methods
+    -------
+    func(x: np.ndarray, Offset: float, Knee: float, Exponent_1: float, Exponent_2: float) -> np.ndarray
+        Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.
+
+    add_infos_to_df(df_params: pd.DataFrame) -> pd.DataFrame
+        Adds calculated knee frequency to the DataFrame of fit parameters.
+
+    curve_kwargs() -> dict[str, Any]
+        Generates initial guess parameters and other keyword arguments for curve fitting.
+    """
+
+    label = 'old_knee'
+    log10_aperiodic = True
+
+    def func(
+        self,
+        x: np.ndarray,
+        Offset: float,  # noqa N803
+        Knee: float,  # noqa N803
+        Exponent_1: float,  # noqa N803
+        Exponent_2: float,  # noqa N803
+    ) -> np.ndarray:
+        """
+        Model aperiodic activity with a spectral knee and a pre-knee slope.
+        Use this to model aperiodic activity with a spectral knee
+        """
+        # y_hat = Offset - np.log10(x**Exponent_1 * (Knee + x**Exponent_2))
+        # equivalent yet more stable solution
+        y_hat = Offset - Exponent_1 * np.log10(x) - np.log10(Knee + x**Exponent_2)
 
         return y_hat
 
@@ -349,23 +530,109 @@ class KneeFitFun(AbstractFitFun):
         df_params['tau'] = 1.0 / (2 * np.pi * df_params['Knee Frequency (Hz)'])
         return df_params
 
+    def jacobian(
+        self,
+        x: np.ndarray,
+        offset: float,
+        knee: float,
+        exponent_1: float,
+        exponent_2: float,
+    ) -> np.ndarray:
+        """Derivatives in the same order as the model parameters."""
+        log_freq = np.log10(x)
+        power = x**exponent_2
+        denominator = knee + power
+
+        return np.column_stack(
+            (
+                np.ones_like(x),
+                -1.0 / (np.log(10.0) * denominator),
+                -log_freq,
+                -(power / denominator) * log_freq,
+            )
+        )
+
     @property
     def curve_kwargs(self) -> dict[str, Any]:
-        aperiodic_nolog = 10**self.aperiodic_spectrum
-        off_guess = [aperiodic_nolog[0]]
-        exp_guess = [
-            np.abs(np.log10(aperiodic_nolog[0] / aperiodic_nolog[-1]) / np.log10(self.freq[-1] / self.freq[0]))
-        ]
-        cumsum_psd = np.cumsum(aperiodic_nolog)
-        half_pw_freq = self.freq[np.abs(cumsum_psd - (0.5 * cumsum_psd[-1])).argmin()]
-        # make the knee guess the point where we have half the power in the spectrum seems plausible to me
-        knee_guess = [half_pw_freq ** (exp_guess[0] + exp_guess[0])]
+        log_freq = np.log10(self.freq)
+        log_power = self.aperiodic_spectrum
+
+        mean_freq = log_freq.mean()
+        centered_freq = log_freq - mean_freq
+        spread = centered_freq @ centered_freq
+
+        if not np.isfinite(spread) or spread <= 0:
+            raise ValueError('Fitting requires finite positive, distinct frequencies.')
+
+        # Candidate crossover locations, expressed in log10 Hz.
+        log_knee_freqs = np.linspace(log_freq.min(), log_freq.max(), 13)
+
+        # Starting candidates only, not bounds on the final fit.
+        exponent_candidates = (0.1, 0.25, 0.5, 1.0, 2.0, 4.0)
+
+        best_error = np.inf
+        p0 = None
+
+        min_log = np.log10(np.finfo(float).tiny)
+        max_log = np.log10(np.finfo(float).max)
+
+        for exponent_2 in exponent_candidates:
+            for log_knee_freq in log_knee_freqs:
+                # Knee = crossover_frequency ** Exponent_2
+                log_knee = exponent_2 * log_knee_freq
+
+                if not min_log < log_knee < max_log:
+                    continue
+
+                # log10(Knee + f**Exponent_2), evaluated stably.
+                log_denominator = np.logaddexp(
+                    np.log(10.0) * log_knee,
+                    np.log(10.0) * exponent_2 * log_freq,
+                ) / np.log(10.0)
+
+                adjusted_power = log_power + log_denominator
+                mean_power = adjusted_power.mean()
+
+                # Conditional least-squares estimate, with Exponent_1 >= 0.
+                exponent_1 = max(
+                    0.0,
+                    -np.dot(
+                        centered_freq,
+                        adjusted_power - mean_power,
+                    )
+                    / spread,
+                )
+
+                offset = mean_power + exponent_1 * mean_freq
+
+                residual = mean_power - exponent_1 * centered_freq - adjusted_power
+                error = residual @ residual
+
+                if error < best_error:
+                    best_error = error
+                    p0 = np.array(
+                        [
+                            offset,
+                            10.0**log_knee,
+                            exponent_1,
+                            exponent_2,
+                        ]
+                    )
+
+        if p0 is None:
+            raise ValueError('No finite initial guess found.')
 
         return {
-            'maxfev': 10_000,
-            'ftol': 1e-5,
-            'xtol': 1e-5,
-            'gtol': 1e-5,
-            'p0': np.array(off_guess + knee_guess + exp_guess + exp_guess),
-            'bounds': ((0, 0, 0, 0), (np.inf, np.inf, np.inf, np.inf)),
+            **super().curve_kwargs,
+            'p0': p0,
+            'bounds': (
+                (-np.inf, 0.0, 0.0, 0.0),
+                (np.inf, np.inf, np.inf, np.inf),
+            ),
+            'method': 'trf',
+            'jac': self.jacobian,
+            'x_scale': 'jac',
+            'ftol': 1e-8,
+            'xtol': 1e-8,
+            'gtol': 1e-8,
         }
