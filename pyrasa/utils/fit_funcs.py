@@ -57,6 +57,8 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
         - 'r_squared': R-squared value
         - 'BIC': Bayesian Information Criterion
         - 'AIC': Akaike Information Criterion
+        - 'lnwBIC': logarithmically sample-size-weighted Bayesian Information Criterion
+        - 'lnwAIC': logarithmically sample-size-weighted Akaike Information Criterion
         - 'fit_type': The type of fit/model used (provided as input)
 
     Notes
@@ -78,23 +80,31 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
     # https://robjhyndman.com/hyndsight/lm_aic.html
     # c is in practice sometimes dropped. Only relevant when comparing models with different n
     # c = n + n * np.log(2 * np.pi)
-    # aic = 2 * k + n * np.log(mse) + c #real
-    aic = 2 * k + np.log(n) * np.log(mse)  # + c
+    aic = 2 * k + n * np.log(mse)  # + c #real
+    aic_log_n = 2 * k + np.log(n) * np.log(
+        mse
+    )  # works better in simulations than the actual aic in detecting a needed knee model
+
     # aic = 2 * k + n * mse
     # according to Sclove 1987 only difference between BIC and AIC
     # is that BIC uses log(n) * k instead of 2 * k
-    # bic = np.log(n) * k + n * np.log(mse) + c #real
-    bic = np.log(n) * k + np.log(n) * np.log(mse)  # + c
+    bic = np.log(n) * k + n * np.log(mse)  # + c #real
+    bic_log_n = np.log(n) * k + np.log(n) * np.log(
+        mse
+    )  ## works better in simulations than the actual bic in detecting a needed knee model
     # bic = np.log(n) * k + n * mse
     # Sclove 1987 also hints at sample size adjusted bic
-    an = (n + 2) / 24  # defined in Rissanen 1978 based on minimum-bit representation of a signal
+    # an = (n + 2) / 24  # defined in Rissanen 1978 based on minimum-bit representation of a signal
     # abic -> https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7299313/
-    abic = np.log(an) * k + np.log(n) * np.log(mse)
+    # abic = np.log(an) * k + np.log(n) * np.log(mse)
 
     r2 = 1 - (ss_res / ss_tot)
     r2_adj = 1 - (((1 - r2) * (n - 1)) / (n - k - 1))
 
-    gof = pd.DataFrame({'mse': mse, 'R2': r2, 'R2_adj.': r2_adj, 'BIC': bic, 'BIC_adj.': abic, 'AIC': aic}, index=[0])
+    gof = pd.DataFrame(
+        {'mse': mse, 'R2': r2, 'R2_adj.': r2_adj, 'BIC': bic, 'lnwBIC': bic_log_n, 'AIC': aic, 'lnwAIC': aic_log_n},
+        index=[0],
+    )
     gof['fit_type'] = fit_type
     return gof
 
