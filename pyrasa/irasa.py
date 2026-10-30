@@ -149,6 +149,12 @@ def irasa(
     hset = np.round(np.arange(*hset_info), hset_accuracy)
     hset = np.array([h for h in hset if h % 1 != 0])  # filter integers
 
+    min_samples = int(np.ceil(data.shape[-1] / hset.max()))
+
+    if nperseg is None:
+        nperseg = min_samples
+    elif nperseg > min_samples:
+        raise ValueError('nperseg exceeds the length of the shortest resampled signal.')
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
         'time_bandwidth': dpss_settings_time_bandwidth,
