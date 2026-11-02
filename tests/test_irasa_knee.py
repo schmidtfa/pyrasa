@@ -1,8 +1,10 @@
 import numpy as np
 import pytest
 import scipy.signal as dsp
+from numpy.testing import assert_allclose
 
 from pyrasa import irasa, irasa_sprint
+from pyrasa.utils.irasa_tf_spectrum import IrasaTfSpectrum
 
 from .settings import EXP_KNEE_COMBO, FS, KNEE_TOLERANCE, MIN_CORR_PSD_CMB, OSC_FREQ, TOLERANCE
 
@@ -144,3 +146,62 @@ def test_aperiodic_error_tf(ts4sprint_knee, fs, exponent_1, exponent_2):
     assert np.mean(irasa_out.get_aperiodic_error(peak_kwargs=kwargs)) < np.mean(
         irasa_out_bad.get_aperiodic_error(peak_kwargs=kwargs)
     )
+
+
+def test_aperiodic_error_tf_known_ground_truth():
+    freqs = np.arange(2.0, 40.25, 0.25)
+    times = np.array([0.1, 0.2, 0.3])
+
+    # Known aperiodic ground truth: identical across channels and times
+    background = 0.6 / (1 + (freqs / 12) ** 1.5)
+    ground_truth = np.broadcast_to(
+        background[None, :, None],
+        (2, len(freqs), len(times)),
+    ).copy()
+
+    # Known oscillations: 12 Hz peaks in different channels/time windows
+    oscillations = np.zeros_like(ground_truth)
+    peak = 0.4 * np.maximum(1 - np.abs(freqs - 12) / 2, 0)
+
+    oscillations[0, :, 0] = peak
+    oscillations[1, :, 1] = peak
+
+    # Deliberately introduce known broadband aperiodic estimation errors
+    leakage = np.zeros_like(ground_truth)
+    contaminated_band = (freqs >= 25) & (freqs <= 35)  # noqa: PLR2004
+
+    leakage[0, contaminated_band, 2] = 0.025
+    leakage[1, contaminated_band, 1] = 0.05
+
+    # Simulated raw spectrum and imperfect aperiodic estimate
+    raw = ground_truth + oscillations
+    estimated_aperiodic = ground_truth + leakage
+
+    spectrum = IrasaTfSpectrum(
+        freqs=freqs,
+        time=times,
+        raw_spectrum=raw,
+        aperiodic=estimated_aperiodic,
+        periodic=raw - estimated_aperiodic,
+        ch_names=np.array(['A', 'B']),
+    )
+
+    peak_kwargs = {
+        'smooth': False,
+        'cut_spectrum': (4, 38),
+        'peak_threshold': 0.5,
+        'min_peak_height': 0.1,
+        'peak_width_limits': (0.5, 6),
+    }
+
+    # Verify that the two injected oscillations are found
+    peaks = spectrum.get_peaks(**peak_kwargs)
+    assert len(peaks) == 2  # noqa: PLR2004
+    assert_allclose(peaks['cf'].to_numpy(dtype=float), [12, 12])
+
+    # The peak-excluded residual should recover the known estimation error
+    error = spectrum.get_aperiodic_error(peak_kwargs=peak_kwargs)
+    true_error = np.abs(estimated_aperiodic - ground_truth)
+
+    assert error.shape == ground_truth.shape
+    assert_allclose(error, true_error, atol=1e-12)
