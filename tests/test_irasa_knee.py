@@ -130,7 +130,7 @@ def test_aperiodic_error_tf(ts4sprint_knee, fs, exponent_1, exponent_2):
         band=(0.1, 50),
         overlap_fraction=0.95,
         win_duration=0.5,
-        hset_info=(1, 8, 0.05),
+        hset_info=(1, 1.5, 0.05),
     )
 
     kwargs = {

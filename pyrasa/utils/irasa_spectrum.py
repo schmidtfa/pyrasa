@@ -300,29 +300,21 @@ class IrasaSpectrum:
 
         """
 
-        if peak_kwargs is None:
-            peak_kwargs = {}
+        error = np.abs(self.periodic)
+        peaks = self.get_peaks(**(peak_kwargs or {}))
 
-        aperiodic_errors = []
-        # get absolute periodic spectrum
-        for ix in range(self.periodic.shape[0]):
-            aperiodic_error = np.abs(self.periodic[ix, :])
+        ch_names = self.ch_names if self.ch_names is not None else [str(i) for i in range(error.shape[0])]
+        ch_index = {ch: ix for ix, ch in enumerate(ch_names)}
 
-            # zero-out peaks
-            peaks = self.get_peaks(**peak_kwargs)
-            freqs = self.freqs
+        for ch, cf, bw in zip(  # this is done to allow type checking
+            peaks['ch_name'],
+            peaks['cf'].to_numpy(dtype=float),
+            peaks['bw'].to_numpy(dtype=float),
+        ):
+            freq_mask = (self.freqs > cf - bw) & (self.freqs < cf + bw)
+            error[ch_index[str(ch)], freq_mask] = 0
 
-            for _, peak in peaks.iterrows():
-                cur_upper = peak['cf'] + peak['bw']
-                cur_lower = peak['cf'] - peak['bw']
-
-                freq_mask = np.logical_and(freqs < cur_upper, freqs > cur_lower)
-
-                aperiodic_error[freq_mask] = 0
-
-            aperiodic_errors.append(aperiodic_error)
-
-        return np.array(aperiodic_errors)
+        return error
 
     def plot(
         self,

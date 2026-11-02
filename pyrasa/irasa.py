@@ -64,7 +64,9 @@ def irasa(
     band : tuple[float, float]
         The frequency range (lower and upper bounds in Hz) over which to compute the spectra.
     nperseg : int | None
-        Length of each segment. Defaults to None if window is array_like, is set to the length of the window.
+        Length of each segment. If None, uses the
+    length of the shortest resampled signal to ensure
+    consistent spectral dimensions across resampling factors.
     noverlap : int | None
         Number of points to overlap between segments. If None, noverlap = nperseg // 2. Defaults to None.
     nfft : int | None

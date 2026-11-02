@@ -133,6 +133,8 @@ def _get_windows(
         if dpss_settings['low_bias']:
             win = win[ratios > low_bias_ratio]
             ratios = ratios[ratios > low_bias_ratio]
+        if not dpss_settings['eigenvalue_weighting']:
+            ratios = None
     else:
         win = [win_func(nperseg, **win_func_kwargs)]
         ratios = None
