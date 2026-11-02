@@ -23,6 +23,7 @@ class PeriodicSpectrumArray(SpectrumArray):
         info: mne.Info,
         freqs: np.ndarray,
         *,
+        aperiodic_spectrum: np.ndarray,
         verbose: bool | str | int | None = None,
     ) -> None:
         # _check_data_shape(data, freqs, info, ndim=2)
@@ -39,6 +40,7 @@ class PeriodicSpectrumArray(SpectrumArray):
                 info=info,
             )
         )
+        self._aperiodic_spectrum = aperiodic_spectrum
 
     def plot(
         self: SpectrumArray,
@@ -166,9 +168,10 @@ class PeriodicSpectrumArray(SpectrumArray):
         """
 
         peak_df = get_peak_params(
-            self.get_data(),
-            self.freqs,
-            self.ch_names,
+            periodic_spectrum=self.get_data(),
+            freqs=self.freqs,
+            aperiodic_spectrum=self._aperiodic_spectrum,
+            ch_names=self.ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,
             cut_spectrum=cut_spectrum,
@@ -289,6 +292,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         events: np.ndarray | None = None,
         event_id: int | list | dict | str | None = None,
         *,
+        aperiodic_spectrum: np.ndarray,
         verbose: bool | str | int | None = None,
     ) -> None:
         if events is not None and data.shape[0] != events.shape[0]:
@@ -314,6 +318,7 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
                 drop_log=tuple(tuple() for _ in range(data.shape[0])),
             )
         )
+        self._aperiodic_spectrum = aperiodic_spectrum
 
     def plot(
         self: EpochsSpectrumArray,
@@ -446,9 +451,10 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         peak_list = []
         for ix, cur_epoch in enumerate(self.get_data()):
             peak_df = get_peak_params(
-                cur_epoch,
-                self.freqs,
-                self.ch_names,
+                periodic_spectrum=cur_epoch,
+                freqs=self.freqs,
+                aperiodic_spectrum=self._aperiodic_spectrum[ix],
+                ch_names=self.ch_names,
                 smooth=smooth,
                 smoothing_window=smoothing_window,
                 cut_spectrum=cut_spectrum,

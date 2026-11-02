@@ -111,7 +111,9 @@ def irasa_raw(
     )
 
     return IrasaRaw(
-        periodic=PeriodicSpectrumArray(irasa_spectrum.periodic, info, freqs=irasa_spectrum.freqs),
+        periodic=PeriodicSpectrumArray(
+            irasa_spectrum.periodic, info, freqs=irasa_spectrum.freqs, aperiodic_spectrum=irasa_spectrum.aperiodic
+        ),
         aperiodic=AperiodicSpectrumArray(irasa_spectrum.aperiodic, info, freqs=irasa_spectrum.freqs),
     )
 
@@ -200,7 +202,12 @@ def irasa_epochs(
 
     return IrasaEpoched(
         periodic=PeriodicEpochsSpectrum(
-            psds_periodic, info, freqs=irasa_spectrum.freqs, events=events, event_id=event_ids
+            psds_periodic,
+            info,
+            freqs=irasa_spectrum.freqs,
+            events=events,
+            event_id=event_ids,
+            aperiodic_spectrum=psds_aperiodic,
         ),
         aperiodic=AperiodicEpochsSpectrum(
             psds_aperiodic, info, freqs=irasa_spectrum.freqs, events=events, event_id=event_ids

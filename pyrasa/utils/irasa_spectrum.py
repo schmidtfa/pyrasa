@@ -257,9 +257,10 @@ class IrasaSpectrum:
         """
 
         return get_peak_params(
-            self.periodic,
-            self.freqs,
-            self.ch_names,
+            periodic_spectrum=self.periodic,
+            freqs=self.freqs,
+            aperiodic_spectrum=self.aperiodic,
+            ch_names=self.ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,
             cut_spectrum=cut_spectrum,

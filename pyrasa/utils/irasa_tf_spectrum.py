@@ -287,6 +287,7 @@ class IrasaTfSpectrum:
             periodic_spectrum=self.periodic[np.newaxis, :, :] if self.periodic.ndim == min_ndim else self.periodic,
             freqs=self.freqs,
             times=self.time,
+            aperiodic_spectrum=self.aperiodic[np.newaxis, :, :] if self.aperiodic.ndim == min_ndim else self.aperiodic,
             ch_names=self.ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,
