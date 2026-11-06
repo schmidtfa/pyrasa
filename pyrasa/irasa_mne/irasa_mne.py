@@ -207,7 +207,6 @@ def irasa_epochs(
             freqs=irasa_spectrum.freqs,
             events=events,
             event_id=event_ids,
-            aperiodic_spectrum=psds_aperiodic,
         ),
         aperiodic=AperiodicEpochsSpectrum(
             psds_aperiodic, info, freqs=irasa_spectrum.freqs, events=events, event_id=event_ids

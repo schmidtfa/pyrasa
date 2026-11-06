@@ -2,6 +2,8 @@
 
 # %% inherit from spectrum array
 
+from typing import Literal, Self
+
 import matplotlib
 import mne
 import numpy as np
@@ -10,6 +12,7 @@ from attrs import define
 from mne.time_frequency import EpochsSpectrumArray, SpectrumArray
 
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
+from pyrasa.utils.fit_funcs import AbstractFitFun
 from pyrasa.utils.peak_utils import get_peak_params
 from pyrasa.utils.types import AperiodicFit
 
@@ -100,90 +103,6 @@ class PeriodicSpectrumArray(SpectrumArray):
             show=show,
         )
 
-    def get_peaks(
-        self: SpectrumArray,
-        smooth: bool = True,
-        smoothing_window: int | float = 2,
-        polyorder: int | None = None,
-        cut_spectrum: tuple[float, float] | None = (1, 40),
-        peak_threshold: float = 2.0,
-        min_peak_height: float = 0.0,
-        min_peak_distance_hz: float | None = None,
-        peak_width_limits: tuple[float, float] = (1, 6),
-    ) -> pd.DataFrame:
-        """
-        Extracts peak parameters from the periodic spectrum obtained via IRASA.
-
-        This method identifies and extracts peak parameters such as center frequency (cf), bandwidth (bw),
-        and peak height (pw) from a periodic spectrum using scipy's find_peaks function.
-        The spectrum can be optionally smoothed prior to the peak detection.
-
-        Parameters
-        ----------
-        smooth : bool, optional
-            Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
-            better identifying peaks. Default is True.
-        smoothing_window : int or float, optional
-            The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.
-        polyorder : int, optional
-            The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
-            less than the window length. Default is 1.
-        cut_spectrum : tuple of (float, float) or None, optional
-            Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
-            before peak extraction. If None, peaks are detected across the full frequency range. Default is None.
-        peak_threshold : float, optional
-            Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
-            filtered spectrum. Default is 1.0.
-        min_peak_height : float, optional
-            The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
-            This can be useful for filtering out noise or insignificant peaks, especially when a "knee" is present
-            in the original data, which may persist in the periodic spectrum. Default is 0.01.
-        min_peak_distance_hz : float or None, optional
-            The minimum distance between two peaks in Hz to avoid fitting too many peaks in close proximity.
-        peak_width_limits : tuple of (float, float), optional
-            The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
-            meaningful features. Default is (0.5, 12.0).
-
-        Returns
-        -------
-        pd.DataFrame
-            A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
-            following columns:
-            - 'ch_name': Channel name
-            - 'cf': Center frequency of the peak
-            - 'bw': Bandwidth of the peak
-            - 'pw': Peak height (power)
-
-
-        Notes
-        -----
-        The function works by first optionally smoothing the periodic spectrum using a Savitzky-Golay filter.
-        Then, it performs peak detection using the `scipy.signal.find_peaks` function, taking into account the
-        specified peak thresholds and width limits. Peaks that do not meet the minimum height requirement are
-        filtered out.
-
-        The `cut_spectrum` parameter can be used to focus peak detection on a specific frequency range, which is
-        particularly useful when the region of interest is known in advance.
-
-        """
-
-        peak_df = get_peak_params(
-            periodic_spectrum=self.get_data(),
-            freqs=self.freqs,
-            aperiodic_spectrum=self._aperiodic_spectrum,
-            ch_names=self.ch_names,
-            smooth=smooth,
-            smoothing_window=smoothing_window,
-            cut_spectrum=cut_spectrum,
-            peak_threshold=peak_threshold,
-            min_peak_height=min_peak_height,
-            min_peak_distance_hz=min_peak_distance_hz,
-            polyorder=polyorder,
-            peak_width_limits=peak_width_limits,
-        )
-
-        return peak_df
-
 
 class AperiodicSpectrumArray(SpectrumArray):
     """Subclass of SpectrumArray"""
@@ -213,7 +132,7 @@ class AperiodicSpectrumArray(SpectrumArray):
 
     def fit_aperiodic_model(
         self: SpectrumArray,
-        fit_func: str = 'fixed',
+        fit_func: str | type[AbstractFitFun] = 'fixed',
         scale: bool = False,
         fit_bounds: tuple[float, float] | None = None,
     ) -> AperiodicFit:
@@ -292,7 +211,6 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
         events: np.ndarray | None = None,
         event_id: int | list | dict | str | None = None,
         *,
-        aperiodic_spectrum: np.ndarray,
         verbose: bool | str | int | None = None,
     ) -> None:
         if events is not None and data.shape[0] != events.shape[0]:
@@ -318,7 +236,6 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
                 drop_log=tuple(tuple() for _ in range(data.shape[0])),
             )
         )
-        self._aperiodic_spectrum = aperiodic_spectrum
 
     def plot(
         self: EpochsSpectrumArray,
@@ -378,99 +295,6 @@ class PeriodicEpochsSpectrum(EpochsSpectrumArray):
             show=show,
         )
 
-    def get_peaks(
-        self: EpochsSpectrumArray,
-        smooth: bool = True,
-        smoothing_window: int | float = 2,
-        polyorder: int | None = None,
-        cut_spectrum: tuple[float, float] | None = (1, 40),
-        peak_threshold: float = 2.0,
-        min_peak_height: float = 0.0,
-        min_peak_distance_hz: float | None = None,
-        peak_width_limits: tuple[float, float] = (1, 6),
-    ) -> pd.DataFrame:
-        """
-        Extracts peak parameters from the periodic spectrum obtained via IRASA.
-
-        This method identifies and extracts peak parameters such as center frequency (cf), bandwidth (bw),
-        and peak height (pw) from a periodic spectrum using scipy's find_peaks function.
-        The spectrum can be optionally smoothed prior to the peak detection.
-
-        Parameters
-        ----------
-        smooth : bool, optional
-            Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
-            better identifying peaks. Default is True.
-        smoothing_window : int or float, optional
-            The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.
-        polyorder : int, optional
-            The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
-            less than the window length. Default is 1.
-        cut_spectrum : tuple of (float, float) or None, optional
-            Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
-            before peak extraction. If None, peaks are detected across the full frequency range. Default is None.
-        peak_threshold : float, optional
-            Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
-            filtered spectrum. Default is 1.0.
-        min_peak_height : float, optional
-            The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
-            This can be useful for filtering out noise or insignificant peaks, especially when a "knee" is present
-            in the original data, which may persist in the periodic spectrum. Default is 0.01.
-        min_peak_distance_hz : float or None, optional
-            The minimum distance between two peaks in Hz to avoid fitting too many peaks in close proximity.
-        peak_width_limits : tuple of (float, float), optional
-            The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
-            meaningful features. Default is (0.5, 12.0).
-
-        Returns
-        -------
-        pd.DataFrame
-            A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
-            following columns:
-            - 'ch_name': Channel name
-            - 'cf': Center frequency of the peak
-            - 'bw': Bandwidth of the peak
-            - 'pw': Peak height (power)
-
-
-        Notes
-        -----
-        The function works by first optionally smoothing the periodic spectrum using a Savitzky-Golay filter.
-        Then, it performs peak detection using the `scipy.signal.find_peaks` function, taking into account the
-        specified peak thresholds and width limits. Peaks that do not meet the minimum height requirement are
-        filtered out.
-
-        The `cut_spectrum` parameter can be used to focus peak detection on a specific frequency range, which is
-        particularly useful when the region of interest is known in advance.
-
-        """
-
-        event_dict = {val: key for key, val in self.event_id.items()}
-        events = self.events[:, 2]
-
-        peak_list = []
-        for ix, cur_epoch in enumerate(self.get_data()):
-            peak_df = get_peak_params(
-                periodic_spectrum=cur_epoch,
-                freqs=self.freqs,
-                aperiodic_spectrum=self._aperiodic_spectrum[ix],
-                ch_names=self.ch_names,
-                smooth=smooth,
-                smoothing_window=smoothing_window,
-                cut_spectrum=cut_spectrum,
-                peak_threshold=peak_threshold,
-                min_peak_height=min_peak_height,
-                polyorder=polyorder,
-                min_peak_distance_hz=min_peak_distance_hz,
-                peak_width_limits=peak_width_limits,
-            )
-
-            peak_df['event_id'] = event_dict[events[ix]]
-
-            peak_list.append(peak_df)
-
-        return pd.concat(peak_list)
-
 
 class AperiodicEpochsSpectrum(EpochsSpectrumArray):
     """Subclass of EpochsSpectrumArray"""
@@ -511,7 +335,7 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
 
     def fit_aperiodic_model(
         self: SpectrumArray,
-        fit_func: str = 'fixed',
+        fit_func: str | type[AbstractFitFun] = 'fixed',
         scale: bool = False,
         fit_bounds: tuple[float, float] | None = None,
     ) -> AperiodicFit:
@@ -593,11 +417,538 @@ class AperiodicEpochsSpectrum(EpochsSpectrumArray):
 
 @define
 class IrasaRaw:
+    """
+    IRASA decomposition of continuous MNE data.
+
+    Contains the periodic and aperiodic power spectra as MNE-compatible
+    SpectrumArray objects, together with methods for extracting
+    oscillatory peaks and fitting the aperiodic component.
+
+    Attributes
+    ----------
+    periodic : PeriodicSpectrumArray
+        Oscillatory component of the power spectrum.
+    aperiodic : AperiodicSpectrumArray
+        Aperiodic component of the power spectrum.
+    """
+
     periodic: PeriodicSpectrumArray
     aperiodic: AperiodicSpectrumArray
+
+    def __attrs_post_init__(self) -> None:
+        """Verify spectral alignment after initialization."""
+        self._check_alignment()
+
+    def _check_alignment(self) -> None:
+        """Check that both spectra describe the same channels and frequencies."""
+        if self.periodic.ch_names != self.aperiodic.ch_names:
+            raise ValueError('Periodic and aperiodic channels are not aligned.')
+
+        if not np.array_equal(self.periodic.freqs, self.aperiodic.freqs):
+            raise ValueError('Periodic and aperiodic frequencies are not aligned.')
+
+    def get_peaks(
+        self,
+        *,
+        smooth: bool = True,
+        smoothing_window: int | float = 2,
+        polyorder: int | None = None,
+        cut_spectrum: tuple[float, float] | None = (1, 40),
+        peak_threshold: float = 2.0,
+        min_peak_height: float = 0.0,
+        min_peak_distance_hz: float | None = None,
+        peak_width_limits: tuple[float, float] = (1.0, 6.0),
+    ) -> pd.DataFrame:
+        """
+        Extract oscillatory peaks from the IRASA decomposition.
+
+        Peak detection is performed on the periodic spectrum, while
+        the aperiodic spectrum is used to calculate relative peak power.
+
+        Parameters
+        ----------
+        smooth : bool, optional
+            Whether to smooth the periodic spectrum before peak detection.
+            Default is True.
+        smoothing_window : int or float, optional
+            Savitzky-Golay smoothing window in Hz. Default is 2 Hz.
+        polyorder : int or None, optional
+            Polynomial order of the Savitzky-Golay filter. If None,
+            the order is selected automatically.
+        cut_spectrum : tuple of (float, float) or None, optional
+            Frequency range in Hz used for peak detection.
+            Default is (1, 40). If None, use the full spectrum.
+        peak_threshold : float, optional
+            Minimum peak prominence expressed as a multiple of the
+            standard deviation of the processed periodic spectrum.
+            Default is 2.0.
+        min_peak_height : float, optional
+            Minimum peak prominence in linear power units.
+            Default is 0.0.
+        min_peak_distance_hz : float or None, optional
+            Minimum distance between detected peaks in Hz.
+        peak_width_limits : tuple of (float, float), optional
+            Minimum and maximum accepted peak widths in Hz.
+            Default is (1.0, 6.0).
+
+        Returns
+        -------
+        pd.DataFrame
+            Detected peaks with the following columns:
+
+            - ch_name : Channel name.
+            - cf : Center frequency in Hz.
+            - bw : Full width at half-prominence in Hz.
+            - pw : Peak prominence in linear power units.
+            - pw_rel : Log10 peak height relative to the aperiodic background.
+
+        Notes
+        -----
+        Peak detection uses scipy.signal.find_peaks. If smoothing is
+        enabled, relative peak power is calculated using the smoothed
+        periodic spectrum and the original aperiodic background.
+        """
+
+        if self.periodic.ch_names != self.aperiodic.ch_names:
+            raise ValueError('Periodic and aperiodic channels are not aligned.')
+
+        if not np.array_equal(self.periodic.freqs, self.aperiodic.freqs):
+            raise ValueError('Periodic and aperiodic frequencies are not aligned.')
+
+        periodic = self.periodic.get_data(
+            picks=self.periodic.ch_names,
+            exclude=(),
+        )
+        aperiodic = self.aperiodic.get_data(
+            picks=self.aperiodic.ch_names,
+            exclude=(),
+        )
+
+        if periodic.shape != aperiodic.shape:
+            raise ValueError('Periodic and aperiodic spectrum shapes do not match.')
+
+        return get_peak_params(
+            periodic_spectrum=periodic,
+            aperiodic_spectrum=aperiodic,
+            freqs=self.periodic.freqs,
+            ch_names=self.periodic.ch_names,
+            smooth=smooth,
+            smoothing_window=smoothing_window,
+            polyorder=polyorder,
+            cut_spectrum=cut_spectrum,
+            peak_threshold=peak_threshold,
+            min_peak_height=min_peak_height,
+            min_peak_distance_hz=min_peak_distance_hz,
+            peak_width_limits=peak_width_limits,
+        )
+
+    def fit_aperiodic_model(
+        self,
+        fit_func: str | type[AbstractFitFun] = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
+    ) -> AperiodicFit:
+        """
+        Fit an aperiodic model to the IRASA aperiodic spectrum.
+
+        Parameters
+        ----------
+        fit_func : str or type[AbstractFitFun], optional
+            Model used for fitting. Either 'fixed', 'knee', or a custom
+            subclass of AbstractFitFun. Default is 'fixed'.
+        scale : bool, optional
+            Whether to scale the power spectrum to improve numerical
+            stability during fitting. Default is False.
+        fit_bounds : tuple of (float, float) or None, optional
+            Lower and upper frequency bounds in Hz. If None, the full
+            frequency range is used.
+
+        Returns
+        -------
+        AperiodicFit
+            Fitting results containing the aperiodic parameters,
+            goodness-of-fit metrics, and model predictions.
+        """
+        return self.aperiodic.fit_aperiodic_model(
+            fit_func=fit_func,
+            scale=scale,
+            fit_bounds=fit_bounds,
+        )
+
+    def copy(self) -> Self:
+        """
+        Return an independent copy of the IRASA decomposition.
+
+        Both the periodic and aperiodic MNE spectrum objects are copied.
+
+        Returns
+        -------
+        IrasaRaw | IrasaEpoched
+            A new IRASA result with independent spectral data.
+        """
+        return type(self)(
+            periodic=self.periodic.copy(),
+            aperiodic=self.aperiodic.copy(),
+        )
+
+    def pick(
+        self,
+        picks: str | list[str] | list[int] | slice | np.ndarray | None,
+        exclude: str | list[str] | tuple[str, ...] = (),
+    ) -> Self:
+        """
+        Select channels in both IRASA spectral components.
+
+        The same MNE channel selection is applied to the periodic and
+        aperiodic spectra. The operation modifies this object in place.
+
+        Parameters
+        ----------
+        picks : str | list | slice | ndarray | None
+            Channels to retain, following MNE's channel-selection
+            conventions. Accepts channel names, indices, channel types
+            (e.g., 'eeg' or 'meg'), or 'all'.
+        exclude : str | list of str | tuple of str, optional
+            Channels to exclude from type-based selections.
+            Default is (), meaning no exclusions.
+
+        Returns
+        -------
+        IrasaRaw | IrasaEpoched
+            The modified IRASA result.
+        """
+        self._check_alignment()
+
+        result = self.copy()
+        result.periodic.pick(picks, exclude=exclude)
+        result.aperiodic.pick(picks, exclude=exclude)
+        result._check_alignment()
+
+        self.periodic, self.aperiodic = result.periodic, result.aperiodic
+        return self
+
+    def drop_channels(
+        self,
+        ch_names: str | list[str],
+        on_missing: Literal['raise', 'warn', 'ignore'] = 'raise',
+    ) -> Self:
+        """
+        Remove channels from both IRASA spectral components.
+
+        Parameters
+        ----------
+        ch_names : str | list of str
+            Channel names to remove.
+        on_missing : {'raise', 'warn', 'ignore'}
+            Behavior when a requested channel does not exist.
+            Default is 'raise'.
+
+        Returns
+        -------
+        IrasaRaw | IrasaEpoched
+            The modified IRASA result.
+        """
+        self._check_alignment()
+
+        result = self.copy()
+        result.periodic.drop_channels(ch_names, on_missing=on_missing)
+        result.aperiodic.drop_channels(ch_names, on_missing=on_missing)
+        result._check_alignment()
+
+        self.periodic, self.aperiodic = result.periodic, result.aperiodic
+        return self
 
 
 @define
 class IrasaEpoched:
+    """
+    IRASA decomposition of epoched MNE data.
+
+    Contains the periodic and aperiodic power spectra as MNE-compatible
+    SpectrumArray objects, together with methods for extracting
+    oscillatory peaks and fitting the aperiodic component.
+
+    Attributes
+    ----------
+    periodic : PeriodicSpectrumArray
+        Oscillatory component of the power spectrum.
+    aperiodic : AperiodicSpectrumArray
+        Aperiodic component of the power spectrum.
+    """
+
     periodic: PeriodicEpochsSpectrum
     aperiodic: AperiodicEpochsSpectrum
+
+    def __getitem__(
+        self,
+        item: int | slice | list[int] | list[str] | np.ndarray | str,
+    ) -> Self:
+        """
+        Select epochs from both IRASA spectral components.
+
+        Supports the same epoch-selection syntax as MNE EpochsSpectrum,
+        including integer indices, slices, lists of indices, boolean
+        masks, and event names.
+
+        Parameters
+        ----------
+        item : int | slice | list | ndarray | str
+            Epoch selection. Event names must exist in the spectrum's
+            event_id mapping.
+
+        Returns
+        -------
+        IrasaEpoched
+            A new IRASA result containing only the selected epochs.
+            The original object remains unchanged.
+        """
+        self._check_alignment()
+
+        result = type(self)(
+            periodic=self.periodic[item],
+            aperiodic=self.aperiodic[item],
+        )
+        result._check_alignment()
+        return result
+
+    def __attrs_post_init__(self) -> None:
+        """Verify spectral alignment after initialization."""
+        self._check_alignment()
+
+    def _check_alignment(self) -> None:
+        """Check channel, frequency, and epoch alignment."""
+        if self.periodic.ch_names != self.aperiodic.ch_names:
+            raise ValueError('Periodic and aperiodic channels are not aligned.')
+
+        if not np.array_equal(self.periodic.freqs, self.aperiodic.freqs):
+            raise ValueError('Periodic and aperiodic frequencies are not aligned.')
+
+        if not np.array_equal(self.periodic.events, self.aperiodic.events):
+            raise ValueError('Periodic and aperiodic epochs are not aligned.')
+
+        if not np.array_equal(self.periodic.selection, self.aperiodic.selection):
+            raise ValueError('Periodic and aperiodic epoch selections are not aligned.')
+
+        if self.periodic.event_id != self.aperiodic.event_id:
+            raise ValueError('Periodic and aperiodic event IDs are not aligned.')
+
+    def get_peaks(
+        self,
+        *,
+        smooth: bool = True,
+        smoothing_window: int | float = 2,
+        polyorder: int | None = None,
+        cut_spectrum: tuple[float, float] | None = (1, 40),
+        peak_threshold: float = 2.0,
+        min_peak_height: float = 0.0,
+        min_peak_distance_hz: float | None = None,
+        peak_width_limits: tuple[float, float] = (1.0, 6.0),
+    ) -> pd.DataFrame:
+        """
+        Extract oscillatory peak parameters for each epoch and channel of the IRASA decomposition.
+
+        Peak detection is performed on the periodic spectrum, while
+        the aperiodic spectrum is used to calculate relative peak power.
+
+        Parameters
+        ----------
+        smooth : bool, optional
+            Whether to smooth the periodic spectrum before peak detection.
+            Default is True.
+        smoothing_window : int or float, optional
+            Savitzky-Golay smoothing window in Hz. Default is 2 Hz.
+        polyorder : int or None, optional
+            Polynomial order of the Savitzky-Golay filter. If None,
+            the order is selected automatically.
+        cut_spectrum : tuple of (float, float) or None, optional
+            Frequency range in Hz used for peak detection.
+            Default is (1, 40). If None, use the full spectrum.
+        peak_threshold : float, optional
+            Minimum peak prominence expressed as a multiple of the
+            standard deviation of the processed periodic spectrum.
+            Default is 2.0.
+        min_peak_height : float, optional
+            Minimum peak prominence in linear power units.
+            Default is 0.0.
+        min_peak_distance_hz : float or None, optional
+            Minimum distance between detected peaks in Hz.
+        peak_width_limits : tuple of (float, float), optional
+            Minimum and maximum accepted peak widths in Hz.
+            Default is (1.0, 6.0).
+
+        Returns
+        -------
+        pd.DataFrame
+            Detected peaks with the following columns:
+
+            - ch_name : Channel name.
+            - cf : Center frequency in Hz.
+            - bw : Full width at half-prominence in Hz.
+            - pw : Peak prominence in linear power units.
+            - pw_rel : Log10 peak height relative to the aperiodic background.
+
+        Notes
+        -----
+        Peak detection uses scipy.signal.find_peaks. If smoothing is
+        enabled, relative peak power is calculated using the smoothed
+        periodic spectrum and the original aperiodic background.
+        """
+        if self.periodic.ch_names != self.aperiodic.ch_names:
+            raise ValueError('Periodic and aperiodic channels are not aligned.')
+
+        if not np.array_equal(self.periodic.freqs, self.aperiodic.freqs):
+            raise ValueError('Periodic and aperiodic frequencies are not aligned.')
+
+        if not np.array_equal(self.periodic.events, self.aperiodic.events):
+            raise ValueError('Periodic and aperiodic epochs are not aligned.')
+
+        periodic = self.periodic.get_data(
+            picks=self.periodic.ch_names,
+            exclude=(),
+        )
+        aperiodic = self.aperiodic.get_data(
+            picks=self.aperiodic.ch_names,
+            exclude=(),
+        )
+
+        if periodic.shape != aperiodic.shape:
+            raise ValueError('Periodic and aperiodic spectrum shapes do not match.')
+
+        event_dict = {value: key for key, value in self.periodic.event_id.items()}
+        peak_list = []
+
+        for ix, (cur_periodic, cur_aperiodic) in enumerate(zip(periodic, aperiodic, strict=True)):
+            peak_df = get_peak_params(
+                periodic_spectrum=cur_periodic,
+                aperiodic_spectrum=cur_aperiodic,
+                freqs=self.periodic.freqs,
+                ch_names=self.periodic.ch_names,
+                smooth=smooth,
+                smoothing_window=smoothing_window,
+                polyorder=polyorder,
+                cut_spectrum=cut_spectrum,
+                peak_threshold=peak_threshold,
+                min_peak_height=min_peak_height,
+                min_peak_distance_hz=min_peak_distance_hz,
+                peak_width_limits=peak_width_limits,
+            )
+
+            peak_df['event_id'] = event_dict[self.periodic.events[ix, 2]]
+            peak_list.append(peak_df)
+
+        return pd.concat(peak_list, ignore_index=True)
+
+    def fit_aperiodic_model(
+        self,
+        fit_func: str | type[AbstractFitFun] = 'fixed',
+        scale: bool = False,
+        fit_bounds: tuple[float, float] | None = None,
+    ) -> AperiodicFit:
+        """Fit an aperiodic model separately to each epoch and channel of the IRASA aperiodic spectrum.
+
+        Parameters
+        ----------
+        fit_func : str or type[AbstractFitFun], optional
+            Model used for fitting. Either 'fixed', 'knee', or a custom
+            subclass of AbstractFitFun. Default is 'fixed'.
+        scale : bool, optional
+            Whether to scale the power spectrum to improve numerical
+            stability during fitting. Default is False.
+        fit_bounds : tuple of (float, float) or None, optional
+            Lower and upper frequency bounds in Hz. If None, the full
+            frequency range is used.
+
+        Returns
+        -------
+        AperiodicFit
+            Fitting results containing the aperiodic parameters,
+            goodness-of-fit metrics, and model predictions.
+        """
+        return self.aperiodic.fit_aperiodic_model(
+            fit_func=fit_func,
+            scale=scale,
+            fit_bounds=fit_bounds,
+        )
+
+    def copy(self) -> Self:
+        """
+        Return an independent copy of the IRASA decomposition.
+
+        Both the periodic and aperiodic MNE spectrum objects are copied.
+
+        Returns
+        -------
+        IrasaRaw | IrasaEpoched
+            A new IRASA result with independent spectral data.
+        """
+        return type(self)(
+            periodic=self.periodic.copy(),
+            aperiodic=self.aperiodic.copy(),
+        )
+
+    def pick(
+        self,
+        picks: str | list[str] | list[int] | slice | np.ndarray | None,
+        exclude: str | list[str] | tuple[str, ...] = (),
+    ) -> Self:
+        """
+        Select channels in both IRASA spectral components.
+
+        The same MNE channel selection is applied to the periodic and
+        aperiodic spectra. The operation modifies this object in place.
+
+        Parameters
+        ----------
+        picks : str | list | slice | ndarray | None
+            Channels to retain, following MNE's channel-selection
+            conventions. Accepts channel names, indices, channel types
+            (e.g., 'eeg' or 'meg'), or 'all'.
+        exclude : str | list of str | tuple of str, optional
+            Channels to exclude from type-based selections.
+            Default is (), meaning no exclusions.
+
+        Returns
+        -------
+        IrasaRaw | IrasaEpoched
+            The modified IRASA result.
+        """
+        self._check_alignment()
+
+        result = self.copy()
+        result.periodic.pick(picks, exclude=exclude)
+        result.aperiodic.pick(picks, exclude=exclude)
+        result._check_alignment()
+
+        self.periodic, self.aperiodic = result.periodic, result.aperiodic
+        return self
+
+    def drop_channels(
+        self,
+        ch_names: str | list[str],
+        on_missing: Literal['raise', 'warn', 'ignore'] = 'raise',
+    ) -> Self:
+        """
+        Remove channels from both IRASA spectral components.
+
+        Parameters
+        ----------
+        ch_names : str | list of str
+            Channel names to remove.
+        on_missing : {'raise', 'warn', 'ignore'}
+            Behavior when a requested channel does not exist.
+            Default is 'raise'.
+
+        Returns
+        -------
+        IrasaRaw | IrasaEpoched
+            The modified IRASA result.
+        """
+        self._check_alignment()
+
+        result = self.copy()
+        result.periodic.drop_channels(ch_names, on_missing=on_missing)
+        result.aperiodic.drop_channels(ch_names, on_missing=on_missing)
+        result._check_alignment()
+
+        self.periodic, self.aperiodic = result.periodic, result.aperiodic
+        return self
