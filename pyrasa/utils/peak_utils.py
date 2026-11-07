@@ -12,6 +12,7 @@ import scipy.signal as dsp
 def get_peak_params(  # noqa C901
     periodic_spectrum: np.ndarray,
     freqs: np.ndarray,
+    aperiodic_spectrum: np.ndarray,
     ch_names: Iterable | None = None,
     smooth: bool = True,
     smoothing_window: int | float = 2,
@@ -36,6 +37,8 @@ def get_peak_params(  # noqa C901
         or [Frequencies]).
     freqs : np.ndarray
         1D array containing frequency values corresponding to the periodic spectrum.
+    aperiodic_spectrum : np.ndarray
+        Aperiodic power spectrum with the same shape as periodic_spectrum.
     ch_names : Iterable or None, optional
         List of channel names corresponding to the periodic spectrum. If None, channels are labeled numerically.
         Default is None.
@@ -68,7 +71,8 @@ def get_peak_params(  # noqa C901
         - 'ch_name': Channel name
         - 'cf': Center frequency of the peak
         - 'bw': Bandwidth of the peak
-        - 'pw': Peak height (power)
+        - 'pw': Peak height (power) in linear power units
+        - 'pw_rel': Log10 peak height relative to the aperiodic background.
 
 
     Notes
@@ -103,6 +107,7 @@ def get_peak_params(  # noqa C901
         freq_range = np.logical_and(freqs > cut_spectrum[0], freqs < cut_spectrum[1])
         freqs = freqs[freq_range]
         periodic_spectrum = periodic_spectrum[:, freq_range]
+        aperiodic_spectrum = aperiodic_spectrum[:, freq_range]
 
     # filter signal to get a smoother spectrum for peak extraction
     if smooth:
@@ -171,6 +176,8 @@ def get_peak_params(  # noqa C901
             rel_height=0.5,  # relative peak height based on full width half prominence
         )
 
+        ap = aperiodic_spectrum[ix, peaks]
+
         peak_list.append(
             pd.DataFrame(
                 {
@@ -178,6 +185,7 @@ def get_peak_params(  # noqa C901
                     'cf': freqs[peaks],
                     'bw': peak_dict['widths'] * freq_step,
                     'pw': peak_dict['prominences'],
+                    'pw_rel': np.log10(ap + x_det[peaks]) - np.log10(ap),
                 }
             )
         )
@@ -201,6 +209,7 @@ def get_peak_params_sprint(
     periodic_spectrum: np.ndarray,
     freqs: np.ndarray,
     times: np.ndarray,
+    aperiodic_spectrum: np.ndarray,
     ch_names: Iterable | None = None,
     smooth: bool = True,
     smoothing_window: int | float = 2,
@@ -282,6 +291,7 @@ def get_peak_params_sprint(
         cur_df = get_peak_params(
             periodic_spectrum[:, :, ix],
             freqs,
+            aperiodic_spectrum=aperiodic_spectrum[:, :, ix],
             ch_names=ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,

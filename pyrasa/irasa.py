@@ -44,87 +44,121 @@ def irasa(
     hset_accuracy: int = 4,
 ) -> IrasaSpectrum:
     """
-    Computes the aperiodic and periodic components of the power spectrum from a time series using the
-    Irregular Resampling Autocorrelation (IRASA) algorithm.
+    Decompose the power spectrum into aperiodic and periodic components using IRASA.
 
-    The IRASA algorithm works by resampling the signal using non-integer factors (h and 1/h),
-    which causes narrowband oscillatory (periodic) peaks to shift in frequency, while leaving the
-    aperiodic structure largely unaffected. By averaging the resulting power spectra across resampling
-    pairs and computing the median across those averages, IRASA suppresses periodic components and
-    isolates the aperiodic spectrum. Subtracting the aperiodic spectrum from the original spectrum
-    recovers the periodic spectrum.
+    Apply Irregular Resampling Auto-Spectral Analysis (IRASA; Wen & Liu, 2016)
+    to separate the power spectrum of a time series into an aperiodic
+    (fractal) and a periodic (oscillatory) component.
 
+    IRASA resamples the signal using pairs of non-integer factors (h and 1/h).
+    This shifts oscillatory peaks in frequency while largely preserving the
+    aperiodic spectral structure. For each resampling pair, the geometric
+    mean of the resulting power spectra is calculated. The median across
+    resampling pairs provides an estimate of the aperiodic spectrum.
+    Subtracting this estimate from the original power spectrum yields the
+    periodic component.
+
+    Power spectral densities are estimated using Welch's method, with
+    optional multitaper estimation using discrete prolate spheroidal
+    sequences (DPSS).
 
     Parameters
     ----------
-    data : np.ndarray
-        Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).
+    data : np.ndarray, shape (n_samples,) or (n_channels, n_samples)
+        Time-series data to decompose. One-dimensional input is treated
+        as a single-channel signal.
     fs : int
-        Sampling frequency of the data in Hz.
+        Sampling frequency of the data, in Hz.
     band : tuple[float, float]
-        The frequency range (lower and upper bounds in Hz) over which to compute the spectra.
-    nperseg : int | None
-        Length of each segment. Defaults to None if window is array_like, is set to the length of the window.
-    noverlap : int | None
-        Number of points to overlap between segments. If None, noverlap = nperseg // 2. Defaults to None.
-    nfft : int | None
-        Length of the FFT used, if a zero padded FFT is desired. If None, the FFT length is nperseg. Defaults to None.
-    detrend : str | function | False
-        Specifies how to detrend each segment. If detrend is a string, it is passed as the type argument to the detrend
-        function. If it is a function, it takes a segment and returns a detrended segment.
-        If detrend is False, no detrending is done. Defaults to ‘constant’.
-    scaling : 'density'
-        Selects between computing the power spectral density (‘density’) where Pxx has units of V**2/Hz and computing
-        the squared magnitude spectrum (‘spectrum’) where Pxx has units of V**2,
-        if x is measured in V and fs is measured in Hz. Defaults to ‘density’
-    average : str
-        Method to use when averaging periodograms. Defaults to ‘mean’ can also be ‘median’.
-    ch_names : np.ndarray | None, optional
-        Channel names associated with the data, if available. Default is None.
-    win_func : Callable, optional
-        Window function to be used in Welch's method. Default is `dsp.windows.hann`.
+        Lower and upper frequency bounds of the returned spectra, in Hz.
+        The requested range must be compatible with the sampling frequency,
+        resampling factors, and specified filter settings.
+    nperseg : int | None, optional
+        Number of samples per segment used for Welch's spectral estimation.
+        If None, the segment length is set to the length of the shortest
+        resampled signal. Explicitly specified values must not exceed
+        this length.
+    noverlap : int | None, optional
+        Number of samples overlapping between consecutive Welch segments.
+        If None, half of `nperseg` is used.
+    nfft : int | None, optional
+        Number of FFT points used for spectral estimation. If None,
+        `nperseg` is used. Values larger than `nperseg` provide
+        zero-padding.
+    detrend : str | Callable | Literal[False], default 'constant'
+        Detrending applied to each segment before spectral estimation.
+        A string specifies the detrending method, a callable defines
+        a custom detrending function, and False disables detrending.
+    scaling : {'density', 'spectrum'}, default 'density'
+        Scaling of the spectral estimates. 'density' returns power
+        spectral density (power per Hz), whereas 'spectrum' returns
+        power spectrum values.
+    average : {'mean', 'median'}, default 'mean'
+        Method used to average Welch periodograms across segments.
+    win_func : Callable, default scipy.signal.windows.hann
+        Window function used for spectral estimation. DPSS windows
+        can be selected for multitaper estimation.
     win_func_kwargs : dict | None, optional
-        Additional keyword arguments for the window function. Default is None.
-    dpss_settings_time_bandwidth : float, optional
-        Time-bandwidth product for the DPSS windows if used. Default is 2.0.
-    dpss_settings_low_bias : bool, optional
-        Keep only tapers with eigenvalues > 0.9. Default is True.
-    dpss_eigenvalue_weighting : bool, optional
-        Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by
-        the concentration ratio of their respective tapers before combining. Default is True.
-    filter_settings : tuple[float | None, float | None], optional
-        Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.
-        Default is (None, None).
-    hset_info : tuple[float, float, float], optional
-        Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).
-    hset_accuracy : int, optional
-        Decimal precision for the resampling factors. Default is 4.
+        Additional keyword arguments passed to the window function.
+    dpss_settings_time_bandwidth : float, default 2.0
+        Time-bandwidth product used when DPSS windows are selected.
+    dpss_settings_low_bias : bool, default True
+        Whether to retain only DPSS tapers with spectral concentration
+        ratios greater than 0.9.
+    dpss_eigenvalue_weighting : bool, default True
+        Whether to weight the spectral estimates of individual DPSS
+        tapers by their spectral concentration ratios.
+    ch_names : np.ndarray | None, optional
+        Channel names corresponding to the input data.
+    filter_settings : tuple[float | None, float | None], default (None, None)
+        High-pass and low-pass filter cutoff frequencies of the input
+        data, in Hz. Used to verify that the frequency range required
+        for IRASA is compatible with the signal's passband. No filtering
+        is performed by this function.
+    hset_info : tuple[float, float, float], default (1.05, 2.0, 0.05)
+        Minimum, maximum, and step size of the resampling factors.
+        Factors are generated using `np.arange`, excluding the upper
+        bound and integer-valued factors.
+    hset_accuracy : int, default 4
+        Number of decimal places used to round the resampling factors.
 
     Returns
     -------
     IrasaSpectrum
-        An object containing the following attributes:
-            - freqs: np.ndarray
-                Frequencies corresponding to the computed spectra.
-            - raw_spectrum: np.ndarray
-                The raw power spectrum.
-            - aperiodic: np.ndarray
-                The aperiodic (fractal) component of the spectrum.
-            - periodic: np.ndarray
-                The periodic (oscillatory) component of the spectrum.
-            - ch_names: np.ndarray
-                Channel names if provided.
+        Object containing the following attributes:
+
+        - `freqs`: Frequency values of the returned spectra, in Hz.
+        - `raw_spectrum`: Original power spectrum, with shape
+        (n_channels, n_freqs).
+        - `aperiodic`: IRASA-estimated aperiodic component, with shape
+        (n_channels, n_freqs).
+        - `periodic`: Periodic component, with shape
+        (n_channels, n_freqs).
+        - `ch_names`: Channel names, if provided.
 
     Notes
     -----
-    This function provides fine-grained control over the IRASA parameters. For users working with MNE-Python,
-    the `irasa_raw` and `irasa_epochs` functions from `pyrasa.irasa_mne` are recommended, as they handle
-    additional preprocessing steps.
+    The periodic component is calculated as the difference between the
+    original and aperiodic spectra and can therefore contain negative values.
+
+    The returned spectra are restricted to the frequency bins within `band`.
+
+    For MNE-Python objects, the `irasa_raw` and `irasa_epochs` functions
+    provide convenient interfaces that extract measurement information
+    and return MNE-compatible spectral objects.
+
+    See Also
+    --------
+    irasa_sprint
+    pyrasa.irasa_mne.irasa_raw
+    pyrasa.irasa_mne.irasa_epochs
 
     References
     ----------
-    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
-    of Neurophysiological Signal. Brain Topography, 29(1), 13–26. https://doi.org/10.1007/s10548-015-0448-0
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components
+    in the Power Spectrum of Neurophysiological Signal.
+    Brain Topography, 29(1), 13–26.
+    https://doi.org/10.1007/s10548-015-0448-0
     """
 
     # set parameters
@@ -149,6 +183,12 @@ def irasa(
     hset = np.round(np.arange(*hset_info), hset_accuracy)
     hset = np.array([h for h in hset if h % 1 != 0])  # filter integers
 
+    min_samples = int(np.ceil(data.shape[-1] / hset.max()))
+
+    if nperseg is None:
+        nperseg = min_samples
+    elif nperseg > min_samples:
+        raise ValueError('nperseg exceeds the length of the shortest resampled signal.')
     win_kwargs = {'win_func': win_func, 'win_func_kwargs': win_func_kwargs}
     dpss_settings = {
         'time_bandwidth': dpss_settings_time_bandwidth,
@@ -221,74 +261,83 @@ def irasa_sprint(  # noqa PLR0915 C901
     hset_accuracy: int = 4,
 ) -> IrasaTfSpectrum:
     """
-    Computes time-resolved aperiodic and periodic components of the power spectrum from a time series
-    using the Irregular Resampling Auto-Spectral Analysis (IRASA) algorithm.
+    Compute time-resolved aperiodic and periodic spectra using IRASA.
 
-    This implementation extends the core IRASA method into the time-frequency domain, enabling the
-    decomposition of power spectra into fractal (aperiodic) and oscillatory (periodic) components
-    across time. This is particularly useful for studying non-stationary (neural) signals where spectral
-    dynamics evolve rapidly (e.g., during cognitive tasks or state transitions).
+    Apply Irregular Resampling Auto-Spectral Analysis (IRASA; Wen & Liu, 2016)
+    to decompose a time series into time-varying aperiodic (fractal) and
+    periodic (oscillatory) spectral components.
 
-    The IRASA algorithm operates by resampling the signal using non-integer factors (h and 1/h),
-    which causes narrowband oscillatory (periodic) peaks to shift in frequency, while leaving the
-    aperiodic structure largely unaffected. By averaging the resulting power spectra across resampling
-    pairs and computing the median across those averages, IRASA suppresses periodic components and
-    isolates the aperiodic spectrum. Subtracting the aperiodic spectrum from the original spectrum
-    recovers the periodic spectrum.
+    Unlike `irasa`, which estimates a power spectrum across a recording,
+    this function uses short-time Fourier transforms (STFTs) to obtain
+    time-frequency representations of the signal. IRASA is then applied
+    to separate the aperiodic and periodic components at each time point.
 
-    In this time-resolved variant, IRASA is applied to overlapping short-time windows.
-    This allows the algorithm to produce a full time-frequency representation of both the aperiodic
-    and periodic components, providing information in how they both change over time.
+    For each non-integer resampling factor (h), the geometric mean of
+    the upsampled and downsampled spectrograms is calculated. The median
+    across resampling factors estimates the aperiodic spectrogram, which
+    is subtracted from the original spectrogram to obtain the periodic
+    component.
 
     Parameters
     ----------
-    data : np.ndarray
-        Time series data, where the shape is expected to be either (Samples,) or (Channels, Samples).
+    data : np.ndarray, shape (n_samples,) or (n_channels, n_samples)
+        Time-series data to decompose. One-dimensional input is treated
+        as a single-channel signal.
     fs : int
-        Sampling frequency of the data in Hz.
+        Sampling frequency of the data, in Hz.
     ch_names : np.ndarray | None, optional
-        Channel names associated with the data, if available. Default is None.
-    band : tuple[float, float], optional
-        The frequency range (lower and upper bounds in Hz) over which to compute the spectra. Default is (1.0, 100.0).
-    win_duration : float, optional
-        Duration of the window in seconds used for the short-time Fourier transforms (STFTs). Default is 0.4 seconds.
-    overlap_fraction : int, optional
-        The overlap between the STFT sliding windows as fraction. Default is .99 of the windows.
-    win_func : Callable, optional
-        Window function to be used in computing the time frequency spectrum. Default is `dsp.windows.hann`.
+        Channel names corresponding to the input data.
+    band : tuple[float, float], default (1.0, 100.0)
+        Lower and upper frequency bounds of the returned spectrograms,
+        in Hz. Frequencies at or below the Rayleigh frequency
+        (1 / win_duration) are additionally excluded.
+    win_duration : float, default 0.4
+        Duration of each STFT analysis window, in seconds.
+    overlap_fraction : float, default 0.90
+        Fraction of overlap between consecutive STFT windows.
+        The nominal hop size in samples is calculated as
+        `int((1 - overlap_fraction) * win_duration * fs)`.
+        The overlap must allow a valid, positive hop size.
+    win_func : Callable, default scipy.signal.windows.hann
+        Window function used for time-frequency estimation. DPSS
+        windows can be selected for multitaper estimation.
     win_func_kwargs : dict | None, optional
-        Additional keyword arguments for the window function. Default is None.
-    dpss_settings_time_bandwidth : float, optional
-        Time-bandwidth product for the DPSS windows if used. Default is 2.0.
-    dpss_settings_low_bias : bool, optional
-        Keep only tapers with eigenvalues > 0.9. Default is True.
-    dpss_eigenvalue_weighting : bool, optional
-        Whether or not to apply eigenvalue weighting in DPSS. If True, spectral estimates weighted by
-        the concentration ratio of their respective tapers before combining. Default is True.
-    filter_settings : tuple[float | None, float | None], optional
-        Cutoff frequencies for highpass and lowpass filtering to avoid artifacts in the evaluated frequency range.
-        Default is (None, None).
-    hset_info : tuple[float, float, float], optional
-        Tuple specifying the range of the resampling factors as (min, max, step). Default is (1.05, 2.0, 0.05).
-    hset_accuracy : int, optional
-        Decimal precision for the resampling factors. Default is 4.
+        Additional keyword arguments passed to the window function.
+    dpss_settings_time_bandwidth : float, default 2.0
+        Time-bandwidth product used when DPSS windows are selected.
+    dpss_settings_low_bias : bool, default True
+        Whether to retain only DPSS tapers with spectral concentration
+        ratios greater than 0.9.
+    dpss_eigenvalue_weighting : bool, default True
+        Whether to weight the spectral estimates of individual DPSS
+        tapers by their spectral concentration ratios.
+    filter_settings : tuple[float | None, float | None], default (None, None)
+        High-pass and low-pass filter cutoff frequencies of the input
+        data, in Hz. Used to verify that the frequency range required
+        for IRASA is compatible with the signal's passband. No filtering
+        is performed by this function.
+    hset_info : tuple[float, float, float], default (1.05, 2.0, 0.05)
+        Minimum, maximum, and step size of the resampling factors.
+        Factors are generated using `np.arange`, excluding the upper
+        bound and integer-valued factors.
+    hset_accuracy : int, default 4
+        Number of decimal places used to round the resampling factors.
 
     Returns
     -------
     IrasaTfSpectrum
-        An object containing the following attributes:
-            - freqs: np.ndarray
-                Frequencies corresponding to the computed spectra.
-            - time: np.ndarray
-                Time bins in seconds associated with the (a-)periodic spectra.
-            - raw_spectrum: np.ndarray
-                The raw time-frequency power spectrum.
-            - aperiodic: np.ndarray
-                The aperiodic (fractal) component of the spectrum.
-            - periodic: np.ndarray
-                The periodic (oscillatory) component of the spectrum.
-            - ch_names: np.ndarray
-                Channel names if provided.
+        Object containing the following attributes:
+
+        - `freqs`: Frequency values of the returned spectrograms, in Hz.
+        - `time`: Time points corresponding to the STFT window centers,
+        in seconds.
+        - `raw_spectrum`: Original time-frequency power spectrum, with
+        shape (n_channels, n_freqs, n_times).
+        - `aperiodic`: IRASA-estimated aperiodic spectrogram, with
+        shape (n_channels, n_freqs, n_times).
+        - `periodic`: Periodic spectrogram, with shape
+        (n_channels, n_freqs, n_times).
+        - `ch_names`: Channel names, if provided.
 
     Notes
     -----
@@ -296,10 +345,16 @@ def irasa_sprint(  # noqa PLR0915 C901
     of the periodic and aperiodic components of the signal. The STFT is computed for each time window, and IRASA
     is applied to separate the spectral components.
 
+    See Also
+    --------
+    irasa
+
     References
     ----------
-    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum of
-    Neurophysiological Signal. Brain Topography, 29(1), 13–26. https://doi.org/10.1007/s10548-015-0448-0
+    Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components
+    in the Power Spectrum of Neurophysiological Signal.
+    Brain Topography, 29(1), 13–26.
+    https://doi.org/10.1007/s10548-015-0448-0
     """
 
     # set parameters

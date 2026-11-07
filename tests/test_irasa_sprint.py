@@ -98,21 +98,11 @@ def test_irasa_sprint_settings(ts4sprint, fs):
     )
 
     # test too much bandwidth
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='time_bandwidth'):
         irasa_sprint(
             ts4sprint[np.newaxis, :],
             fs=fs,
             band=(1, 100),
             win_func=dsp.windows.dpss,
-            dpss_settings_time_bandwidth=4,
-        )
-
-    # test ratios
-    with pytest.raises(ValueError):
-        irasa_sprint(
-            ts4sprint[np.newaxis, :],
-            fs=fs,
-            band=(1, 100),
-            win_func=dsp.windows.dpss,
-            dpss_settings_time_bandwidth=4,
+            dpss_settings_time_bandwidth=1.5,
         )

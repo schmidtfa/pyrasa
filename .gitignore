@@ -27,6 +27,7 @@ simulations/jobs
 simulations/data
 simulations/results
 simulations/old
+simulations/notebooks
 
 .venv
 .pixi

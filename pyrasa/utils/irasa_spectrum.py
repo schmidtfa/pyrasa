@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from attrs import define
 
+from pyrasa.utils.acf_utils import IrasaACF, psd_to_acf
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model
 from pyrasa.utils.fit_funcs import AbstractFitFun
 from pyrasa.utils.peak_utils import get_peak_params
@@ -63,7 +64,7 @@ class IrasaSpectrum:
     Example
     -------
     >>> from pyrasa import irasa
-    >>> irasa_spec = irasa(time_series_data, sfreq=1000)
+    >>> irasa_spec = irasa(time_series_data, fs=1000, band=(1.0, 100.0))
     >>> irasa_spec.fit_aperiodic_model(fit_func='knee')
     >>> peaks = irasa_spec.get_peaks()
     >>> error = irasa_spec.get_aperiodic_error(peak_kwargs={'min_peak_height': 0.05})
@@ -122,11 +123,12 @@ class IrasaSpectrum:
         Returns
         -------
         AperiodicFit
-            An object containing two pandas DataFrames:
-                - aperiodic_params : pd.DataFrame
-                    A DataFrame containing the fitted aperiodic parameters for each channel.
-                - gof : pd.DataFrame
-                    A DataFrame containing the goodness of fit metrics for each channel.
+            Object containing three pandas DataFrames:
+
+            - `aperiodic_params`: Fitted model parameters for each channel.
+            - `gof`: Goodness-of-fit metrics for each channel.
+            - `model`: Predicted aperiodic power values for each channel
+            and frequency in the fitted range.
 
         Notes
         -----
@@ -153,6 +155,41 @@ class IrasaSpectrum:
             fit_bounds=fit_bounds,
         )
 
+    def to_acf(
+        self,
+        source: str = 'aperiodic',
+        max_lag: float = 0.2,
+        lag_step: float = 0.001,
+    ) -> IrasaACF:
+        """Compute a normalized, band-limited ACF from an IRASA spectrum.
+
+        Parameters
+        ----------
+        source : {'aperiodic', 'raw'}, default 'aperiodic'
+            Spectrum to convert. Can either be 'aperiodic' or 'raw' the 'periodic' difference
+            spectrum is not a valid target.
+        max_lag : float, default 0.2
+            Maximum ACF lag, in seconds.
+        lag_step : float, default 0.001
+            Maximum ACF lag spacing, in seconds.
+
+        Returns
+        -------
+        IrasaACF
+            ACF with channel labels and methods ``half_life`` and ``at_lag``.
+        """
+        if source not in ('aperiodic', 'raw'):
+            raise ValueError("source must be 'aperiodic' or 'raw'.")
+
+        powers = self.aperiodic if source == 'aperiodic' else self.raw_spectrum
+        lags, corrs = psd_to_acf(self.freqs, powers, max_lag=max_lag, lag_step=lag_step)
+        return IrasaACF(
+            lags=lags,
+            corrs=np.atleast_2d(corrs),
+            ch_names=self.ch_names,
+            source=source,
+        )
+
     def get_peaks(
         self,
         smooth: bool = True,
@@ -176,37 +213,36 @@ class IrasaSpectrum:
         smooth : bool, optional
             Whether to smooth the spectrum before peak extraction. Smoothing can help in reducing noise and
             better identifying peaks. Default is True.
-        smoothing_window : int or float, optional
-            The size of the smoothing window in Hz, passed to the Savitzky-Golay filter. Default is 1 Hz.
-        polyorder : int, optional
-            The polynomial order for the Savitzky-Golay filter used in smoothing. The polynomial order must be
-            less than the window length. Default is 1.
+        smoothing_window : int | float, default 2
+            Size of the Savitzky-Golay smoothing window, in Hz.
+        polyorder : int | None, optional
+            Polynomial order of the Savitzky-Golay filter. If None,
+            the order is selected automatically.
         cut_spectrum : tuple of (float, float) or None, optional
             Tuple specifying the frequency range (lower_bound, upper_bound) to which the spectrum should be cut
             before peak extraction. If None, peaks are detected across the full frequency range. Default is None.
-        peak_threshold : float, optional
-            Relative threshold for detecting peaks, defined as a multiple of the standard deviation of the
-            filtered spectrum. Default is 1.0.
-        min_peak_height : float, optional
-            The minimum peak height (in absolute units of the power spectrum) required for a peak to be recognized.
-            This can be useful for filtering out noise or insignificant peaks, especially when a "knee" is present
-            in the original data, which may persist in the periodic spectrum. Default is 0.01.
+        peak_threshold : float, default 2.0
+            Minimum peak prominence expressed as a multiple of the
+            standard deviation of the processed periodic spectrum.
+        min_peak_height : float, default 0.0
+            Minimum peak prominence in linear power units. Applied to
+            the `pw` values after peak detection.
         min_peak_distance_hz : float or None, optional
             The minimum distance between two peaks in Hz to avoid fitting too many peaks in close proximity.
-        peak_width_limits : tuple of (float, float), optional
-            The lower and upper bounds for peak widths, in Hz. This helps in constraining the peak detection to
-            meaningful features. Default is (0.5, 12.0).
+        peak_width_limits : tuple[float, float], default (1.0, 6.0)
+            Minimum and maximum accepted peak widths, in Hz.
 
         Returns
         -------
         pd.DataFrame
-            A DataFrame containing the detected peak parameters for each channel. The DataFrame includes the
+            Detected oscillatory peaks, with one row per peak and the
             following columns:
-            - 'ch_name': Channel name
-            - 'cf': Center frequency of the peak
-            - 'bw': Bandwidth of the peak
-            - 'pw': Peak height (power)
 
+            - `ch_name`: Name of the channel containing the peak.
+            - `cf`: Center frequency of the peak, in Hz.
+            - `bw`: Peak bandwidth at half-prominence, in Hz.
+            - `pw`: Peak prominence in linear power units.
+            - `pw_rel`: Log10 peak height relative to the aperiodic background.
 
         Notes
         -----
@@ -221,9 +257,10 @@ class IrasaSpectrum:
         """
 
         return get_peak_params(
-            self.periodic,
-            self.freqs,
-            self.ch_names,
+            periodic_spectrum=self.periodic,
+            freqs=self.freqs,
+            aperiodic_spectrum=self.aperiodic,
+            ch_names=self.ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,
             cut_spectrum=cut_spectrum,
@@ -236,57 +273,51 @@ class IrasaSpectrum:
 
     def get_aperiodic_error(self, peak_kwargs: None | dict = None) -> np.ndarray:
         """
-        Computes the frequency resolved error of the aperiodic spectrum.
+        Compute the frequency-resolved residual periodic power after peak removal.
 
-        This method first computes the absolute of the periodic spectrum and subsequently zeroes out
-        any peaks in the spectrum that are potentially "oscillations", yielding the residual error of the aperiodic
-        spectrum as a function of frequency.
-        This can be useful when trying to optimize hyperparameters such as the hset.
+        Calculate the absolute value of the periodic spectrum and set
+        frequency bins around detected oscillatory peaks to zero. The
+        remaining values provide an estimate of the residual spectral
+        power not attributed to detected oscillatory peaks.
 
-        peak_kwargs : dict
-            A dictionary containing keyword arguments that are passed on to the peak finding method 'get_peaks'
+        This measure can be used to evaluate IRASA decomposition quality
+        and compare different algorithm settings, such as resampling factors.
+
+        Parameters
+        ----------
+        peak_kwargs : dict | None, optional
+            Keyword arguments passed to `get_peaks` for detecting oscillatory
+            peaks. If None, the default peak detection settings are used.
 
         Returns
         -------
-            np.ndarray
-                A numpy array containing the frequency resolved squared error of the aperiodic
-                spectrum extracted using irasa
-
+        np.ndarray, shape (n_channels, n_freqs)
+            Absolute periodic spectral values after masking detected peaks.
 
         Notes
         -----
-        While not strictly necessary, setting peak_kwargs is highly recommended.
-        The reason for this is that through up-/downsampling and averaging "broadband"
-        parameters such as spectral knees can bleed in the periodic spectrum and could be wrongfully
-        interpreted as oscillations. This can be avoided by e.g. explicitely setting `min_peak_height`.
-        A good way of making a decision for the periodic parameters is to base it on the settings
-        used in peak detection.
+        For each detected peak, frequency bins strictly within
+        (cf - bw, cf + bw) are set to zero, where cf is the center frequency
+        and bw is the estimated peak bandwidth.
 
+        The returned values are absolute residuals, not squared errors.
         """
 
-        if peak_kwargs is None:
-            peak_kwargs = {}
+        error = np.abs(self.periodic)
+        peaks = self.get_peaks(**(peak_kwargs or {}))
 
-        aperiodic_errors = []
-        # get absolute periodic spectrum
-        for ix in range(self.periodic.shape[0]):
-            aperiodic_error = np.abs(self.periodic[ix, :])
+        ch_names = self.ch_names if self.ch_names is not None else [str(i) for i in range(error.shape[0])]
+        ch_index = {ch: ix for ix, ch in enumerate(ch_names)}
 
-            # zero-out peaks
-            peaks = self.get_peaks(**peak_kwargs)
-            freqs = self.freqs
+        for ch, cf, bw in zip(  # this is done to allow type checking
+            peaks['ch_name'],
+            peaks['cf'].to_numpy(dtype=float),
+            peaks['bw'].to_numpy(dtype=float),
+        ):
+            freq_mask = (self.freqs > cf - bw) & (self.freqs < cf + bw)
+            error[ch_index[str(ch)], freq_mask] = 0
 
-            for _, peak in peaks.iterrows():
-                cur_upper = peak['cf'] + peak['bw']
-                cur_lower = peak['cf'] - peak['bw']
-
-                freq_mask = np.logical_and(freqs < cur_upper, freqs > cur_lower)
-
-                aperiodic_error[freq_mask] = 0
-
-            aperiodic_errors.append(aperiodic_error)
-
-        return np.array(aperiodic_errors)
+        return error
 
     def plot(
         self,
@@ -301,14 +332,6 @@ class IrasaSpectrum:
         The main use of this function is for quality control of the IRASA settings that were used to
         separate periodic and aperiodic spectra.
 
-        NOTE: The y-axis of the aperiodic spectrum is plotted in log-scale
-        and the y-axis of the periodic spectrum is plotted in linear scale. The reason for this decision is
-        that the periodic spectrum is the result from subtracting the aperiodic spectrum from the raw powerspectrum.
-        This can induce negligible values below 0, very close to 0 or at 0 which creates a weird looking spectrum
-        as logarithms of these values can result in nans, negative values or infs. The main purpose of the
-        plotting functionality is to allow you to visually inspect whether something went wrong during
-        the IRASA procedure and we feel this is best accomplished using the herein specified settings.
-
         Parameters
         ----------
         freq_range: tuple of (float, float) or None, optional
@@ -322,6 +345,17 @@ class IrasaSpectrum:
             A string that specifies the units in which the data are plotted. Defaults to (a.u.) i.e. arbitrary units.
         legend: bool, optional
             Whether or not a legend should be plotted
+
+        Notes
+        -----
+        The left panel displays the original and aperiodic spectra with
+        a logarithmic y-axis. The right panel displays the original and
+        periodic spectra with a linear y-axis.
+
+        The periodic spectrum can contain negative values because it is
+        obtained by subtracting the aperiodic spectrum from the original
+        power spectrum. A linear scale is therefore used to preserve
+        these values.
         """
 
         if freq_range is not None:

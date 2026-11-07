@@ -117,7 +117,7 @@ def _get_windows(
     # special settings in case multitapering is required
     if win_func == dsp.windows.dpss:
         time_bandwidth = dpss_settings['time_bandwidth']
-        if time_bandwidth > min_time_bandwidth:
+        if time_bandwidth < min_time_bandwidth:
             raise ValueError(f'time_bandwidth should be >= {min_time_bandwidth} for good tapers')
 
         n_taps = int(np.floor(time_bandwidth - 1))
@@ -133,6 +133,8 @@ def _get_windows(
         if dpss_settings['low_bias']:
             win = win[ratios > low_bias_ratio]
             ratios = ratios[ratios > low_bias_ratio]
+        if not dpss_settings['eigenvalue_weighting']:
+            ratios = None
     else:
         win = [win_func(nperseg, **win_func_kwargs)]
         ratios = None

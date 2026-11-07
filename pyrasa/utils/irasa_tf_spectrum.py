@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from attrs import define
 
+from pyrasa.utils.acf_utils import IrasaACF, psd_to_acf
 from pyrasa.utils.aperiodic_utils import compute_aperiodic_model_sprint
 from pyrasa.utils.fit_funcs import AbstractFitFun
 from pyrasa.utils.peak_utils import get_peak_params_sprint
@@ -180,6 +181,41 @@ class IrasaTfSpectrum:
             fit_bounds=fit_bounds,
         )
 
+    def to_acf(
+        self,
+        source: str = 'aperiodic',
+        max_lag: float = 0.2,
+        lag_step: float = 0.001,
+    ) -> IrasaACF:
+        """Compute the band-limited ACF for each time window."""
+        if source not in ('aperiodic', 'raw'):
+            raise ValueError("source must be 'aperiodic' or 'raw'.")
+
+        powers = self.aperiodic if source == 'aperiodic' else self.raw_spectrum
+
+        is2d = 2
+        if powers.ndim == is2d:
+            powers = powers[np.newaxis, :, :]
+
+        acf_list = []
+
+        for ix in range(powers.shape[-1]):
+            lags, corrs = psd_to_acf(
+                self.freqs,
+                powers[:, :, ix],
+                max_lag=max_lag,
+                lag_step=lag_step,
+            )
+            acf_list.append(corrs)
+
+        return IrasaACF(
+            lags=lags,
+            corrs=np.stack(acf_list, axis=1),
+            ch_names=self.ch_names,
+            source=source,
+            time=self.time,
+        )
+
     def get_peaks(
         self,
         smooth: bool = True,
@@ -251,6 +287,7 @@ class IrasaTfSpectrum:
             periodic_spectrum=self.periodic[np.newaxis, :, :] if self.periodic.ndim == min_ndim else self.periodic,
             freqs=self.freqs,
             times=self.time,
+            aperiodic_spectrum=self.aperiodic[np.newaxis, :, :] if self.aperiodic.ndim == min_ndim else self.aperiodic,
             ch_names=self.ch_names,
             smooth=smooth,
             smoothing_window=smoothing_window,
@@ -292,42 +329,33 @@ class IrasaTfSpectrum:
 
         """
 
-        if peak_kwargs is None:
-            peak_kwargs = {}
+        error = np.abs(self.periodic)
+        is2d = 2
+        if error.ndim == is2d:
+            error = error[np.newaxis, :, :]
 
-        # get absolute periodic spectrum & zero-out peaks
-        freqs = self.freqs
-        peaks = self.get_peaks(**peak_kwargs)
-        peak_times = peaks['time'].unique()
-        ch_names = peaks['ch_name'].unique()
+        peaks = self.get_peaks(**(peak_kwargs or {}))
 
-        valid_peak_times = [cur_t in peak_times for cur_t in self.time]
-        aperiodic_error = np.abs(self.periodic)
-        aperiodic_error_cut = aperiodic_error[:, :, valid_peak_times]
+        ch_names = self.ch_names if self.ch_names is not None else [str(i) for i in range(error.shape[0])]
 
-        aperiodic_errors_ch = []
-        for c_ix, ch in enumerate(ch_names):
-            cur_ch_ape = aperiodic_error_cut[c_ix, :, :]
-            cur_peak_ch = peaks.query(f'ch_name == "{ch}"')
+        ch_index = {str(ch): ix for ix, ch in enumerate(ch_names)}
+        time_index = {float(t): ix for ix, t in enumerate(self.time)}
 
-            aperiodic_errors_t = []
-            for t_ix, cur_t in enumerate(peak_times):
-                cur_t_ape = cur_ch_ape[:, t_ix]
-                cur_t_ch = cur_peak_ch.query(f'time == "{cur_t}"')
+        for ch, t, cf, bw in zip(
+            peaks['ch_name'],
+            peaks['time'].to_numpy(dtype=float),
+            peaks['cf'].to_numpy(dtype=float),
+            peaks['bw'].to_numpy(dtype=float),
+        ):
+            freq_mask = (self.freqs > cf - bw) & (self.freqs < cf + bw)
 
-                for _, peak in cur_t_ch.iterrows():
-                    cur_upper = peak['cf'] + peak['bw']
-                    cur_lower = peak['cf'] - peak['bw']
+            error[
+                ch_index[str(ch)],
+                freq_mask,
+                time_index[float(t)],
+            ] = 0
 
-                    freq_mask = np.logical_and(freqs < cur_upper, freqs > cur_lower)
-
-                    cur_t_ape[freq_mask] = 0
-
-                aperiodic_errors_t.append(cur_t_ape)
-
-            aperiodic_errors_ch.append(np.array(aperiodic_errors_t).T)
-
-        return np.array(aperiodic_errors_ch)
+        return error
 
     def plot(
         self,
