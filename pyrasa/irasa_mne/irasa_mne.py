@@ -39,11 +39,13 @@ def irasa_raw(
     band : tuple of (float, float), optional, default: (1.0, 100.0)
         A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
         for extracting the aperiodic and periodic spectra.
-    duration : float, required
-        The duration (in seconds) of each segment used to calculate the power spectral density (PSD).
-        This must be less than the total duration of the data.
-    overlap : float or int, optional, default: 50
-        The overlap between segments, specified as a percentage (0-100).
+    duration : float | None, default None
+        Duration of each segment used to estimate the power spectral
+        density (PSD), in seconds. Must be provided and must be shorter
+        than the total recording duration.
+    overlap : float | int, default 50
+        Overlap between consecutive segments, expressed as a percentage.
+        Must be strictly between 0 and 100.
     hset_info : tuple of (float, float, float), optional, default: (1.05, 2.0, 0.05)
         Contains the range of up/downsampling factors used in the IRASA algorithm.
         This should be a tuple specifying the (min, max, step) values for the resampling.
@@ -51,11 +53,13 @@ def irasa_raw(
     Returns
     -------
     IrasaRaw
-        A custom object containing the separated aperiodic and periodic components of the data:
-        - `periodic`: An instance of `PeriodicSpectrumArray`, which includes the periodic
-          (oscillatory) component of the power spectrum.
-        - `aperiodic`: An instance of `AperiodicSpectrumArray`, which includes the aperiodic
-          (fractal) component of the power spectrum.
+        Object containing the IRASA decomposition with two MNE-compatible
+        spectral representations:
+
+        - `periodic`: PeriodicSpectrumArray containing the periodic
+        (oscillatory) component of the power spectrum.
+        - `aperiodic`: AperiodicSpectrumArray containing the aperiodic
+        (fractal) component of the power spectrum.
 
     References
     ----------
@@ -65,13 +69,12 @@ def irasa_raw(
 
     Notes
     -----
-    - Ensure that `data` does not contain any bad channels (`data.info['bads']` should be empty),
-      as this could affect the results.
-    - The overlap percentage should be carefully chosen to balance between segment independence
-      and sufficient data for analysis. A value between 0 and 100% is valid.
-    - The function will raise assertions if the input parameters are not consistent with the
-      expected formats or if the provided `duration` exceeds the length of the data.
+    The input data must not contain channels marked as bad in
+    `data.info['bads']`.
 
+    Power spectral densities are estimated using overlapping segments
+    and median averaging. The recording's high-pass and low-pass filter
+    settings are passed to the underlying IRASA implementation.
     """
 
     # set parameters & safety checks
@@ -135,8 +138,9 @@ def irasa_epochs(
     Parameters
     ----------
     data : mne.Epochs
-        The time-series data used to extract aperiodic and periodic power spectra.
-        This should be an instance of `mne.Epochs`.
+        Epoched neurophysiological time-series data used to estimate
+        the periodic and aperiodic power spectra. Any MNE object
+        inheriting from `mne.BaseEpochs` is supported.
     band : tuple of (float, float), optional, default: (1.0, 100.0)
         A tuple specifying the lower and upper bounds of the frequency range (in Hz) used
         for extracting the aperiodic and periodic spectra.
@@ -146,16 +150,31 @@ def irasa_epochs(
 
     Returns
     -------
-    aperiodic : AperiodicEpochsSpectrum
-        The aperiodic component of the data as an `AperiodicEpochsSpectrum` object.
-    periodic : PeriodicEpochsSpectrum
-        The periodic component of the data as a `PeriodicEpochsSpectrum` object.
+    IrasaEpoched
+    Object containing the IRASA decomposition for each epoch and
+    channel, with two MNE-compatible spectral representations:
+
+    - `periodic`: PeriodicEpochsSpectrum containing the periodic
+      (oscillatory) component of the power spectrum.
+    - `aperiodic`: AperiodicEpochsSpectrum containing the aperiodic
+      (fractal) component of the power spectrum.
 
     References
     ----------
     Wen, H., & Liu, Z. (2016). Separating Fractal and Oscillatory Components in the Power Spectrum
     of Neurophysiological Signal. Brain Topography, 29(1), 13–26.
     https://doi.org/10.1007/s10548-015-0448-0
+
+    Notes
+    -----
+    IRASA is applied independently to each epoch using its full duration
+    for spectral estimation. No averaging across epochs is performed.
+
+    The original event information and event ID mapping are preserved
+    in the returned spectral objects.
+
+    The input data must not contain channels marked as bad in
+    `data.info['bads']`.
 
     """
 

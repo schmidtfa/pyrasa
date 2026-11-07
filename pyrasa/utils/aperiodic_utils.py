@@ -42,65 +42,80 @@ def compute_aperiodic_model(  # noqa: C901
     fit_bounds: tuple[float, float] | None = None,
 ) -> AperiodicFit:
     """
-    Computes aperiodic parameters from the aperiodic spectrum using scipy's curve fitting function.
+    Fit a parametric model to the aperiodic component of a power spectrum.
 
-    This function can be used to model the aperiodic (1/f-like) component of the power spectrum. Per default, users can
-    choose between a fixed or knee model fit or specify their own fit method see examples custom_fit_functions.ipynb
-    for an example. The function returns the fitted parameters for each channel along with some
-    goodness of fit metrics.
+    Fit the aperiodic (1/f-like) component of the power spectrum separately
+    for each channel. Two models are available by default: a fixed model
+    describing a power-law relationship without a knee, and a knee model
+    that additionally captures a bend in the aperiodic spectrum.
+
+    Custom fitting functions can be provided as subclasses of
+    `AbstractFitFun`.
 
     Parameters
     ----------
-    aperiodic_spectrum : np.ndarray
-        A 1 or 2D array of power values for the aperiodic spectrum where the shape is
-        expected to be either (Samples,) or (Channels, Samples).
-    freqs : np.ndarray
-        A 1D array of frequency values corresponding to the aperiodic spectrum.
-    fit_func : str or type[AbstractFitFun], optional
-        The fitting function to use. Can be "fixed" for a linear fit or "knee" for a fit that includes a
-        knee (bend) in the spectrum or a class that is inherited from AbstractFitFun. The default is 'fixed'.
-    ch_names : Iterable or None, optional
-        Channel names corresponding to the aperiodic spectrum. If None, channels will be named numerically
-        in ascending order. Default is None.
-    scale : bool, optional
-        Whether to scale the data to improve fitting accuracy. This is useful in cases where
-        power values are very small (e.g., 1e-28), which may lead to numerical precision issues during fitting.
-        After fitting, the parameters are rescaled to match the original data scale. Default is False.
+    aperiodic_spectrum : np.ndarray, shape (n_freqs,) or (n_channels, n_freqs)
+        Aperiodic power spectral values for one or multiple channels.
+        One-dimensional input is treated as a single-channel spectrum.
+    freqs : np.ndarray, shape (n_freqs,)
+        Frequency values corresponding to the aperiodic spectrum, in Hz.
+    fit_func : str | type[AbstractFitFun], default 'fixed'
+        Model used to fit the aperiodic spectrum. Options are:
+
+        - 'fixed': Fit a power-law model without a knee, characterized
+        by an offset and exponent.
+        - 'knee': Fit a model including a spectral knee.
+        - A subclass of `AbstractFitFun` defining a custom fitting model.
+
+    ch_names : list | tuple | np.ndarray | None, optional
+        Channel names corresponding to the aperiodic spectrum.
+        If None, channels are assigned numerical string labels
+        starting from '0'.
+    scale : bool, default False
+        Whether to scale the aperiodic spectrum before fitting to improve
+        numerical stability. This can be useful when power values are
+        very small. The scaling factor is passed to the fitting model
+        to account for the original data scale.
     scale_percentile : float, default 5.0
-        Percentile of the aperiodic power spectrum used to determine the scaling factor when scale=True.
-        The percentile is computed across all channels and frequencies, ensuring a common scaling factor.
-        A value of 0 reproduces the original minimum-based scaling implemented until (v1.1.1),
-        while higher percentiles reduce sensitivity to exceptionally small spectral values. Only used when scale=True.
-    fit_bounds : tuple[float, float] or None, optional
-        Tuple specifying the lower and upper frequency bounds for the fit function. If None, the entire frequency
-        range is used. Otherwise, the spectrum is cropped to the specified bounds. Default is None.
+        Percentile of the aperiodic power values used to determine the
+        scaling factor. Must be between 0 and 100. The percentile is
+        calculated across all channels and frequencies included in the fit,
+        providing a common scaling factor. A value of 0 uses the minimum
+        power value. Only used when `scale=True`.
+    fit_bounds : tuple[float, float] | None, optional
+        Lower and upper frequency bounds for model fitting, in Hz.
+        Both bounds must lie strictly within the available frequency
+        range. Frequencies equal to the specified bounds are included.
+        If None, the full available frequency range is used.
 
     Returns
     -------
     AperiodicFit
-        An object containing three pandas DataFrames:
-            - aperiodic_params : pd.DataFrame
-                A DataFrame containing the fitted aperiodic parameters for each channel.
-            - gof : pd.DataFrame
-                A DataFrame containing the goodness of fit metrics for each channel.
-            - model : pd.DataFrame
-                A DataFrame containing the predicted aperiodic model for each channel.
+        Object containing three pandas DataFrames:
+
+        - `aperiodic_params`: Fitted model parameters for each channel,
+        including a `ch_name` column.
+        - `gof`: Goodness-of-fit metrics for each channel, including
+        a `ch_name` column.
+        - `model`: Predicted aperiodic power values for each channel
+        at the fitted frequencies, including a `ch_name` column.
 
     Notes
     -----
-    This function fits the aperiodic component of the power spectrum using scipy's curve fitting function.
-    The fitting can be performed using either a simple linear model ('fixed') or a more complex model
-    that includes a "knee" point, where the spectrum bends. The resulting parameters can help in
-    understanding the underlying characteristics of the aperiodic component in the data.
+    If the first frequency value is 0 Hz, a warning is issued and this
+    frequency is excluded from model fitting.
 
-    If the `fit_bounds` parameter is used, it ensures that only the specified frequency range is considered
-    for fitting, which can be important to avoid fitting artifacts outside the region of interest.
+    When `scale=True`, the scaling factor is determined after applying
+    the specified frequency bounds and excluding 0 Hz, if present.
 
-    The `scale` parameter can be crucial when dealing with data that have extremely small values,
-    as it helps to mitigate issues related to machine precision during the fitting process.
+    For the built-in fixed and knee models, goodness-of-fit metrics are
+    calculated in log10 power space, whereas the returned model predictions
+    are expressed in the original linear power scale.
 
-    The function asserts that the input data are of the correct type and shape, and raises warnings
-    if the first frequency value is zero, as this can cause issues during model fitting.
+    See Also
+    --------
+    compute_aperiodic_model_sprint
+    pyrasa.utils.fit_funcs.AbstractFitFun
     """
 
     assert isinstance(aperiodic_spectrum, np.ndarray), 'aperiodic_spectrum should be a numpy array.'
@@ -188,63 +203,92 @@ def compute_aperiodic_model_sprint(
     fit_bounds: tuple[float, float] | None = None,
 ) -> AperiodicFit:
     """
-    Extracts aperiodic parameters from the aperiodic spectrogram using scipy's curve fitting
-    function.
+    Fit parametric aperiodic models to a time-resolved power spectrum.
 
-    This function computes aperiodic parameters for each time point in the spectrogram by applying either one of
-    two different curve fitting functions (`fixed` or `knee`) or a custom function specified by user to the data.
-    See examples custom_fit_functions.ipynb. The parameters, along with the goodness of
-    fit for each time point, are returned in a concatenated format.
+    Fit the aperiodic (1/f-like) component of a spectrogram separately
+    for each channel and time point.
+
+    Two models are available by default: a fixed model describing a
+    power-law relationship without a knee, and a knee model that
+    additionally captures a bend in the aperiodic spectrum. Custom
+    fitting functions can be provided as subclasses of `AbstractFitFun`.
+
+    The fitted parameters, goodness-of-fit metrics, and model predictions
+    are combined across time points and annotated with their
+    corresponding time values.
 
     Parameters
     ----------
-    aperiodic_spectrum : np.ndarray
-        A 2 or 3D array of power values from the aperiodic spectrogram, with shape (Frequencies, Time)
-        or (Channels, Frequencies, Time).
-    freqs : np.ndarray
-        A 1D array of frequency values corresponding to the aperiodic spectrogram.
-    times : np.ndarray
-        A 1D array of time values corresponding to the aperiodic spectrogram.
-    fit_func : str or type[AbstractFitFun], optional
-        The fitting function to use. Can be "fixed" for a linear fit or "knee" for a fit that includes a
-        knee (bend) in the spectrum or a class that is inherited from AbstractFitFun. The default is 'fixed'..
-    ch_names : Iterable or None, optional
-        Channel names corresponding to the aperiodic spectrogram. If None, channels will be named numerically
-        in ascending order. Default is None.
-    scale : bool, optional
-        Whether to scale the data to improve fitting accuracy. This is useful when fitting a knee in cases where
-        power values are very small, leading to numerical precision issues. Default is False.
-    fit_bounds : tuple[float, float] or None, optional
-        Tuple specifying the lower and upper frequency bounds for the fit function. If None, the entire frequency
-        range is used. Otherwise, the spectrum is cropped to the specified bounds before fitting. Default is None.
+    aperiodic_spectrum : np.ndarray, shape (n_channels, n_freqs, n_times)
+        Time-resolved aperiodic power spectral values. The last
+        dimension represents time.
+    freqs : np.ndarray, shape (n_freqs,)
+        Frequency values corresponding to the aperiodic spectrogram,
+        in Hz.
+    times : np.ndarray, shape (n_times,)
+        Time values corresponding to the aperiodic spectrogram,
+        in seconds.
+    fit_func : str | type[AbstractFitFun], default 'fixed'
+        Model used to fit the aperiodic spectrum. Options are:
+
+        - 'fixed': Fit a power-law model without a knee, characterized
+        by an offset and exponent.
+        - 'knee': Fit a model including a spectral knee.
+        - A subclass of `AbstractFitFun` defining a custom fitting model.
+
+    scale : bool, default False
+        Whether to scale the aperiodic spectrum before fitting to improve
+        numerical stability. This can be useful when power values are
+        very small. The scaling factor is passed to the fitting model
+        to account for the original data scale.
+    ch_names : list | tuple | np.ndarray | None, optional
+        Channel names corresponding to the aperiodic spectrogram.
+        If None, channels are assigned numerical string labels
+        starting from '0'.
+    fit_bounds : tuple[float, float] | None, optional
+        Lower and upper frequency bounds for model fitting, in Hz.
+        Both bounds must lie strictly within the available frequency
+        range. Frequencies equal to the specified bounds are included.
+        If None, the full available frequency range is used.
 
     Returns
     -------
     AperiodicFit
-        An object containing three pandas DataFrames:
-            - aperiodic_params : pd.DataFrame
-                A DataFrame containing the aperiodic parameters (e.g., Offset and Exponent)
-                for each channel and each time point.
-            - gof : pd.DataFrame
-                A DataFrame containing the goodness of fit metrics for each channel and each time point.
-            - model : pd.DataFrame
-                A DataFrame containing the predicted aperiodic model for each channel and each time point.
+        Object containing three pandas DataFrames:
+
+        - `aperiodic_params`: Fitted model parameters for each channel
+        and time point, including `ch_name` and `time` columns.
+        - `gof`: Goodness-of-fit metrics for each channel and time point,
+        including `ch_name` and `time` columns.
+        - `model`: Predicted aperiodic power values for each channel
+        and time point at the fitted frequencies, including
+        `ch_name` and `time` columns.
 
     Notes
     -----
-    This function iterates over each time point in the provided spectrogram to extract aperiodic parameters
-    using the specified fit function. It leverages the `compute_aperiodic_model` function for individual fits
-    at each time point, then combines the results across all time points into comprehensive DataFrames.
+    Models are fitted independently for each channel and time point.
+    No averaging across time points is performed.
 
-    The `fit_bounds` parameter allows for frequency range restrictions during fitting, which can help in focusing
-    the analysis on a particular frequency band of interest.
+    Fitting is performed using `compute_aperiodic_model`. When scaling
+    is enabled, a separate scaling factor is determined for each time
+    point using the default 5th percentile across its channels and
+    included frequencies.
 
-    Scaling the data using the `scale` parameter can be particularly important when dealing with very small power
-    values that might lead to poor fitting due to numerical precision limitations.
+    For the built-in fixed and knee models, goodness-of-fit metrics are
+    calculated in log10 power space, whereas the returned model predictions
+    are expressed in the original linear power scale.
 
+    See Also
+    --------
+    compute_aperiodic_model
+    pyrasa.utils.fit_funcs.AbstractFitFun
     """
 
     ap_t_list, gof_t_list, pred_t_list = [], [], []
+
+    is_2d = 2
+    if aperiodic_spectrum.ndim == is_2d:
+        aperiodic_spectrum = aperiodic_spectrum[np.newaxis, :, :]
 
     for ix, t in enumerate(times):
         aperiodic_fit = compute_aperiodic_model(

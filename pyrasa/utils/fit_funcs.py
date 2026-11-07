@@ -112,54 +112,54 @@ def _get_gof(psd: np.ndarray, psd_pred: np.ndarray, k: int, fit_type: str) -> pd
 @define
 class AbstractFitFun(abc.ABC):
     """
-    Abstract base class for fitting functions used to model aperiodic spectra.
+    Abstract base class for fitting parametric models to aperiodic spectra.
 
-    This class provides a framework for defining and fitting models to aperiodic spectra.
-    It handles common functionality required for fitting a model, such as scaling and goodness-of-fit
-    computation. Subclasses should implement the `func` method to define the specific fitting function
-    used for curve fitting.
+    Provides a framework for fitting aperiodic spectral models using
+    `scipy.optimize.curve_fit`, including optional logarithmic
+    transformations, parameter scaling, and goodness-of-fit evaluation.
+
+    Subclasses must implement `func` to define the mathematical model.
+    Additional methods can be overridden to customize fitting parameters,
+    include derived model parameters, or handle power scaling.
+
+    Parameters
+    ----------
+    freq : np.ndarray, shape (n_freqs,)
+        Frequency values corresponding to the aperiodic spectrum, in Hz.
+    aperiodic_spectrum : np.ndarray, shape (n_freqs,)
+        Aperiodic power spectral values to fit.
+    scale_factor : int | float
+        Factor by which the original power values were multiplied before
+        fitting. Used to restore model predictions and, where implemented,
+        fitted parameters to the original power scale.
 
     Attributes
     ----------
-    freq : np.ndarray
-        The frequency values associated with the aperiodic spectrum data.
-    aperiodic_spectrum : np.ndarray
-        The aperiodic spectrum data to which the model will be fit.
-    scale_factor : int | float
-        A scaling factor used to adjust the fit results.
     label : ClassVar[str]
-        A label to identify the type of fit or model used. Default is 'custom'.
+        Label identifying the fitting model. Default is 'custom'.
     log10_aperiodic : ClassVar[bool]
-        If True, the aperiodic spectrum values will be transformed using log10. Default is False.
+        Whether to log10-transform the aperiodic power values before
+        fitting. Default is False.
     log10_freq : ClassVar[bool]
-        If True, the frequency values will be transformed using log10. Default is False.
-
-    Methods
-    -------
-    __attrs_post_init__()
-        Post-initialization method to apply log10 transformations if specified.
-    func(x: np.ndarray, *args: float) -> np.ndarray
-        Abstract method to define the model function. Must be implemented by subclasses
-        and should be applicable to scipy.optimize.curve_fit.
-    curve_kwargs() -> dict[str, Any]
-        Returns keyword arguments for the curve fitting process.
-    add_infos_to_df(df_params: pd.DataFrame) -> pd.DataFrame
-        Method to add additional information to the parameters DataFrame. Can be overridden by subclasses.
-    handle_scaling(df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame
-        Adjusts the parameters DataFrame based on the scaling factor. Can be overridden by subclasses.
-    fit_func() -> tuple[pd.DataFrame, pd.DataFrame]
-        Fits the model to the data and returns DataFrames containing the model parameters and goodness-of-fit metrics.
+        Whether to log10-transform the frequency values before fitting.
+        Default is False.
 
     Notes
     -----
-    - Subclasses must implement the `func` method to define the model's functional form.
-    - The `curve_kwargs` method can be overridden to customize curve fitting options.
-    - The `add_infos_to_df` and `handle_scaling` methods are intended to be overridden if additional
-      functionality or specific scaling behavior is required.
+    Subclasses must implement `func` to define the model evaluated by
+    `scipy.optimize.curve_fit`.
 
-    References
-    ----------
-    For details on goodness-of-fit metrics and their calculations, see the documentation for `_get_gof`.
+    The `curve_kwargs` property can be overridden to configure the
+    optimization procedure. The `add_infos_to_df` method can be overridden
+    to include derived model parameters in the results.
+
+    When `scale_factor` differs from 1, subclasses must implement
+    `handle_scaling` to adjust the fitted parameters. Otherwise, a
+    `NotImplementedError` is raised.
+
+    Goodness-of-fit metrics are calculated using the spectral values
+    in the representation used for fitting, which may be logarithmically
+    transformed.
     """
 
     freq: np.ndarray
@@ -202,6 +202,38 @@ class AbstractFitFun(abc.ABC):
         )
 
     def fit_func(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """
+        Fit the model and return parameters, goodness-of-fit metrics, and predictions.
+
+        Fit the model defined by `func` using `scipy.optimize.curve_fit`.
+        The parameter names are obtained from the signature of `func`.
+
+        Model predictions are transformed back to the original power and
+        frequency scales before being returned.
+
+        Returns
+        -------
+        df_params : pd.DataFrame
+            Fitted model parameters, including the `fit_type` column and
+            any additional parameters provided by `add_infos_to_df`.
+        df_gof : pd.DataFrame
+            Goodness-of-fit metrics, including mean squared error (`mse`),
+            R-squared (`R2`), adjusted R-squared (`R2_adj.`), AIC, BIC,
+            their logarithmically sample-size-weighted variants
+            (`lnwAIC`, `lnwBIC`), and `fit_type`.
+        df_pred : pd.DataFrame
+            Model predictions containing the columns `Frequency (Hz)`,
+            `aperiodic_model`, and `fit_type`.
+
+        Notes
+        -----
+        Goodness-of-fit metrics are computed before transforming model
+        predictions back to the original power scale. Consequently, their
+        values depend on the representation used for fitting.
+
+        The returned model predictions are adjusted for the specified
+        `scale_factor`.
+        """
         curve_kwargs = self.curve_kwargs
         p, _ = curve_fit(self.func, self.freq, self.aperiodic_spectrum, **curve_kwargs)
 
@@ -231,27 +263,42 @@ class AbstractFitFun(abc.ABC):
 
 class FixedFitFun(AbstractFitFun):
     """
-    A model for fitting aperiodic activity in power spectra.
+    Fit an aperiodic power-law model without a spectral knee.
 
-    The `FixedFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra
-    using a fixed function that does not include a spectral knee. This model is suitable for
-    cases where the aperiodic component of the spectrum follows a consistent slope across
-    the entire frequency range.
+    This class extends `AbstractFitFun` to model the aperiodic spectrum
+    using a fixed power-law relationship.
+
+    The model is defined as:
+
+        log10(P(f)) = Offset - Exponent * log10(f)
+
+    where P(f) is the aperiodic power at frequency f, `Offset` is the
+    log10 power at 1 Hz, and `Exponent` describes the power-law decay.
+
+    The model is fitted to log10-transformed power values using
+    nonlinear least-squares optimization. Initial parameter estimates
+    are obtained from linear regression in log-log space.
 
     Attributes
     ----------
     label : str
-        A label to identify this fitting model. Default is 'fixed'.
+        Model identifier, set to 'fixed'.
     log10_aperiodic : bool
-        Indicates whether to log-transform the aperiodic spectrum. Default is True.
+        Whether to log10-transform the aperiodic power values.
+        Set to True.
 
-    Methods
-    -------
-    func(x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray
-        Defines the model function for aperiodic activity without a spectral knee.
+    Notes
+    -----
+    The model assumes a constant exponent across the fitted frequency
+    range and does not account for a spectral knee.
 
-    curve_kwargs() -> dict[str, Any]
-        Generates initial guess parameters and other keyword arguments for curve fitting.
+    Optimization uses the Levenberg-Marquardt algorithm with an
+    analytical Jacobian.
+
+    See Also
+    --------
+    AbstractFitFun
+    KneeFitFun
     """
 
     label = 'fixed'
@@ -259,8 +306,21 @@ class FixedFitFun(AbstractFitFun):
 
     def func(self, x: np.ndarray, Offset: float, Exponent: float) -> np.ndarray:  # noqa N803
         """
-        Specparams fixed fitting function.
-        Use this to model aperiodic activity without a spectral knee
+        Evaluate a fixed aperiodic model in log10 power space.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Frequencies at which to evaluate the model, in Hz.
+        Offset : float
+            Log10 power at 1 Hz.
+        Exponent : float
+            Power-law exponent controlling the spectral slope.
+
+        Returns
+        -------
+        np.ndarray
+            Predicted log10 power values at the specified frequencies.
         """
         y_hat = Offset - Exponent * np.log10(x)
 
@@ -302,30 +362,59 @@ class FixedFitFun(AbstractFitFun):
 
 class KneeFitFun(AbstractFitFun):
     """
-    A model for fitting aperiodic activity in power spectra with a spectral knee.
+    Fit an aperiodic power-law model with a spectral knee.
 
-    The `KneeFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra
-    using a function that includes a spectral knee. This model is particularly useful for
-    cases where the aperiodic component of the spectrum has a break or knee, representing
-    a transition between two different spectral slopes.
+    This class extends `AbstractFitFun` to model aperiodic spectra with
+    a transition between two power-law regimes.
+
+    The model is defined as:
+
+        log10(P(f)) = Offset
+                    - Exponent_1 * log10(f)
+                    - log10(Knee + f**Exponent_2)
+
+    where P(f) is the aperiodic power at frequency f.
+
+    `Exponent_1` describes the low-frequency power-law exponent, while
+    the high-frequency exponent approaches the sum of `Exponent_1`
+    and `Exponent_2`.
+
+    The knee parameter determines the transition between these regimes.
+    The corresponding knee frequency is calculated as:
+
+        f_knee = Knee ** (1 / Exponent_2)
+
+    A characteristic timescale is additionally calculated as:
+
+        tau = 1 / (2 * pi * f_knee)
+
+    The model is fitted to log10-transformed power values using bounded
+    nonlinear least-squares optimization.
 
     Attributes
     ----------
     label : str
-        A label to identify this fitting model. Default is 'knee'.
+        Model identifier, set to 'knee'.
     log10_aperiodic : bool
-        Indicates whether to log-transform the aperiodic spectrum. Default is True.
+        Whether to log10-transform the aperiodic power values.
+        Set to True.
 
-    Methods
-    -------
-    func(x: np.ndarray, Offset: float, Knee: float, Exponent_1: float, Exponent_2: float) -> np.ndarray
-        Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.
+    Notes
+    -----
+    The knee parameter and both exponents
+    are constrained to nonnegative values.
 
-    add_infos_to_df(df_params: pd.DataFrame) -> pd.DataFrame
-        Adds calculated knee frequency to the DataFrame of fit parameters.
+    Initial parameter estimates are selected from multiple candidate
+    knee locations and high-frequency exponent contributions.
 
-    curve_kwargs() -> dict[str, Any]
-        Generates initial guess parameters and other keyword arguments for curve fitting.
+    The fitted parameters include the derived `Knee Frequency (Hz)`
+    and `tau` values. These quantities may be undefined or non-finite
+    for degenerate fits, particularly when `Exponent_2` approaches zero.
+
+    See Also
+    --------
+    AbstractFitFun
+    FixedFitFun
     """
 
     label = 'knee'
@@ -340,8 +429,26 @@ class KneeFitFun(AbstractFitFun):
         Exponent_2: float,  # noqa N803
     ) -> np.ndarray:
         """
-        Model aperiodic activity with a spectral knee and a pre-knee slope.
-        Use this to model aperiodic activity with a spectral knee
+        Evaluate the knee aperiodic model in log10 power space.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Frequencies at which to evaluate the model, in Hz.
+        Offset : float
+            Intercept parameter of the aperiodic model in log10 power space.
+        Knee : float
+            Nonnegative parameter controlling the spectral knee.
+        Exponent_1 : float
+            Low-frequency power-law exponent.
+        Exponent_2 : float
+            Additional exponent determining the change in spectral slope
+            above the knee.
+
+        Returns
+        -------
+        np.ndarray
+            Predicted log10 power values at the specified frequencies.
         """
         # y_hat = Offset - np.log10(x**Exponent_1 * (Knee + x**Exponent_2))
         # equivalent yet more stable solution
@@ -357,176 +464,6 @@ class KneeFitFun(AbstractFitFun):
 
     def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
         df_params['Knee Frequency (Hz)'] = df_params['Knee'] ** (1.0 / df_params['Exponent_2'])
-        df_params['tau'] = 1.0 / (2 * np.pi * df_params['Knee Frequency (Hz)'])
-        return df_params
-
-    def jacobian(
-        self,
-        x: np.ndarray,
-        offset: float,
-        knee: float,
-        exponent_1: float,
-        exponent_2: float,
-    ) -> np.ndarray:
-        """Derivatives in the same order as the model parameters."""
-        log_freq = np.log10(x)
-        power = x**exponent_2
-        denominator = knee + power
-
-        return np.column_stack(
-            (
-                np.ones_like(x),
-                -1.0 / (np.log(10.0) * denominator),
-                -log_freq,
-                -(power / denominator) * log_freq,
-            )
-        )
-
-    @property
-    def curve_kwargs(self) -> dict[str, Any]:
-        log_freq = np.log10(self.freq)
-        log_power = self.aperiodic_spectrum
-
-        mean_freq = log_freq.mean()
-        centered_freq = log_freq - mean_freq
-        spread = centered_freq @ centered_freq
-
-        if not np.isfinite(spread) or spread <= 0:
-            raise ValueError('Fitting requires finite positive, distinct frequencies.')
-
-        # Candidate crossover locations, expressed in log10 Hz.
-        log_knee_freqs = np.linspace(log_freq.min(), log_freq.max(), 13)
-
-        # Starting candidates only, not bounds on the final fit.
-        exponent_candidates = (0.1, 0.25, 0.5, 1.0, 2.0, 4.0)
-
-        best_error = np.inf
-        p0 = None
-
-        min_log = np.log10(np.finfo(float).tiny)
-        max_log = np.log10(np.finfo(float).max)
-
-        for exponent_2 in exponent_candidates:
-            for log_knee_freq in log_knee_freqs:
-                # Knee = crossover_frequency ** Exponent_2
-                log_knee = exponent_2 * log_knee_freq
-
-                if not min_log < log_knee < max_log:
-                    continue
-
-                # log10(Knee + f**Exponent_2), evaluated stably.
-                log_denominator = np.logaddexp(
-                    np.log(10.0) * log_knee,
-                    np.log(10.0) * exponent_2 * log_freq,
-                ) / np.log(10.0)
-
-                adjusted_power = log_power + log_denominator
-                mean_power = adjusted_power.mean()
-
-                # Conditional least-squares estimate, with Exponent_1 >= 0.
-                exponent_1 = max(
-                    0.0,
-                    -np.dot(
-                        centered_freq,
-                        adjusted_power - mean_power,
-                    )
-                    / spread,
-                )
-
-                offset = mean_power + exponent_1 * mean_freq
-
-                residual = mean_power - exponent_1 * centered_freq - adjusted_power
-                error = residual @ residual
-
-                if error < best_error:
-                    best_error = error
-                    p0 = np.array(
-                        [
-                            offset,
-                            10.0**log_knee,
-                            exponent_1,
-                            exponent_2,
-                        ]
-                    )
-
-        if p0 is None:
-            raise ValueError('No finite initial guess found.')
-
-        return {
-            **super().curve_kwargs,
-            'p0': p0,
-            'bounds': (
-                (-np.inf, 0.0, 0.0, 0.0),
-                (np.inf, np.inf, np.inf, np.inf),
-            ),
-            'method': 'trf',
-            'jac': self.jacobian,
-            'x_scale': 'jac',
-            'ftol': 1e-8,
-            'xtol': 1e-8,
-            'gtol': 1e-8,
-        }
-
-
-class OldKneeFitFun(AbstractFitFun):
-    """
-    A model for fitting aperiodic activity in power spectra with a spectral knee.
-
-    The `KneeFitFun` class extends `AbstractFitFun` to model aperiodic activity in power spectra
-    using a function that includes a spectral knee. This model is particularly useful for
-    cases where the aperiodic component of the spectrum has a break or knee, representing
-    a transition between two different spectral slopes.
-
-    Attributes
-    ----------
-    label : str
-        A label to identify this fitting model. Default is 'knee'.
-    log10_aperiodic : bool
-        Indicates whether to log-transform the aperiodic spectrum. Default is True.
-
-    Methods
-    -------
-    func(x: np.ndarray, Offset: float, Knee: float, Exponent_1: float, Exponent_2: float) -> np.ndarray
-        Defines the model function for aperiodic activity with a spectral knee and pre-knee slope.
-
-    add_infos_to_df(df_params: pd.DataFrame) -> pd.DataFrame
-        Adds calculated knee frequency to the DataFrame of fit parameters.
-
-    curve_kwargs() -> dict[str, Any]
-        Generates initial guess parameters and other keyword arguments for curve fitting.
-    """
-
-    label = 'old_knee'
-    log10_aperiodic = True
-
-    def func(
-        self,
-        x: np.ndarray,
-        Offset: float,  # noqa N803
-        Knee: float,  # noqa N803
-        Exponent_1: float,  # noqa N803
-        Exponent_2: float,  # noqa N803
-    ) -> np.ndarray:
-        """
-        Model aperiodic activity with a spectral knee and a pre-knee slope.
-        Use this to model aperiodic activity with a spectral knee
-        """
-        # y_hat = Offset - np.log10(x**Exponent_1 * (Knee + x**Exponent_2))
-        # equivalent yet more stable solution
-        y_hat = Offset - Exponent_1 * np.log10(x) - np.log10(Knee + x**Exponent_2)
-
-        return y_hat
-
-    def handle_scaling(self, df_params: pd.DataFrame, scale_factor: float) -> pd.DataFrame:
-        if scale_factor != 1.0:
-            df_params['Offset'] -= np.log10(scale_factor)
-
-        return df_params
-
-    def add_infos_to_df(self, df_params: pd.DataFrame) -> pd.DataFrame:
-        df_params['Knee Frequency (Hz)'] = df_params['Knee'] ** (
-            1.0 / (2 * df_params['Exponent_1'] + df_params['Exponent_2'])
-        )
         df_params['tau'] = 1.0 / (2 * np.pi * df_params['Knee Frequency (Hz)'])
         return df_params
 
